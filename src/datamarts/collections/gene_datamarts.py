@@ -1,0 +1,114 @@
+import multigenomic_api
+from src.datamarts.domain.gene_datamart.gene import Gene
+from src.datamarts.domain.gene_datamart.product import Product
+from src.datamarts.domain.gene_datamart.regulation import Regulation
+from src.datamarts.domain.general.biological_base import BiologicalBase
+
+
+class GeneDatamarts:
+
+    @property
+    def objects(self):
+        gene_objects = multigenomic_api.genes.get_all()
+        for gene_object in gene_objects[2912:2913]:
+            gene_datamart = GeneDatamarts.GeneDatamart(gene_object)
+            yield gene_datamart
+
+    class GeneDatamart:
+
+        def __init__(self, gene):
+            self.id = gene.id
+            self.gene = gene
+            self.products = gene.id
+            self.regulation = gene.id
+            self.organism = gene.organisms_id
+
+        @property
+        def gene(self):
+            return self._gene
+
+        @gene.setter
+        def gene(self, gene):
+            gene = Gene(gene)
+            self._gene = gene.to_dict()
+
+        @property
+        def products(self):
+            return self._products
+
+        @products.setter
+        def products(self, gene_id):
+            gene_products = multigenomic_api.products.find_by_gene_id(gene_id)
+            self._products = []
+            for related_product in gene_products:
+                related_product = Product(related_product)
+                self._products.append(related_product.to_dict().copy())
+
+        @property
+        def regulation(self):
+            return self._regulation
+
+        @regulation.setter
+        def regulation(self, gene_id):
+            try:
+                operon = multigenomic_api.operons.find_by_gene_id(gene_id)
+            except ValueError:
+                operon = None
+            if operon:
+                operon = multigenomic_api.operons.find_by_id(operon.id)
+                regulation = Regulation(operon)
+                self._regulation = regulation.to_dict()
+            else:
+                self._regulation = None
+
+        @property
+        def organism(self):
+            return self._organism
+
+        @organism.setter
+        def organism(self, organism_id):
+            organism = multigenomic_api.organisms.find_by_id(organism_id)
+            if organism:
+                self._organism = {
+                    "id": organism.id,
+                    "name": organism.name
+                }
+            else:
+                self._organism = {
+                    "id": organism_id
+                }
+
+        def to_dict(self):
+            gene_datamart = {
+                "_id": self.id,
+                "gene": self.gene,
+                "products": self.products,
+                #TODO: falta implementar shine dalgarnos, no se encuentra en multigenomic
+                "shineDalgarnos": [],
+                "regulation": self.regulation,
+                #TODO: falta implementar growth conditions, no se encuentra en multigenomic
+                "growthConditions": [],
+                #TODO: falta implementar organism dentro de multigenomic, por ahora solo ocupa el organism_id del gene
+                "organism": self.organism,
+                "allCitations": BiologicalBase.get_all_citations()
+            }
+            return gene_datamart
+
+
+def all_genes_datamarts():
+    genes = GeneDatamarts()
+    json_genes = []
+    for gene in genes.objects:
+        gene_dict = remove_none_fields_empty_lists(gene.to_dict().copy())
+        json_genes.append(remove_none_fields_empty_lists(gene_dict))
+    return json_genes
+
+
+def remove_none_fields_empty_lists(gene_object):
+    if isinstance(gene_object, dict):
+        return {property: remove_none_fields_empty_lists(property_value) for property, property_value in gene_object.items() if property_value}
+    elif isinstance(gene_object, list):
+        if len(gene_object) != 0:
+            return [remove_none_fields_empty_lists(v) for v in gene_object]
+    else:
+        return gene_object
