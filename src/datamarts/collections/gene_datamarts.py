@@ -10,7 +10,7 @@ class GeneDatamarts:
     @property
     def objects(self):
         gene_objects = multigenomic_api.genes.get_all()
-        for gene_object in gene_objects[2912:2913]:
+        for gene_object in gene_objects:
             gene_datamart = GeneDatamarts.GeneDatamart(gene_object)
             yield gene_datamart
 

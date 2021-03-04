@@ -12,11 +12,14 @@ class TranscriptionUnit(BiologicalBase):
 
     def __init__(self, transcription_unit):
         super().__init__(transcription_unit.external_cross_references, transcription_unit.citations, transcription_unit.note)
+        regulatory_int = multigenomic_api.regulatory_interactions.find_regulatory_interactions_by_reg_entity_id(transcription_unit.id)
         self.transcription_unit = transcription_unit
         self.first_gene = transcription_unit
         self.genes = transcription_unit.genes_ids
         self.promoter = transcription_unit
+        self.sites = regulatory_int
         self.terminators = transcription_unit.terminators_ids
+        self.transcription_factors = regulatory_int
         self.transcription_factor_binding_sites = transcription_unit.id
 
     @property
@@ -54,6 +57,30 @@ class TranscriptionUnit(BiologicalBase):
             self._genes.append(gene.copy())
 
     @property
+    def promoter(self):
+        return self._promoter
+
+    @promoter.setter
+    def promoter(self, transcription_unit):
+        self._promoter = {}
+        promoter_id = transcription_unit.promoters_id
+        if promoter_id:
+            promoter = Promoters(multigenomic_api.promoters.find_by_id(promoter_id))
+            self._promoter = promoter.to_dict().copy()
+
+    @property
+    def sites(self):
+        return self._sites
+
+    @sites.setter
+    def sites(self, reg_int):
+        self._sites = []
+        for ri in reg_int:
+            if ri.regulatory_sites_id:
+                self._sites.append(ri.regulatory_sites_id)
+
+
+    @property
     def terminators(self):
         return self._terminators
 
@@ -66,16 +93,18 @@ class TranscriptionUnit(BiologicalBase):
             self._terminators.append(terminator_dict.copy())
 
     @property
-    def promoter(self):
-        return self._promoter
+    def transcription_factors(self):
+        return self._transcription_factors
 
-    @promoter.setter
-    def promoter(self, transcription_unit):
-        self._promoter = {}
-        promoter_id = transcription_unit.promoters_id
-        if promoter_id:
-            promoter = Promoters(multigenomic_api.promoters.find_by_id(promoter_id))
-            self._promoter = promoter.to_dict().copy()
+    @transcription_factors.setter
+    def transcription_factors(self, reg_int):
+        self._transcription_factors = []
+        for ri in reg_int:
+            if ri.regulator:
+                trans_factor = multigenomic_api.transcription_factors.find_tf_id_by_active_conformation_id(ri.regulator.id)
+                self._transcription_factors.extend(trans_factor)
+        self._transcription_factors = set(list(self._transcription_factors))
+
 
     @property
     def transcription_factor_binding_sites(self):
@@ -97,6 +126,11 @@ class TranscriptionUnit(BiologicalBase):
             "note": self.transcription_unit.note,
             "synonyms": self.transcription_unit.synonyms,
             "promoter": self.promoter,
+            "statistics": {
+                "genes": len(self.genes),
+                "sites": len(self.sites),
+                "transcriptionFactors": len(self.transcription_factors)
+            },
             "terminators": self.terminators,
             "transcriptionFactorsBindingSites": self._transcription_factor_binding_sites
         }
