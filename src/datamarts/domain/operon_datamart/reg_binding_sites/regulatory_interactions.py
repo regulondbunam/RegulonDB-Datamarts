@@ -10,7 +10,6 @@ class RegulatoryInteractions(BiologicalBase):
         reg_int_dict = {
             "_id": self.regulatory_interactions.id,
             "centerPosition": self.regulatory_interactions.center_position,
-            # TODO: Check this later
             "citations": self.citations,
             "function": self.regulatory_interactions.function,
             "note": self.regulatory_interactions.note,

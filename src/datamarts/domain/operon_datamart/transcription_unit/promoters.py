@@ -1,7 +1,7 @@
 import multigenomic_api
 
 from src.datamarts.domain.general.biological_base import BiologicalBase
-from src.datamarts.domain.operon_datamart.tf_binding_sites import Transcription_Factor_Binding_Sites
+from src.datamarts.domain.operon_datamart.regulator_binding_sites import Regulator_Binding_Sites
 from src.datamarts.domain.operon_datamart.transcription_unit.promoter.binds_sigma_factor import BindsSigmaFactor
 
 
@@ -9,7 +9,7 @@ class Promoters(BiologicalBase):
     def __init__(self, promoter):
         super().__init__(promoter.external_cross_references, promoter.citations, promoter.note)
         self.promoter = promoter
-        self.transcription_factor_binding_sites = promoter.id
+        self.regulator_binding_sites = promoter.id
         self.binds_sigma_factor = promoter
         self.boxes = promoter
         self.transcription_start_site = promoter
@@ -61,14 +61,14 @@ class Promoters(BiologicalBase):
             self._transcription_start_site = trans_ss
 
     @property
-    def transcription_factor_binding_sites(self):
-        return self._transcription_factor_binding_sites
+    def regulator_binding_sites(self):
+        return self._regulator_binding_sites
 
-    @transcription_factor_binding_sites.setter
-    def transcription_factor_binding_sites(self, promoter_id):
-        self._transcription_factor_binding_sites = []
-        tf_binding_sites_dict = Transcription_Factor_Binding_Sites(promoter_id)
-        self._transcription_factor_binding_sites = tf_binding_sites_dict.to_dict()
+    @regulator_binding_sites.setter
+    def regulator_binding_sites(self, promoter_id):
+        self._regulator_binding_sites = []
+        tf_binding_sites_dict = Regulator_Binding_Sites(promoter_id)
+        self._regulator_binding_sites = tf_binding_sites_dict.to_dict()
 
     def to_dict(self):
         promoter_dict = {
@@ -81,7 +81,7 @@ class Promoters(BiologicalBase):
             "score": self.promoter.score,
             "sequence": self.promoter.sequence,
             "synonyms": self.promoter.synonyms,
-            "transcriptionFactorBindingSites": self.transcription_factor_binding_sites,
+            "regulatorBindingSites": self.regulator_binding_sites,
             "transcriptionStartSite": self.transcription_start_site
         }
         return promoter_dict

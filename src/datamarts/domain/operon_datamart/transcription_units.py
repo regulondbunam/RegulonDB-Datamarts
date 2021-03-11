@@ -5,7 +5,7 @@ from src.datamarts.domain.general.biological_base import BiologicalBase
 from src.datamarts.domain.operon_datamart.transcription_unit.promoters import Promoters
 from src.datamarts.domain.operon_datamart.transcription_unit.terminators import Terminators
 
-from src.datamarts.domain.operon_datamart.tf_binding_sites import Transcription_Factor_Binding_Sites
+from src.datamarts.domain.operon_datamart.regulator_binding_sites import Regulator_Binding_Sites
 
 
 class TranscriptionUnit(BiologicalBase):
@@ -17,10 +17,10 @@ class TranscriptionUnit(BiologicalBase):
         self.first_gene = transcription_unit
         self.genes = transcription_unit.genes_ids
         self.promoter = transcription_unit
+        self.regulator_binding_sites = transcription_unit.id
         self.sites = regulatory_int
         self.terminators = transcription_unit.terminators_ids
         self.transcription_factors = regulatory_int
-        self.transcription_factor_binding_sites = transcription_unit.id
 
     @property
     def first_gene(self):
@@ -48,11 +48,11 @@ class TranscriptionUnit(BiologicalBase):
         self._genes = []
         for gene_id in gene_ids:
             gene = multigenomic_api.genes.find_by_id(gene_id)
-            tf_binding_sites = Transcription_Factor_Binding_Sites(gene_id)
+            tf_binding_sites = Regulator_Binding_Sites(gene_id)
             gene = {
                 "id": gene.id,
                 "name": gene.name,
-                "transcriptionFactorsBindingSites": tf_binding_sites.to_dict()
+                "regulatorBindingSites": tf_binding_sites.to_dict()
             }
             self._genes.append(gene.copy())
 
@@ -107,14 +107,14 @@ class TranscriptionUnit(BiologicalBase):
 
 
     @property
-    def transcription_factor_binding_sites(self):
-        return self._transcription_factor_binding_sites
+    def regulator_binding_sites(self):
+        return self._regulator_binding_sites
 
-    @transcription_factor_binding_sites.setter
-    def transcription_factor_binding_sites(self, transcription_unit_id):
-        self._transcription_factor_binding_sites = []
-        tf_binding_sites_dict = Transcription_Factor_Binding_Sites(transcription_unit_id)
-        self._transcription_factor_binding_sites = tf_binding_sites_dict.to_dict()
+    @regulator_binding_sites.setter
+    def regulator_binding_sites(self, transcription_unit_id):
+        self._regulator_binding_sites = []
+        tf_binding_sites_dict = Regulator_Binding_Sites(transcription_unit_id)
+        self._regulator_binding_sites = tf_binding_sites_dict.to_dict()
 
     def to_dict(self):
         transcription_unit = {
@@ -132,7 +132,7 @@ class TranscriptionUnit(BiologicalBase):
                 "transcriptionFactors": len(self.transcription_factors)
             },
             "terminators": self.terminators,
-            "transcriptionFactorsBindingSites": self._transcription_factor_binding_sites
+            "regulatorBindingSites": self._regulator_binding_sites
         }
         return transcription_unit
 
