@@ -1,0 +1,854 @@
+{
+  "regulonDatamart": {
+        "validator": {
+            "$jsonSchema": {
+                "bsonType": "object",
+                "required": [
+                    "_id"
+                ],
+                "properties": {
+                    "_id": {
+                        "type": ["string", "null"],
+                        "pattern": "^RDB[A-Z0-9_]{5}[A-Z]{3}[0-9A-Z]{5}$"
+                    },
+                    "regulator": {
+                        "type": "object",
+                        "properties": {
+                            "name": {
+                                "type": ["string", "null"]
+                            },
+                            "synonyms": {
+                                "type": "array",
+                                "uniqueItems": true,
+                                "items":{
+                                    "type": ["string", "null"]
+                                }
+                            },
+                            "note": {
+                                "type": ["string", "null"]
+                            },
+                            "conformations": {
+                                "type": "array",
+                                "uniqueItems": true,
+                                "items": {
+                                    "type": "object",
+                                    "properties": {
+                                        "_id":{
+                                            "type": ["string", "null"],
+                                            "pattern": "^RDB[A-Z0-9_]{5}[A-Z]{3}[0-9A-Z]{5}$"
+                                        },
+                                        "name": {
+                                            "type": ["string", "null"]
+                                        },
+                                        "type": {
+                                            "type": ["string", "null"]
+                                        },
+                                        "effectorInteractionType":{
+                                            "type": ["string", "null"]
+                                        },
+                                        "citations": {
+                                            "type": "array",
+                                            "uniqueItems": true,
+                                            "items": {
+                                                "type": "object",
+                                                "properties": {
+                                                    "publication": {
+                                                        "type": "object",
+                                                        "properties": {
+                                                            "authors": {
+                                                                "type": "array",
+                                                                "uniqueItems": true,
+                                                                "items": {
+                                                                    "type": ["string", "null"]
+                                                                }
+                                                            },
+                                                            "pmid": {
+                                                                "type": ["string", "null"]
+                                                            },
+                                                            "id": {
+                                                                "type": ["string", "null"],
+                                                                "pattern": "^RDB[A-Z0-9_]{5}[A-Z]{3}[0-9A-Z]{5}$"
+                                                            },
+                                                            "citation": {
+                                                                "type": ["string", "null"]
+                                                            },
+                                                            "title": {
+                                                                "type": ["string", "null"]
+                                                            },
+                                                            "url": {
+                                                                "type": ["string", "null"]
+                                                            },
+                                                            "year": {
+                                                                "type": "number"
+                                                            }
+                                                        },
+                                                        "additionalProperties": false
+                                                    },
+                                                    "evidence": {
+                                                        "type": "object",
+                                                        "properties": {
+                                                            "code": {
+                                                                "type": ["string", "null"]
+                                                            },
+                                                            "id": {
+                                                                "type": ["string", "null"],
+                                                                "pattern": "^RDB[A-Z0-9_]{5}[A-Z]{3}[0-9A-Z]{5}$"
+                                                            },
+                                                            "name": {
+                                                                "type": ["string", "null"]
+                                                            },
+                                                            "type": {
+                                                                "type": ["string", "null"]
+                                                            }
+                                                        },
+                                                        "additionalProperties": false
+                                                    }
+                                                },
+                                                "additionalProperties": false
+                                            }
+                                        },
+                                        "functionalType": {
+                                            "type": ["string", "null"]
+                                        }
+                                    },
+                                    "additionalProperties": false
+                                }
+                            },
+                            "genes": {
+                                "type": "array",
+                                "uniqueItems": true,
+                                "items": {
+                                    "type": "object",
+                                    "properties": {
+                                        "gene_id": {
+                                            "type": ["string", "null"],
+                                            "pattern": "^RDB[A-Z0-9_]{5}[A-Z]{3}[0-9A-Z]{5}$"
+                                        },
+                                        "genomePosition": {
+                                            "type": ["string", "null"]
+                                        },
+                                        "length": {
+                                            "type": ["string", "null"]
+                                        }
+                                    },
+                                    "additionalProperties": false
+                                }
+                            },
+                            "operons": {
+                                "type": "array",
+                                "uniqueItems": true,
+                                "items": {
+                                    "type": "object",
+                                    "properties": {
+                                        "operon_id": {
+                                            "type": ["string", "null"],
+                                            "pattern": "^RDB[A-Z0-9_]{5}[A-Z]{3}[0-9A-Z]{5}$"
+                                        },
+                                        "name": {
+                                            "type": ["string", "null"]
+                                        },
+                                        "tusEncodingRegulator": {
+                                            "type": "object",
+                                            "properties": {
+                                                "transcriptionUnitName": {
+                                                    "type": ["string", "null"]
+                                                },
+                                                "promoterName": {
+                                                    "type": ["string","null"]
+                                                }
+                                            },
+                                            "additionalProperties": false
+                                        }
+                                    },
+                                    "additionalProperties": false
+                                }
+                            },
+                            "sensingClass": {
+                                "type": ["string", "null"]
+                            },
+                            "connectivityClass": {
+                                "type": ["string", "null"]
+                            }
+                        },
+                        "additionalProperties": false
+                    },
+                    "terms": {
+                        "type": "object",
+                        "properties": {
+                            "multifun": {
+                                "type": "array", 
+                                "uniqueItems": true,
+                                "items": {
+                                    "type": "object",
+                                    "properties": {
+                                        "id": {
+                                            "type": ["string", "null"],
+                                            "pattern": "^RDB[A-Z0-9_]{5}[A-Z]{3}[0-9A-Z]{5}$"
+                                        },
+                                        "name": {
+                                            "type": ["string", "null"]
+                                        },
+                                        "gene_ids": {
+                                            "type": "array",
+                                            "uniqueItems": true,
+                                            "items": {
+                                                "type": ["string", "null"]
+                                            }
+                                        }
+                                    },
+                                    "additionalProperties": false
+                                }
+                            },
+                            "geneOntology": {
+                                "type": "object",
+                                "properties": {
+                                    "cellularComponent": {
+                                        "type": "array",
+                                        "uniqueItems": true,
+                                        "items":{
+                                            "type": "object",
+                                            "properties": {
+                                                "term_id": {
+                                                    "type": ["string", "null"],
+                                                    "pattern": "^RDB[A-Z0-9_]{5}[A-Z]{3}[0-9A-Z]{5}$"
+                                                },
+                                                "name": {
+                                                    "type": ["string", "null"]
+                                                },
+                                                "gene_ids": {
+                                                    "type": "array",
+                                                    "uniqueItems": true,
+                                                    "items": {
+                                                        "type": ["string", "null"]
+                                                    }
+                                                }
+                                            },
+                                            "additionalProperties": false
+                                        }
+                                    },
+                                    "molecularFunction": {
+                                        "type": "array",
+                                        "uniqueItems": true,
+                                        "items":{
+                                            "type": "object",
+                                            "properties": {
+                                                "term_id": {
+                                                    "type": ["string", "null"],
+                                                    "pattern": "^RDB[A-Z0-9_]{5}[A-Z]{3}[0-9A-Z]{5}$"
+                                                },
+                                                "name": {
+                                                    "type": ["string", "null"]
+                                                },
+                                                "gene_ids": {
+                                                    "type": "array",
+                                                    "uniqueItems": true,
+                                                    "items": {
+                                                        "type": ["string", "null"]
+                                                    }
+                                                }
+                                            },
+                                            "additionalProperties": false
+                                        }
+                                    },
+                                    "biologicalProcess": {
+                                        "type": "array",
+                                        "uniqueItems": true,
+                                        "items":{
+                                            "type": "object",
+                                            "properties": {
+                                                "term_id": {
+                                                    "type": ["string", "null"],
+                                                    "pattern": "^RDB[A-Z0-9_]{5}[A-Z]{3}[0-9A-Z]{5}$"
+                                                },
+                                                "name": {
+                                                    "type": ["string", "null"]
+                                                },
+                                                "gene_ids": {
+                                                    "type": "array",
+                                                    "uniqueItems": true,
+                                                    "items": {
+                                                        "type": ["string", "null"]
+                                                    }
+                                                }
+                                            },
+                                            "additionalProperties": false
+                                        }
+                                    }
+                                },
+                                "additionalProperties": false
+                            }
+                        },
+                        "additionalProperties": false
+                    },
+                    "regulates": {
+                        "type": "object",
+                        "properties": {
+                            "genes": {
+                                "type": "array",
+                                "uniqueItems": true,
+                                "items": {
+                                    "type": "object",
+                                    "properties": {
+                                        "id": {
+                                            "type": ["string", "null"],
+                                            "pattern": "^RDB[A-Z0-9_]{5}[A-Z]{3}[0-9A-Z]{5}$"
+                                        },
+                                        "name": {
+                                            "type": ["string", "null"]
+                                        },
+                                        "function": {
+                                            "type": ["string", "null"]
+                                        },
+                                        "terms": {
+                                            "type": "object",
+                                            "properties": {
+                                                "multifun": {
+                                                    "type": "array", 
+                                                    "uniqueItems": true,
+                                                    "items": {
+                                                        "type": "object",
+                                                        "properties": {
+                                                            "id": {
+                                                                "type": ["string", "null"],
+                                                                "pattern": "^RDB[A-Z0-9_]{5}[A-Z]{3}[0-9A-Z]{5}$"
+                                                            },
+                                                            "name": {
+                                                                "type": ["string", "null"]
+                                                            },
+                                                            "gene_ids": {
+                                                                "type": "array",
+                                                                "uniqueItems": true,
+                                                                "items": {
+                                                                    "type": ["string", "null"]
+                                                                }
+                                                            }
+                                                        },
+                                                        "additionalProperties": false
+                                                    }
+                                                },
+                                                "geneOntology": {
+                                                    "type": "object",
+                                                    "properties": {
+                                                        "cellularComponent": {
+                                                            "type": "array",
+                                                            "uniqueItems": true,
+                                                            "items":{
+                                                                "type": "object",
+                                                                "properties": {
+                                                                    "term_id": {
+                                                                        "type": ["string", "null"],
+                                                                        "pattern": "^RDB[A-Z0-9_]{5}[A-Z]{3}[0-9A-Z]{5}$"
+                                                                    },
+                                                                    "name": {
+                                                                        "type": ["string", "null"]
+                                                                    },
+                                                                    "gene_ids": {
+                                                                        "type": "array",
+                                                                        "uniqueItems": true,
+                                                                        "items": {
+                                                                            "type": ["string", "null"]
+                                                                        }
+                                                                    }
+                                                                },
+                                                                "additionalProperties": false
+                                                            }
+                                                        },
+                                                        "molecularFunction": {
+                                                            "type": "array",
+                                                            "uniqueItems": true,
+                                                            "items":{
+                                                                "type": "object",
+                                                                "properties": {
+                                                                    "term_id": {
+                                                                        "type": ["string", "null"],
+                                                                        "pattern": "^RDB[A-Z0-9_]{5}[A-Z]{3}[0-9A-Z]{5}$"
+                                                                    },
+                                                                    "name": {
+                                                                        "type": ["string", "null"]
+                                                                    },
+                                                                    "gene_ids": {
+                                                                        "type": "array",
+                                                                        "uniqueItems": true,
+                                                                        "items": {
+                                                                            "type": ["string", "null"]
+                                                                        }
+                                                                    }
+                                                                },
+                                                                "additionalProperties": false
+                                                            }
+                                                        },
+                                                        "biologicalProcess": {
+                                                            "type": "array",
+                                                            "uniqueItems": true,
+                                                            "items":{
+                                                                "type": "object",
+                                                                "properties": {
+                                                                    "term_id": {
+                                                                        "type": ["string", "null"],
+                                                                        "pattern": "^RDB[A-Z0-9_]{5}[A-Z]{3}[0-9A-Z]{5}$"
+                                                                    },
+                                                                    "name": {
+                                                                        "type": ["string", "null"]
+                                                                    },
+                                                                    "gene_ids": {
+                                                                        "type": "array",
+                                                                        "uniqueItems": true,
+                                                                        "items": {
+                                                                            "type": ["string", "null"]
+                                                                        }
+                                                                    }
+                                                                },
+                                                                "additionalProperties": false
+                                                            }
+                                                        }
+                                                    },
+                                                    "additionalProperties": false
+                                                }
+                                            },
+                                            "additionalProperties": false
+                                        }
+                                    },
+                                    "additionalProperties": false
+                                }
+                            },
+                            "regulators": {
+                                "type": "array",
+                                "uniqueItems": true,
+                                "items": {
+                                    "type": "object",
+                                    "properties": {
+                                        "id": {
+                                            "type": ["string", "null"],
+                                            "pattern": "^RDB[A-Z0-9_]{5}[A-Z]{3}[0-9A-Z]{5}$"
+                                        },
+                                        "name": {
+                                            "type": ["string", "null"]
+                                        },
+                                        "function": {
+                                            "type": ["string", "null"]
+                                        }
+                                    },
+                                    "additionalProperties": false
+                                }
+                            },
+                            "transcriptionUnits": {
+                                "type": "array",
+                                "uniqueItems": true,
+                                "items": {
+                                    "type": "object",
+                                    "properties": {
+                                        "id": {
+                                            "type": ["string", "null"],
+                                            "pattern": "^RDB[A-Z0-9_]{5}[A-Z]{3}[0-9A-Z]{5}$"
+                                        },
+                                        "name": {
+                                            "type": ["string", "null"]
+                                        },
+                                        "function": {
+                                            "type": ["string", "null"]
+                                        },
+                                        "firstGene": {
+                                            "type": "object",
+                                            "properties": {
+                                                "id": {
+                                                    "type": ["string", "null"],
+                                                    "pattern": "^RDB[A-Z0-9_]{5}[A-Z]{3}[0-9A-Z]{5}$"
+                                                },
+                                                "name": {
+                                                    "type": ["string", "null"]
+                                                }
+                                            },
+                                            "additionalProperties": false
+                                        }
+                                    },
+                                    "additionalProperties": false
+                                }
+                            },
+                            "operons": {
+                                "type": "array",
+                                "uniqueItems": true,
+                                "items": {
+                                    "type": "object",
+                                    "properties": {
+                                        "id": {
+                                            "type": ["string", "null"],
+                                            "pattern": "^RDB[A-Z0-9_]{5}[A-Z]{3}[0-9A-Z]{5}$"
+                                        },
+                                        "name": {
+                                            "type": ["string", "null"]
+                                        },
+                                        "function": {
+                                            "type": ["string", "null"]
+                                        },
+                                        "firstGene": {
+                                            "type": "object",
+                                            "properties": {
+                                                "id": {
+                                                    "type": ["string", "null"],
+                                                    "pattern": "^RDB[A-Z0-9_]{5}[A-Z]{3}[0-9A-Z]{5}$"
+                                                },
+                                                "name": {
+                                                    "type": ["string", "null"]
+                                                }
+                                            },
+                                            "additionalProperties": false
+                                        }
+                                    },
+                                    "additionalProperties": false
+                                }
+                            },
+                            "sigmaFactors": {
+                                "type": "array",
+                                "uniqueItems": true,
+                                "items": {
+                                    "type": "object",
+                                    "properties": {
+                                        "id": {
+                                            "type": ["string", "null"],
+                                            "pattern": "^RDB[A-Z0-9_]{5}[A-Z]{3}[0-9A-Z]{5}$"
+                                        },
+                                        "name": {
+                                            "type": ["string", "null"]
+                                        },
+                                        "function": {
+                                            "type": ["string", "null"]
+                                        },
+                                        "firstGene": {
+                                            "type": "object",
+                                            "properties": {
+                                                "id": {
+                                                    "type": ["string", "null"],
+                                                    "pattern": "^RDB[A-Z0-9_]{5}[A-Z]{3}[0-9A-Z]{5}$"
+                                                },
+                                                "name": {
+                                                    "type": ["string", "null"]
+                                                }
+                                            },
+                                            "additionalProperties": false
+                                        }
+                                    },
+                                    "additionalProperties": false
+                                }
+                            }
+                        },
+                        "additionalProperties": false
+                    },
+                    "regulatoryInteractions": {
+                        "type": "array",
+                        "uniqueItems": true,
+                        "items": {
+                            "type": "object",
+                            "properties": {
+                                "regulatorName": {
+                                    "type": ["string", "null"]
+                                },
+                                "function": {
+                                    "type": ["string", "null"]
+                                },
+                                "promoter_id": {
+                                    "type": ["string", "null"],
+                                    "pattern": "^RDB[A-Z0-9_]{5}[A-Z]{3}[0-9A-Z]{5}$"
+                                },
+                                "promoter_strand": {
+                                    "type": ["string", "null"]
+                                },
+                                "promoter_name": {
+                                    "type": ["string", "null"]
+                                },
+                                "sigmaFactorName": {
+                                    "type": ["string", "null"]
+                                },
+                                "centralRelativePosition": {
+                                    "type": ["number", "null"]
+                                },
+                                "distanceToFirstGene": {
+                                    "type": ["number", "null"]
+                                },
+                                "genes": {
+                                    "type": "array",
+                                    "uniqueItems": true,
+                                    "items": {
+                                        "type": "object",
+                                        "properties": {
+                                            "id": {
+                                                "type": ["string", "null"],
+                                                "pattern": "^RDB[A-Z0-9_]{5}[A-Z]{3}[0-9A-Z]{5}$"
+                                            },
+                                            "name": {
+                                                "type": ["string", "null"]
+                                            }
+                                        },
+                                        "additionalProperties": false
+                                    }
+                                },
+                                "site_leftEndPosition": {
+                                    "type": ["number", "null"]
+                                },
+                                "site_rightEndPosition": {
+                                    "type": ["number", "null"]
+                                },
+                                "citations": {
+                                    "type": "array",
+                                    "uniqueItems": true,
+                                    "items": {
+                                        "type": "object",
+                                        "properties": {
+                                            "publication": {
+                                                "type": "object",
+                                                "properties": {
+                                                    "authors": {
+                                                        "type": "array",
+                                                        "uniqueItems": true,
+                                                        "items": {
+                                                            "type": ["string", "null"]
+                                                        }
+                                                    },
+                                                    "pmid": {
+                                                        "type": ["string", "null"]
+                                                    },
+                                                    "id": {
+                                                        "type": ["string", "null"],
+                                                        "pattern": "^RDB[A-Z0-9_]{5}[A-Z]{3}[0-9A-Z]{5}$"
+                                                    },
+                                                    "citation": {
+                                                        "type": ["string", "null"]
+                                                    },
+                                                    "title": {
+                                                        "type": ["string", "null"]
+                                                    },
+                                                    "url": {
+                                                        "type": ["string", "null"]
+                                                    },
+                                                    "year": {
+                                                        "type": "number"
+                                                    }
+                                                },
+                                                "additionalProperties": false
+                                            },
+                                            "evidence": {
+                                                "type": "object",
+                                                "properties": {
+                                                    "code": {
+                                                        "type": ["string", "null"]
+                                                    },
+                                                    "id": {
+                                                        "type": ["string", "null"],
+                                                        "pattern": "^RDB[A-Z0-9_]{5}[A-Z]{3}[0-9A-Z]{5}$"
+                                                    },
+                                                    "name": {
+                                                        "type": ["string", "null"]
+                                                    },
+                                                    "type": {
+                                                        "type": ["string", "null"]
+                                                    }
+                                                },
+                                                "additionalProperties": false
+                                            }
+                                        },
+                                        "additionalProperties": false
+                                    }
+                                }
+                            },
+                            "additionalProperties": false
+                        }
+                    },
+                    "aligmentMatrix": {
+                        "type": "array",
+                        "uniqueItems": true,
+                        "items": {
+                            "type": "object",
+                            "properties": {
+                                "aligment": {
+                                    "type": ["string", "null"]
+                                },
+                                "matrix": {
+                                    "type": ["string", "null"]
+                                },
+                                "consensus": {
+                                    "type": ["string", "null"]
+                                },
+                                "urlPWMLogo": {
+                                    "type": ["string", "null"]
+                                },
+                                "urlMatrixQualityResult": {
+                                    "type": ["string", "null"]
+                                }
+                            },
+                            "additionalProperties": false
+                        }
+                    },
+                    "evolutionaryConservation": {
+                        "type": "object",
+                        "properties": {
+                            "urlRegulatorTargetGene": {
+                                "type": ["string", "null"]
+                            },
+                            "urlPromoterTargetGene": {
+                                "type": ["string", "null"]
+                            }
+                        },
+                        "additionalProperties": false
+                    },
+                    "organism": {
+                        "type": "object",
+                        "properties": {
+                            "id": {
+                                "type": ["string", "null"],
+                                "pattern": "^RDB[A-Z0-9_]{5}[A-Z]{3}[0-9A-Z]{5}$"
+                            },
+                            "name": {
+                                "type": ["string", "null"]
+                            }
+                        },
+                        "additionalProperties": false
+                    },
+                    "summary": {
+                        "genes": {
+                            "type": "object",
+                            "properties": {
+                                "repressed": {
+                                    "type": ["number", "null"]
+                                },
+                                "activated": {
+                                    "type": ["number", "null"]
+                                },
+                                "dual": {
+                                    "type": ["number", "null"]
+                                },
+                                "unknown": {
+                                    "type": ["number", "null"]
+                                },
+                                "total": {
+                                    "type": ["number", "null"]
+                                }
+                            }
+                        },
+                        "regulators": {
+                            "type": "object",
+                            "properties": {
+                                "repressed": {
+                                    "type": ["number", "null"]
+                                },
+                                "activated": {
+                                    "type": ["number", "null"]
+                                },
+                                "dual": {
+                                    "type": ["number", "null"]
+                                },
+                                "unknown": {
+                                    "type": ["number", "null"]
+                                },
+                                "total": {
+                                    "type": ["number", "null"]
+                                }
+                            }
+                        },
+                        "transcriptionUnits":{
+                            "type": "object",
+                            "properties": {
+                                "repressed": {
+                                    "type": ["number", "null"]
+                                },
+                                "activated": {
+                                    "type": ["number", "null"]
+                                },
+                                "dual": {
+                                    "type": ["number", "null"]
+                                },
+                                "unknown": {
+                                    "type": ["number", "null"]
+                                },
+                                "total": {
+                                    "type": ["number", "null"]
+                                }
+                            }
+                        },
+                        "operons": {
+                            "type": "object",
+                            "properties": {
+                                "repressed": {
+                                    "type": ["number", "null"]
+                                },
+                                "activated": {
+                                    "type": ["number", "null"]
+                                },
+                                "dual": {
+                                    "type": ["number", "null"]
+                                },
+                                "unknown": {
+                                    "type": ["number", "null"]
+                                },
+                                "total": {
+                                    "type": ["number", "null"]
+                                }
+                            }
+                        },
+                        "sigmaFactors": {
+                            "type": "object",
+                            "properties": {
+                                "repressed": {
+                                    "type": ["number", "null"]
+                                },
+                                "activated": {
+                                    "type": ["number", "null"]
+                                },
+                                "dual": {
+                                    "type": ["number", "null"]
+                                },
+                                "unknown": {
+                                    "type": ["number", "null"]
+                                },
+                                "total": {
+                                    "type": ["number", "null"]
+                                }
+                            }
+                        },
+                        "bindingSites": {
+                            "type": "object",
+                            "properties": {
+                                "repressed": {
+                                    "type": ["number", "null"]
+                                },
+                                "activated": {
+                                    "type": ["number", "null"]
+                                },
+                                "dual": {
+                                    "type": ["number", "null"]
+                                },
+                                "unknown": {
+                                    "type": ["number", "null"]
+                                },
+                                "total": {
+                                    "type": ["number", "null"]
+                                }
+                            }
+                        },
+                        "regulatoryInteractions": {
+                            "type": "object",
+                            "properties": {
+                                "repressed": {
+                                    "type": ["number", "null"]
+                                },
+                                "activated": {
+                                    "type": ["number", "null"]
+                                },
+                                "dual": {
+                                    "type": ["number", "null"]
+                                },
+                                "unknown": {
+                                    "type": ["number", "null"]
+                                },
+                                "total": {
+                                    "type": ["number", "null"]
+                                }
+                            }
+                        }
+                    }
+                },
+                "additionalProperties": false
+            }
+        },
+        "validationLevel": "strict",
+        "validationAction": "error"
+    }
+}

@@ -1,0 +1,2248 @@
+{
+	"geneDatamart": {
+        "name": "geneDatamart",
+        "description": "This collection represents to __geneDatamart__ object",
+		"validator": {
+			"$jsonSchema": {
+				"type": "object",
+				"required": [
+					"gene",
+					"organism"
+				],
+				"properties": {
+					"_id": {
+						"type": ["string", "null"],
+						"pattern": "^RDB[A-Z0-9_]{5}[A-Z]{3}[0-9A-Z]{5}$",
+                        "annotation": {
+                            "Synonyms": "",
+                            "Description":"" ,
+                            "URI": "[value]",
+                            "Required": "[value]",
+                            "Example": "",
+                            "Comments": ""
+                        }
+					},
+					"gene": {
+						"type": "object",
+						"required": [
+							"id",
+							"strand"
+						],
+						"properties": {
+							"bnumber": {
+								"type": ["string", "null"],
+                                "annotation": {
+                                    "Synonyms": "",
+                                    "Description":"" ,
+                                    "URI": "[value]",
+                                    "Required": "[value]",
+                                    "Example": "",
+                                    "Comments": ""
+                                }
+							},
+							"centisomePosition": {
+								"type": ["number", "null"],
+                                "annotation": {
+                                    "Synonyms": "",
+                                    "Description":"" ,
+                                    "URI": "[value]",
+                                    "Required": "[value]",
+                                    "Example": "",
+                                    "Comments": ""
+                                }
+							},
+							"citations": {
+								"type": "array",
+								"uniqueItems": true,
+								"items": {
+									"type": "object",
+									"properties": {
+										"publication": {
+											"type": "object",
+											"properties": {
+                                                "authors": {
+                                                    "type": "array",
+                                                    "uniqueItems": true,
+                                                    "items": {
+                                                        "type": ["string", "null"]
+                                                    },
+                                                    "annotation": {
+                                                        "Synonyms": "",
+                                                        "Description":"" ,
+                                                        "URI": "[value]",
+                                                        "Required": "[value]",
+                                                        "Example": "",
+                                                        "Comments": ""
+                                                    }
+                                                },
+												"pmid": {
+													"type": ["string", "null"],
+                                                    "annotation": {
+                                                        "Synonyms": "",
+                                                        "Description":"" ,
+                                                        "URI": "[value]",
+                                                        "Required": "[value]",
+                                                        "Example": "",
+                                                        "Comments": ""
+                                                    }
+												},
+												"id": {
+													"type": ["string", "null"],
+													"pattern": "^RDB[A-Z0-9_]{5}[A-Z]{3}[0-9A-Z]{5}$",
+                                                    "annotation": {
+                                                        "Synonyms": "",
+                                                        "Description":"" ,
+                                                        "URI": "[value]",
+                                                        "Required": "[value]",
+                                                        "Example": "",
+                                                        "Comments": ""
+                                                    }
+												},
+												"citation": {
+													"type": ["string", "null"],
+                                                    "annotation": {
+                                                        "Synonyms": "",
+                                                        "Description":"" ,
+                                                        "URI": "[value]",
+                                                        "Required": "[value]",
+                                                        "Example": "",
+                                                        "Comments": ""
+                                                    }
+												},
+                                                "title": {
+                                                    "type": ["string", "null"],
+                                                    "annotation": {
+                                                        "Synonyms": "",
+                                                        "Description":"" ,
+                                                        "URI": "[value]",
+                                                        "Required": "[value]",
+                                                        "Example": "",
+                                                        "Comments": ""
+                                                    }
+                                                },
+												"url": {
+													"type": ["string", "null"],
+                                                    "annotation": {
+                                                        "Synonyms": "",
+                                                        "Description":"" ,
+                                                        "URI": "[value]",
+                                                        "Required": "[value]",
+                                                        "Example": "",
+                                                        "Comments": ""
+                                                    }
+												},
+                                                "year": {
+                                                    "type": "number",
+                                                    "annotation": {
+                                                        "Synonyms": "",
+                                                        "Description":"" ,
+                                                        "URI": "[value]",
+                                                        "Required": "[value]",
+                                                        "Example": "",
+                                                        "Comments": ""
+                                                    }
+                                                }
+											},
+											"additionalProperties": false
+										},
+										"evidence": {
+											"type": "object",
+											"properties": {
+												"code": {
+													"type": ["string", "null"]
+												},
+												"id": {
+													"type": ["string", "null"],
+													"pattern": "^RDB[A-Z0-9_]{5}[A-Z]{3}[0-9A-Z]{5}$",
+                                                    "annotation": {
+                                                        "Synonyms": "",
+                                                        "Description":"" ,
+                                                        "URI": "[value]",
+                                                        "Required": "[value]",
+                                                        "Example": "",
+                                                        "Comments": ""
+                                                    }
+												},
+												"name": {
+													"type": ["string", "null"],
+                                                    "annotation": {
+                                                        "Synonyms": "",
+                                                        "Description":"" ,
+                                                        "URI": "[value]",
+                                                        "Required": "[value]",
+                                                        "Example": "",
+                                                        "Comments": ""
+                                                    }
+												},
+												"type": {
+													"type": ["string", "null"],
+                                                    "annotation": {
+                                                        "Synonyms": "",
+                                                        "Description":"" ,
+                                                        "URI": "[value]",
+                                                        "Required": "[value]",
+                                                        "Example": "",
+                                                        "Comments": ""
+                                                    }
+												}
+											},
+											"additionalProperties": false
+										}
+									},
+									"additionalProperties": false
+								}
+							},
+							"externalCrossReferences": {
+								"type": "array",
+								"uniqueItems": true,
+								"items": {
+									"type": "object",
+									"properties": {
+										"externalCrossReferenceId": {
+											"type": ["string", "null"],
+											"pattern": "^RDB[A-Z0-9_]{5}[A-Z]{3}[0-9A-Z]{5}$",
+                                            "annotation": {
+                                                "Synonyms": "",
+                                                "Description":"" ,
+                                                "URI": "[value]",
+                                                "Required": "[value]",
+                                                "Example": "",
+                                                "Comments": ""
+                                            }
+										},
+										"externalCrossReferenceName": {
+											"type": ["string", "null"],
+                                            "annotation": {
+                                                "Synonyms": "",
+                                                "Description":"" ,
+                                                "URI": "[value]",
+                                                "Required": "[value]",
+                                                "Example": "",
+                                                "Comments": ""
+                                            }
+										},
+										"objectId": {
+											"type": ["string", "null"],
+                                            "annotation": {
+                                                "Synonyms": "",
+                                                "Description":"" ,
+                                                "URI": "[value]",
+                                                "Required": "[value]",
+                                                "Example": "",
+                                                "Comments": ""
+                                            }
+										},
+										"url": {
+											"type": ["string", "null"],
+                                            "annotation": {
+                                                "Synonyms": "",
+                                                "Description":"" ,
+                                                "URI": "[value]",
+                                                "Required": "[value]",
+                                                "Example": "",
+                                                "Comments": ""
+                                            }
+										}
+									},
+									"additionalProperties": false
+								}
+							},
+							"fragments":{
+								"type":"array",
+								"uniqueItems":true,
+								"items":{
+									"type": "object",
+									"properties":{
+										"id":{
+											"type":["string", "null"],
+                                            "annotation": {
+                                                "Synonyms": "",
+                                                "Description":"" ,
+                                                "URI": "[value]",
+                                                "Required": "[value]",
+                                                "Example": "",
+                                                "Comments": ""
+                                            }
+										},
+										"name":{
+											"type": ["string", "null"],
+                                            "annotation": {
+                                                "Synonyms": "",
+                                                "Description":"" ,
+                                                "URI": "[value]",
+                                                "Required": "[value]",
+                                                "Example": "",
+                                                "Comments": ""
+                                            }
+										},
+										"leftEndPosition":{
+											"type": ["number", "null"],
+                                            "annotation": {
+                                                "Synonyms": "",
+                                                "Description":"" ,
+                                                "URI": "[value]",
+                                                "Required": "[value]",
+                                                "Example": "",
+                                                "Comments": ""
+                                            }
+										},
+										"rightEndPosition":{
+											"type": ["number", "null"],
+                                            "annotation": {
+                                                "Synonyms": "",
+                                                "Description":"" ,
+                                                "URI": "[value]",
+                                                "Required": "[value]",
+                                                "Example": "",
+                                                "Comments": ""
+                                            }
+										},
+										"sequence": {
+											"type": ["string", "null"],
+                                            "annotation": {
+                                                "Synonyms": "",
+                                                "Description":"" ,
+                                                "URI": "[value]",
+                                                "Required": "[value]",
+                                                "Example": "",
+                                                "Comments": ""
+                                            }
+										},
+										"centisomePosition":{
+											"type": ["number", "null"],
+                                            "annotation": {
+                                                "Synonyms": "",
+                                                "Description":"" ,
+                                                "URI": "[value]",
+                                                "Required": "[value]",
+                                                "Example": "",
+                                                "Comments": ""
+                                            }
+										}
+									},
+									"additionalProperties":false
+								}
+							},
+							"gcContent": {
+								"type": ["number", "null"],
+                                "annotation": {
+                                    "Synonyms": "",
+                                    "Description":"" ,
+                                    "URI": "[value]",
+                                    "Required": "[value]",
+                                    "Example": "",
+                                    "Comments": ""
+                                }
+							},
+							"id": {
+								"type": ["string", "null"],
+								"pattern": "^RDB[A-Z0-9_]{5}[A-Z]{3}[0-9A-Z]{5}$",
+                                "annotation": {
+                                    "Synonyms": "",
+                                    "Description":"" ,
+                                    "URI": "[value]",
+                                    "Required": "[value]",
+                                    "Example": "",
+                                    "Comments": ""
+                                }
+							},
+							"leftEndPosition": {
+								"type": ["number", "null"],
+								"multipleOf": 1.0,
+                                "annotation": {
+                                    "Synonyms": "",
+                                    "Description":"" ,
+                                    "URI": "[value]",
+                                    "Required": "[value]",
+                                    "Example": "",
+                                    "Comments": ""
+                                }
+							},
+							"multifunTerms": {
+								"type": "array",
+								"uniqueItems": true,
+								"items": {
+									"type": "object",
+									"properties": {
+										"geneIds": {
+											"type": "array",
+											"uniqueItems": true,
+											"items": {
+												"type": ["string", "null"]
+											},
+                                            "annotation": {
+                                                "Synonyms": "",
+                                                "Description":"" ,
+                                                "URI": "[value]",
+                                                "Required": "[value]",
+                                                "Example": "",
+                                                "Comments": ""
+                                            }
+										},
+										"id": {
+											"type": ["string", "null"],
+											"pattern": "^RDB[A-Z0-9_]{5}[A-Z]{3}[0-9A-Z]{5}$",
+                                            "annotation": {
+                                                "Synonyms": "",
+                                                "Description":"" ,
+                                                "URI": "[value]",
+                                                "Required": "[value]",
+                                                "Example": "",
+                                                "Comments": ""
+                                            }
+										},
+										"label": {
+											"type": ["string", "null"],
+                                            "annotation": {
+                                                "Synonyms": "",
+                                                "Description":"" ,
+                                                "URI": "[value]",
+                                                "Required": "[value]",
+                                                "Example": "",
+                                                "Comments": ""
+                                            }
+										},
+										"name": {
+											"type": ["string", "null"],
+                                            "annotation": {
+                                                "Synonyms": "",
+                                                "Description":"" ,
+                                                "URI": "[value]",
+                                                "Required": "[value]",
+                                                "Example": "",
+                                                "Comments": ""
+                                            }
+										}
+									},
+									"additionalProperties": false
+								}
+							},
+							"name": {
+								"type": ["string", "null"],
+                                "annotation": {
+                                    "Synonyms": "",
+                                    "Description":"" ,
+                                    "URI": "[value]",
+                                    "Required": "[value]",
+                                    "Example": "",
+                                    "Comments": ""
+                                }
+							},
+							"note": {
+								"type": ["string", "null"],
+                                "annotation": {
+                                    "Synonyms": "",
+                                    "Description":"" ,
+                                    "URI": "[value]",
+                                    "Required": "[value]",
+                                    "Example": "",
+                                    "Comments": ""
+                                }
+							},
+							"rightEndPosition": {
+								"type": ["number", "null"],
+								"multipleOf": 1.0,
+                                "annotation": {
+                                    "Synonyms": "",
+                                    "Description":"" ,
+                                    "URI": "[value]",
+                                    "Required": "[value]",
+                                    "Example": "",
+                                    "Comments": ""
+                                }
+							},
+							"sequence": {
+								"type": ["string", "null"],
+								"pattern": "^[ATCGatcg]+$",
+                                "annotation": {
+                                    "Synonyms": "",
+                                    "Description":"" ,
+                                    "URI": "[value]",
+                                    "Required": "[value]",
+                                    "Example": "",
+                                    "Comments": ""
+                                }
+							},
+							"strand": {
+								"type": ["string", "null"],
+								"enum": ["forward", "reverse"],
+                                "annotation": {
+                                    "Synonyms": "",
+                                    "Description":"" ,
+                                    "URI": "[value]",
+                                    "Required": "[value]",
+                                    "Example": "",
+                                    "Comments": ""
+                                }
+							},
+							"synonyms": {
+								"type": "array",
+								"uniqueItems": true,
+								"items": {
+									"type": ["string", "null"]
+								},
+                                "annotation": {
+                                    "Synonyms": "",
+                                    "Description":"" ,
+                                    "URI": "[value]",
+                                    "Required": "[value]",
+                                    "Example": "",
+                                    "Comments": ""
+                                }
+							},
+							"type": {
+								"type": ["string", "null"],
+								"enum": [
+									"pseudo",
+									"phantom",
+									"gene",
+									"truncated",
+									null
+								],
+                                "annotation": {
+                                    "Synonyms": "",
+                                    "Description":"" ,
+                                    "URI": "[value]",
+                                    "Required": "[value]",
+                                    "Example": "",
+                                    "Comments": ""
+                                }
+							}
+						},
+						"additionalProperties": false
+					},
+					"products": {
+						"type": "array",
+						"uniqueItems": true,
+						"items": {
+							"type": "object",
+							"properties": {
+								"anticodon": {
+									"type": ["string", "null"],
+                                    "annotation": {
+                                        "Synonyms": "",
+                                        "Description":"" ,
+                                        "URI": "[value]",
+                                        "Required": "[value]",
+                                        "Example": "",
+                                        "Comments": ""
+                                    }
+								},
+								"cellularLocations": {
+									"type": "array",
+									"uniqueItems": true,
+									"items": {
+										"type": ["string", "null"]
+									},
+                                    "annotation": {
+                                        "Synonyms": "",
+                                        "Description":"" ,
+                                        "URI": "[value]",
+                                        "Required": "[value]",
+                                        "Example": "",
+                                        "Comments": ""
+                                    }
+								},
+								"citations": {
+                                    "type": "array",
+                                    "uniqueItems": true,
+                                    "items": {
+                                        "type": "object",
+                                        "properties": {
+                                            "publication": {
+                                                "type": "object",
+                                                "properties": {
+                                                    "authors": {
+                                                        "type": "array",
+                                                        "uniqueItems": true,
+                                                        "items": {
+                                                            "type": ["string", "null"]
+                                                        },
+                                                        "annotation": {
+                                                            "Synonyms": "",
+                                                            "Description":"" ,
+                                                            "URI": "[value]",
+                                                            "Required": "[value]",
+                                                            "Example": "",
+                                                            "Comments": ""
+                                                        }
+                                                    },
+                                                    "pmid": {
+                                                        "type": ["string", "null"],
+                                                        "annotation": {
+                                                            "Synonyms": "",
+                                                            "Description":"" ,
+                                                            "URI": "[value]",
+                                                            "Required": "[value]",
+                                                            "Example": "",
+                                                            "Comments": ""
+                                                        }
+                                                    },
+                                                    "id": {
+                                                        "type": ["string", "null"],
+                                                        "pattern": "^RDB[A-Z0-9_]{5}[A-Z]{3}[0-9A-Z]{5}$",
+                                                        "annotation": {
+                                                            "Synonyms": "",
+                                                            "Description":"" ,
+                                                            "URI": "[value]",
+                                                            "Required": "[value]",
+                                                            "Example": "",
+                                                            "Comments": ""
+                                                        }
+                                                    },
+                                                    "citation": {
+                                                        "type": ["string", "null"],
+                                                        "annotation": {
+                                                            "Synonyms": "",
+                                                            "Description":"" ,
+                                                            "URI": "[value]",
+                                                            "Required": "[value]",
+                                                            "Example": "",
+                                                            "Comments": ""
+                                                        }
+                                                    },
+                                                    "title": {
+                                                        "type": ["string", "null"],
+                                                        "annotation": {
+                                                            "Synonyms": "",
+                                                            "Description":"" ,
+                                                            "URI": "[value]",
+                                                            "Required": "[value]",
+                                                            "Example": "",
+                                                            "Comments": ""
+                                                        }
+                                                    },
+                                                    "url": {
+                                                        "type": ["string", "null"],
+                                                        "annotation": {
+                                                            "Synonyms": "",
+                                                            "Description":"" ,
+                                                            "URI": "[value]",
+                                                            "Required": "[value]",
+                                                            "Example": "",
+                                                            "Comments": ""
+                                                        }
+                                                    },
+                                                    "year": {
+                                                        "type": "number",
+                                                        "annotation": {
+                                                            "Synonyms": "",
+                                                            "Description":"" ,
+                                                            "URI": "[value]",
+                                                            "Required": "[value]",
+                                                            "Example": "",
+                                                            "Comments": ""
+                                                        }
+                                                    }
+                                                },
+                                                "additionalProperties": false
+                                            },
+                                            "evidence": {
+                                                "type": "object",
+                                                "properties": {
+                                                    "code": {
+                                                        "type": ["string", "null"]
+                                                    },
+                                                    "id": {
+                                                        "type": ["string", "null"],
+                                                        "pattern": "^RDB[A-Z0-9_]{5}[A-Z]{3}[0-9A-Z]{5}$",
+                                                        "annotation": {
+                                                            "Synonyms": "",
+                                                            "Description":"" ,
+                                                            "URI": "[value]",
+                                                            "Required": "[value]",
+                                                            "Example": "",
+                                                            "Comments": ""
+                                                        }
+                                                    },
+                                                    "name": {
+                                                        "type": ["string", "null"],
+                                                        "annotation": {
+                                                            "Synonyms": "",
+                                                            "Description":"" ,
+                                                            "URI": "[value]",
+                                                            "Required": "[value]",
+                                                            "Example": "",
+                                                            "Comments": ""
+                                                        }
+                                                    },
+                                                    "type": {
+                                                        "type": ["string", "null"],
+                                                        "annotation": {
+                                                            "Synonyms": "",
+                                                            "Description":"" ,
+                                                            "URI": "[value]",
+                                                            "Required": "[value]",
+                                                            "Example": "",
+                                                            "Comments": ""
+                                                        }
+                                                    }
+                                                },
+                                                "additionalProperties": false
+                                            }
+                                        },
+                                        "additionalProperties": false
+                                    }
+                                },
+								"externalCrossReferences": {
+                                    "type": "array",
+                                    "uniqueItems": true,
+                                    "items": {
+                                        "type": "object",
+                                        "properties": {
+                                            "externalCrossReferenceId": {
+                                                "type": ["string", "null"],
+                                                "pattern": "^RDB[A-Z0-9_]{5}[A-Z]{3}[0-9A-Z]{5}$",
+                                                "annotation": {
+                                                    "Synonyms": "",
+                                                    "Description":"" ,
+                                                    "URI": "[value]",
+                                                    "Required": "[value]",
+                                                    "Example": "",
+                                                    "Comments": ""
+                                                }
+                                            },
+                                            "externalCrossReferenceName": {
+                                                "type": ["string", "null"],
+                                                "annotation": {
+                                                    "Synonyms": "",
+                                                    "Description":"" ,
+                                                    "URI": "[value]",
+                                                    "Required": "[value]",
+                                                    "Example": "",
+                                                    "Comments": ""
+                                                }
+                                            },
+                                            "objectId": {
+                                                "type": ["string", "null"],
+                                                "annotation": {
+                                                    "Synonyms": "",
+                                                    "Description":"" ,
+                                                    "URI": "[value]",
+                                                    "Required": "[value]",
+                                                    "Example": "",
+                                                    "Comments": ""
+                                                }
+                                            },
+                                            "url": {
+                                                "type": ["string", "null"],
+                                                "annotation": {
+                                                    "Synonyms": "",
+                                                    "Description":"" ,
+                                                    "URI": "[value]",
+                                                    "Required": "[value]",
+                                                    "Example": "",
+                                                    "Comments": ""
+                                                }
+                                            }
+                                        },
+                                        "additionalProperties": false
+                                    }
+                                },
+								"geneOntologyTerms": {
+									"type": "object",
+									"properties": {
+										"biologicalProcess": {
+											"type": "array",
+											"uniqueItems": true,
+											"items": {
+												"type": "object",
+												"properties": {
+													"citations": {
+                                                        "type": "array",
+                                                        "uniqueItems": true,
+                                                        "items": {
+                                                            "type": "object",
+                                                            "properties": {
+                                                                "publication": {
+                                                                    "type": "object",
+                                                                    "properties": {
+                                                                        "authors": {
+                                                                            "type": "array",
+                                                                            "uniqueItems": true,
+                                                                            "items": {
+                                                                                "type": ["string", "null"]
+                                                                            },
+                                                                            "annotation": {
+                                                                                "Synonyms": "",
+                                                                                "Description":"" ,
+                                                                                "URI": "[value]",
+                                                                                "Required": "[value]",
+                                                                                "Example": "",
+                                                                                "Comments": ""
+                                                                            }
+                                                                        },
+                                                                        "pmid": {
+                                                                            "type": ["string", "null"],
+                                                                            "annotation": {
+                                                                                "Synonyms": "",
+                                                                                "Description":"" ,
+                                                                                "URI": "[value]",
+                                                                                "Required": "[value]",
+                                                                                "Example": "",
+                                                                                "Comments": ""
+                                                                            }
+                                                                        },
+                                                                        "id": {
+                                                                            "type": ["string", "null"],
+                                                                            "pattern": "^RDB[A-Z0-9_]{5}[A-Z]{3}[0-9A-Z]{5}$",
+                                                                            "annotation": {
+                                                                                "Synonyms": "",
+                                                                                "Description":"" ,
+                                                                                "URI": "[value]",
+                                                                                "Required": "[value]",
+                                                                                "Example": "",
+                                                                                "Comments": ""
+                                                                            }
+                                                                        },
+                                                                        "citation": {
+                                                                            "type": ["string", "null"],
+                                                                            "annotation": {
+                                                                                "Synonyms": "",
+                                                                                "Description":"" ,
+                                                                                "URI": "[value]",
+                                                                                "Required": "[value]",
+                                                                                "Example": "",
+                                                                                "Comments": ""
+                                                                            }
+                                                                        },
+                                                                        "title": {
+                                                                            "type": ["string", "null"],
+                                                                            "annotation": {
+                                                                                "Synonyms": "",
+                                                                                "Description":"" ,
+                                                                                "URI": "[value]",
+                                                                                "Required": "[value]",
+                                                                                "Example": "",
+                                                                                "Comments": ""
+                                                                            }
+                                                                        },
+                                                                        "url": {
+                                                                            "type": ["string", "null"],
+                                                                            "annotation": {
+                                                                                "Synonyms": "",
+                                                                                "Description":"" ,
+                                                                                "URI": "[value]",
+                                                                                "Required": "[value]",
+                                                                                "Example": "",
+                                                                                "Comments": ""
+                                                                            }
+                                                                        },
+                                                                        "year": {
+                                                                            "type": "number",
+                                                                            "annotation": {
+                                                                                "Synonyms": "",
+                                                                                "Description":"" ,
+                                                                                "URI": "[value]",
+                                                                                "Required": "[value]",
+                                                                                "Example": "",
+                                                                                "Comments": ""
+                                                                            }
+                                                                        }
+                                                                    },
+                                                                    "additionalProperties": false
+                                                                },
+                                                                "evidence": {
+                                                                    "type": "object",
+                                                                    "properties": {
+                                                                        "code": {
+                                                                            "type": ["string", "null"]
+                                                                        },
+                                                                        "id": {
+                                                                            "type": ["string", "null"],
+                                                                            "pattern": "^RDB[A-Z0-9_]{5}[A-Z]{3}[0-9A-Z]{5}$",
+                                                                            "annotation": {
+                                                                                "Synonyms": "",
+                                                                                "Description":"" ,
+                                                                                "URI": "[value]",
+                                                                                "Required": "[value]",
+                                                                                "Example": "",
+                                                                                "Comments": ""
+                                                                            }
+                                                                        },
+                                                                        "name": {
+                                                                            "type": ["string", "null"],
+                                                                            "annotation": {
+                                                                                "Synonyms": "",
+                                                                                "Description":"" ,
+                                                                                "URI": "[value]",
+                                                                                "Required": "[value]",
+                                                                                "Example": "",
+                                                                                "Comments": ""
+                                                                            }
+                                                                        },
+                                                                        "type": {
+                                                                            "type": ["string", "null"],
+                                                                            "annotation": {
+                                                                                "Synonyms": "",
+                                                                                "Description":"" ,
+                                                                                "URI": "[value]",
+                                                                                "Required": "[value]",
+                                                                                "Example": "",
+                                                                                "Comments": ""
+                                                                            }
+                                                                        }
+                                                                    },
+                                                                    "additionalProperties": false
+                                                                }
+                                                            },
+                                                            "additionalProperties": false
+                                                        }
+                                                    },
+													"id": {
+														"type": ["string", "null"],
+                                                        "annotation": {
+                                                            "Synonyms": "",
+                                                            "Description":"" ,
+                                                            "URI": "[value]",
+                                                            "Required": "[value]",
+                                                            "Example": "",
+                                                            "Comments": ""
+                                                        }
+													},
+													"name": {
+														"type": ["string", "null"],
+                                                        "annotation": {
+                                                            "Synonyms": "",
+                                                            "Description":"" ,
+                                                            "URI": "[value]",
+                                                            "Required": "[value]",
+                                                            "Example": "",
+                                                            "Comments": ""
+                                                        }
+													},
+													"productIds": {
+														"type": "array",
+														"uniqueItems": true,
+														"items": {
+															"type": ["string", "null"]
+														},
+                                                        "annotation": {
+                                                            "Synonyms": "",
+                                                            "Description":"" ,
+                                                            "URI": "[value]",
+                                                            "Required": "[value]",
+                                                            "Example": "",
+                                                            "Comments": ""
+                                                        }
+													}
+												},
+												"additionalProperties": false
+											}
+										},
+										"cellularComponent": {
+											"type": "array",
+											"uniqueItems": true,
+											"items": {
+												"type": "object",
+												"properties": {
+													"citations": {
+                                                        "type": "array",
+                                                        "uniqueItems": true,
+                                                        "items": {
+                                                            "type": "object",
+                                                            "properties": {
+                                                                "publication": {
+                                                                    "type": "object",
+                                                                    "properties": {
+                                                                        "authors": {
+                                                                            "type": "array",
+                                                                            "uniqueItems": true,
+                                                                            "items": {
+                                                                                "type": ["string", "null"]
+                                                                            },
+                                                                            "annotation": {
+                                                                                "Synonyms": "",
+                                                                                "Description":"" ,
+                                                                                "URI": "[value]",
+                                                                                "Required": "[value]",
+                                                                                "Example": "",
+                                                                                "Comments": ""
+                                                                            }
+                                                                        },
+                                                                        "pmid": {
+                                                                            "type": ["string", "null"],
+                                                                            "annotation": {
+                                                                                "Synonyms": "",
+                                                                                "Description":"" ,
+                                                                                "URI": "[value]",
+                                                                                "Required": "[value]",
+                                                                                "Example": "",
+                                                                                "Comments": ""
+                                                                            }
+                                                                        },
+                                                                        "id": {
+                                                                            "type": ["string", "null"],
+                                                                            "pattern": "^RDB[A-Z0-9_]{5}[A-Z]{3}[0-9A-Z]{5}$",
+                                                                            "annotation": {
+                                                                                "Synonyms": "",
+                                                                                "Description":"" ,
+                                                                                "URI": "[value]",
+                                                                                "Required": "[value]",
+                                                                                "Example": "",
+                                                                                "Comments": ""
+                                                                            }
+                                                                        },
+                                                                        "citation": {
+                                                                            "type": ["string", "null"],
+                                                                            "annotation": {
+                                                                                "Synonyms": "",
+                                                                                "Description":"" ,
+                                                                                "URI": "[value]",
+                                                                                "Required": "[value]",
+                                                                                "Example": "",
+                                                                                "Comments": ""
+                                                                            }
+                                                                        },
+                                                                        "title": {
+                                                                            "type": ["string", "null"],
+                                                                            "annotation": {
+                                                                                "Synonyms": "",
+                                                                                "Description":"" ,
+                                                                                "URI": "[value]",
+                                                                                "Required": "[value]",
+                                                                                "Example": "",
+                                                                                "Comments": ""
+                                                                            }
+                                                                        },
+                                                                        "url": {
+                                                                            "type": ["string", "null"],
+                                                                            "annotation": {
+                                                                                "Synonyms": "",
+                                                                                "Description":"" ,
+                                                                                "URI": "[value]",
+                                                                                "Required": "[value]",
+                                                                                "Example": "",
+                                                                                "Comments": ""
+                                                                            }
+                                                                        },
+                                                                        "year": {
+                                                                            "type": "number",
+                                                                            "annotation": {
+                                                                                "Synonyms": "",
+                                                                                "Description":"" ,
+                                                                                "URI": "[value]",
+                                                                                "Required": "[value]",
+                                                                                "Example": "",
+                                                                                "Comments": ""
+                                                                            }
+                                                                        }
+                                                                    },
+                                                                    "additionalProperties": false
+                                                                },
+                                                                "evidence": {
+                                                                    "type": "object",
+                                                                    "properties": {
+                                                                        "code": {
+                                                                            "type": ["string", "null"]
+                                                                        },
+                                                                        "id": {
+                                                                            "type": ["string", "null"],
+                                                                            "pattern": "^RDB[A-Z0-9_]{5}[A-Z]{3}[0-9A-Z]{5}$",
+                                                                            "annotation": {
+                                                                                "Synonyms": "",
+                                                                                "Description":"" ,
+                                                                                "URI": "[value]",
+                                                                                "Required": "[value]",
+                                                                                "Example": "",
+                                                                                "Comments": ""
+                                                                            }
+                                                                        },
+                                                                        "name": {
+                                                                            "type": ["string", "null"],
+                                                                            "annotation": {
+                                                                                "Synonyms": "",
+                                                                                "Description":"" ,
+                                                                                "URI": "[value]",
+                                                                                "Required": "[value]",
+                                                                                "Example": "",
+                                                                                "Comments": ""
+                                                                            }
+                                                                        },
+                                                                        "type": {
+                                                                            "type": ["string", "null"],
+                                                                            "annotation": {
+                                                                                "Synonyms": "",
+                                                                                "Description":"" ,
+                                                                                "URI": "[value]",
+                                                                                "Required": "[value]",
+                                                                                "Example": "",
+                                                                                "Comments": ""
+                                                                            }
+                                                                        }
+                                                                    },
+                                                                    "additionalProperties": false
+                                                                }
+                                                            },
+                                                            "additionalProperties": false
+                                                        }
+                                                    },
+													"id": {
+														"type": ["string", "null"],
+                                                        "annotation": {
+                                                            "Synonyms": "",
+                                                            "Description":"" ,
+                                                            "URI": "[value]",
+                                                            "Required": "[value]",
+                                                            "Example": "",
+                                                            "Comments": ""
+                                                        }
+													},
+													"name": {
+														"type": ["string", "null"],
+                                                        "annotation": {
+                                                            "Synonyms": "",
+                                                            "Description":"" ,
+                                                            "URI": "[value]",
+                                                            "Required": "[value]",
+                                                            "Example": "",
+                                                            "Comments": ""
+                                                        }
+													},
+													"productIds": {
+														"type": "array",
+														"uniqueItems": true,
+														"items": {
+															"type": ["string", "null"]
+														},
+                                                        "annotation": {
+                                                            "Synonyms": "",
+                                                            "Description":"" ,
+                                                            "URI": "[value]",
+                                                            "Required": "[value]",
+                                                            "Example": "",
+                                                            "Comments": ""
+                                                        }
+													}
+												},
+												"additionalProperties": false
+											}
+										},
+										"molecularFunction": {
+											"type": "array",
+											"uniqueItems": true,
+											"items": {
+												"type": "object",
+												"properties": {
+													"citations": {
+                                                        "type": "array",
+                                                        "uniqueItems": true,
+                                                        "items": {
+                                                            "type": "object",
+                                                            "properties": {
+                                                                "publication": {
+                                                                    "type": "object",
+                                                                    "properties": {
+                                                                        "authors": {
+                                                                            "type": "array",
+                                                                            "uniqueItems": true,
+                                                                            "items": {
+                                                                                "type": ["string", "null"]
+                                                                            },
+                                                                            "annotation": {
+                                                                                "Synonyms": "",
+                                                                                "Description":"" ,
+                                                                                "URI": "[value]",
+                                                                                "Required": "[value]",
+                                                                                "Example": "",
+                                                                                "Comments": ""
+                                                                            }
+                                                                        },
+                                                                        "pmid": {
+                                                                            "type": ["string", "null"],
+                                                                            "annotation": {
+                                                                                "Synonyms": "",
+                                                                                "Description":"" ,
+                                                                                "URI": "[value]",
+                                                                                "Required": "[value]",
+                                                                                "Example": "",
+                                                                                "Comments": ""
+                                                                            }
+                                                                        },
+                                                                        "id": {
+                                                                            "type": ["string", "null"],
+                                                                            "pattern": "^RDB[A-Z0-9_]{5}[A-Z]{3}[0-9A-Z]{5}$",
+                                                                            "annotation": {
+                                                                                "Synonyms": "",
+                                                                                "Description":"" ,
+                                                                                "URI": "[value]",
+                                                                                "Required": "[value]",
+                                                                                "Example": "",
+                                                                                "Comments": ""
+                                                                            }
+                                                                        },
+                                                                        "citation": {
+                                                                            "type": ["string", "null"],
+                                                                            "annotation": {
+                                                                                "Synonyms": "",
+                                                                                "Description":"" ,
+                                                                                "URI": "[value]",
+                                                                                "Required": "[value]",
+                                                                                "Example": "",
+                                                                                "Comments": ""
+                                                                            }
+                                                                        },
+                                                                        "title": {
+                                                                            "type": ["string", "null"],
+                                                                            "annotation": {
+                                                                                "Synonyms": "",
+                                                                                "Description":"" ,
+                                                                                "URI": "[value]",
+                                                                                "Required": "[value]",
+                                                                                "Example": "",
+                                                                                "Comments": ""
+                                                                            }
+                                                                        },
+                                                                        "url": {
+                                                                            "type": ["string", "null"],
+                                                                            "annotation": {
+                                                                                "Synonyms": "",
+                                                                                "Description":"" ,
+                                                                                "URI": "[value]",
+                                                                                "Required": "[value]",
+                                                                                "Example": "",
+                                                                                "Comments": ""
+                                                                            }
+                                                                        },
+                                                                        "year": {
+                                                                            "type": "number",
+                                                                            "annotation": {
+                                                                                "Synonyms": "",
+                                                                                "Description":"" ,
+                                                                                "URI": "[value]",
+                                                                                "Required": "[value]",
+                                                                                "Example": "",
+                                                                                "Comments": ""
+                                                                            }
+                                                                        }
+                                                                    },
+                                                                    "additionalProperties": false
+                                                                },
+                                                                "evidence": {
+                                                                    "type": "object",
+                                                                    "properties": {
+                                                                        "code": {
+                                                                            "type": ["string", "null"]
+                                                                        },
+                                                                        "id": {
+                                                                            "type": ["string", "null"],
+                                                                            "pattern": "^RDB[A-Z0-9_]{5}[A-Z]{3}[0-9A-Z]{5}$",
+                                                                            "annotation": {
+                                                                                "Synonyms": "",
+                                                                                "Description":"" ,
+                                                                                "URI": "[value]",
+                                                                                "Required": "[value]",
+                                                                                "Example": "",
+                                                                                "Comments": ""
+                                                                            }
+                                                                        },
+                                                                        "name": {
+                                                                            "type": ["string", "null"],
+                                                                            "annotation": {
+                                                                                "Synonyms": "",
+                                                                                "Description":"" ,
+                                                                                "URI": "[value]",
+                                                                                "Required": "[value]",
+                                                                                "Example": "",
+                                                                                "Comments": ""
+                                                                            }
+                                                                        },
+                                                                        "type": {
+                                                                            "type": ["string", "null"],
+                                                                            "annotation": {
+                                                                                "Synonyms": "",
+                                                                                "Description":"" ,
+                                                                                "URI": "[value]",
+                                                                                "Required": "[value]",
+                                                                                "Example": "",
+                                                                                "Comments": ""
+                                                                            }
+                                                                        }
+                                                                    },
+                                                                    "additionalProperties": false
+                                                                }
+                                                            },
+                                                            "additionalProperties": false
+                                                        }
+                                                    },
+													"id": {
+														"type": [
+															"string",
+															"null"
+														],
+                                                        "annotation": {
+                                                            "Synonyms": "",
+                                                            "Description":"" ,
+                                                            "URI": "[value]",
+                                                            "Required": "[value]",
+                                                            "Example": "",
+                                                            "Comments": ""
+                                                        }
+													},
+													"name": {
+														"type": [
+															"string",
+															"null"
+														],
+                                                        "annotation": {
+                                                            "Synonyms": "",
+                                                            "Description":"" ,
+                                                            "URI": "[value]",
+                                                            "Required": "[value]",
+                                                            "Example": "",
+                                                            "Comments": ""
+                                                        }
+													},
+													"productIds": {
+														"type": "array",
+														"uniqueItems": true,
+														"items": {
+															"type": [
+																"string",
+																"null"
+															]
+														},
+                                                        "annotation": {
+                                                            "Synonyms": "",
+                                                            "Description":"" ,
+                                                            "URI": "[value]",
+                                                            "Required": "[value]",
+                                                            "Example": "",
+                                                            "Comments": ""
+                                                        }
+													}
+												},
+												"additionalProperties": false
+											}
+										}
+									},
+									"additionalProperties": false
+								},
+								"id": {
+									"type": ["string", "null"],
+									"pattern": "^RDB[A-Z0-9_]{5}[A-Z]{3}[0-9A-Z]{5}$",
+                                    "annotation": {
+                                        "Synonyms": "",
+                                        "Description":"" ,
+                                        "URI": "[value]",
+                                        "Required": "[value]",
+                                        "Example": "",
+                                        "Comments": ""
+                                    }
+								},
+								"isoelectricPoint": {
+									"type": ["number", "null"],
+                                    "annotation": {
+                                        "Synonyms": "",
+                                        "Description":"" ,
+                                        "URI": "[value]",
+                                        "Required": "[value]",
+                                        "Example": "",
+                                        "Comments": ""
+                                    }
+								},
+								"isRegulator": {
+									"type": "boolean",
+                                    "annotation": {
+                                        "Synonyms": "",
+                                        "Description":"" ,
+                                        "URI": "[value]",
+                                        "Required": "[value]",
+                                        "Example": "",
+                                        "Comments": ""
+                                    }
+								},
+								"molecularWeight": {
+									"type": ["number", "null"],
+                                    "annotation": {
+                                        "Synonyms": "",
+                                        "Description":"" ,
+                                        "URI": "[value]",
+                                        "Required": "[value]",
+                                        "Example": "",
+                                        "Comments": ""
+                                    }
+								},
+								"motifs": {
+									"type": "array",
+									"uniqueItems": true,
+									"items": {
+										"type": "object",
+										"properties": {
+											"description": {
+												"type": ["string", "null"],
+                                                "annotation": {
+                                                    "Synonyms": "",
+                                                    "Description":"" ,
+                                                    "URI": "[value]",
+                                                    "Required": "[value]",
+                                                    "Example": "",
+                                                    "Comments": ""
+                                                }
+											},
+											"id": {
+												"type": ["string", "null"],
+												"pattern": "^RDB[A-Z0-9_]{5}[A-Z]{3}[0-9A-Z]{5}$",
+                                                "annotation": {
+                                                    "Synonyms": "",
+                                                    "Description":"" ,
+                                                    "URI": "[value]",
+                                                    "Required": "[value]",
+                                                    "Example": "",
+                                                    "Comments": ""
+                                                }
+											},
+											"leftEndPosition": {
+												"type": ["number", "null"],
+                                                "annotation": {
+                                                    "Synonyms": "",
+                                                    "Description":"" ,
+                                                    "URI": "[value]",
+                                                    "Required": "[value]",
+                                                    "Example": "",
+                                                    "Comments": ""
+                                                }
+											},
+											"note": {
+												"type": ["string", "null"],
+                                                "annotation": {
+                                                    "Synonyms": "",
+                                                    "Description":"" ,
+                                                    "URI": "[value]",
+                                                    "Required": "[value]",
+                                                    "Example": "",
+                                                    "Comments": ""
+                                                }
+											},
+											"rightEndPosition": {
+												"type": ["number", "null"],
+                                                "annotation": {
+                                                    "Synonyms": "",
+                                                    "Description":"" ,
+                                                    "URI": "[value]",
+                                                    "Required": "[value]",
+                                                    "Example": "",
+                                                    "Comments": ""
+                                                }
+											},
+											"sequence": {
+												"type": ["string", "null"],
+                                                "annotation": {
+                                                    "Synonyms": "",
+                                                    "Description":"" ,
+                                                    "URI": "[value]",
+                                                    "Required": "[value]",
+                                                    "Example": "",
+                                                    "Comments": ""
+                                                }
+											},
+											"type": {
+												"type": ["string", "null"],
+                                                "annotation": {
+                                                    "Synonyms": "",
+                                                    "Description":"" ,
+                                                    "URI": "[value]",
+                                                    "Required": "[value]",
+                                                    "Example": "",
+                                                    "Comments": ""
+                                                }
+											}
+										},
+										"additionalProperties": false
+									}
+								},
+								"name": {
+									"type": ["string", "null"],
+                                    "annotation": {
+                                        "Synonyms": "",
+                                        "Description":"" ,
+                                        "URI": "[value]",
+                                        "Required": "[value]",
+                                        "Example": "",
+                                        "Comments": ""
+                                    }
+								},
+								"note": {
+									"type": ["string", "null"],
+                                    "annotation": {
+                                        "Synonyms": "",
+                                        "Description":"" ,
+                                        "URI": "[value]",
+                                        "Required": "[value]",
+                                        "Example": "",
+                                        "Comments": ""
+                                    }
+								},
+								"regulon_id": {
+									"type": ["string", "null"],
+									"pattern": "^RDB[A-Z0-9_]{5}[A-Z]{3}[0-9A-Z]{5}$",
+                                    "annotation": {
+                                        "Synonyms": "",
+                                        "Description":"" ,
+                                        "URI": "[value]",
+                                        "Required": "[value]",
+                                        "Example": "",
+                                        "Comments": ""
+                                    }
+								},
+								"sequence": {
+									"type": ["string", "null"],
+                                    "annotation": {
+                                        "Synonyms": "",
+                                        "Description":"" ,
+                                        "URI": "[value]",
+                                        "Required": "[value]",
+                                        "Example": "",
+                                        "Comments": ""
+                                    }
+								},
+								"synonyms": {
+									"type": "array",
+									"uniqueItems": true,
+									"items": {
+										"type": ["string", "null"],
+                                        "annotation": {
+                                            "Synonyms": "",
+                                            "Description":"" ,
+                                            "URI": "[value]",
+                                            "Required": "[value]",
+                                            "Example": "",
+                                            "Comments": ""
+                                        }
+									}
+								},
+								"type": {
+									"type": ["string", "null"],
+                                    "annotation": {
+                                        "Synonyms": "",
+                                        "Description":"" ,
+                                        "URI": "[value]",
+                                        "Required": "[value]",
+                                        "Example": "",
+                                        "Comments": ""
+                                    }
+								}
+							},
+							"additionalProperties": false
+						}
+					},
+					"shineDalgarnos": {
+						"type": "array",
+						"uniqueItems": true,
+						"items": {
+							"type": "object",
+							"properties": {
+								"distanceToGene": {
+									"type": "number",
+                                    "annotation": {
+                                        "Synonyms": "",
+                                        "Description":"" ,
+                                        "URI": "[value]",
+                                        "Required": "[value]",
+                                        "Example": "",
+                                        "Comments": ""
+                                    }
+								},
+								"id": {
+									"type": "string",
+									"pattern": "^RDB[A-Z0-9_]{5}[A-Z]{3}[0-9A-Z]{5}$",
+                                    "annotation": {
+                                        "Synonyms": "",
+                                        "Description":"" ,
+                                        "URI": "[value]",
+                                        "Required": "[value]",
+                                        "Example": "",
+                                        "Comments": ""
+                                    }
+								},
+								"leftEndPosition": {
+									"type": ["number", "null"],
+                                    "annotation": {
+                                        "Synonyms": "",
+                                        "Description":"" ,
+                                        "URI": "[value]",
+                                        "Required": "[value]",
+                                        "Example": "",
+                                        "Comments": ""
+                                    }
+								},
+								"note": {
+									"type": ["string", "null"],
+                                    "annotation": {
+                                        "Synonyms": "",
+                                        "Description":"" ,
+                                        "URI": "[value]",
+                                        "Required": "[value]",
+                                        "Example": "",
+                                        "Comments": ""
+                                    }
+								},
+								"rightEndPosition": {
+									"type": ["number", "null"],
+                                    "annotation": {
+                                        "Synonyms": "",
+                                        "Description":"" ,
+                                        "URI": "[value]",
+                                        "Required": "[value]",
+                                        "Example": "",
+                                        "Comments": ""
+                                    }
+								},
+								"sequence": {
+									"type": ["string", "null"],
+									"pattern": "^[ATCGatcg]+$",
+                                    "annotation": {
+                                        "Synonyms": "",
+                                        "Description":"" ,
+                                        "URI": "[value]",
+                                        "Required": "[value]",
+                                        "Example": "",
+                                        "Comments": ""
+                                    }
+								}
+							},
+							"additionalProperties": false
+						}
+					},
+					"regulation": {
+						"type": ["object", "null"],
+						"properties": {
+							"operon": {
+								"type": "object",
+								"properties": {
+									"id": {
+										"type": ["string", "null"],
+										"pattern": "^RDB[A-Z0-9_]{5}[A-Z]{3}[0-9A-Z]{5}$",
+                                        "annotation": {
+                                            "Synonyms": "",
+                                            "Description":"" ,
+                                            "URI": "[value]",
+                                            "Required": "[value]",
+                                            "Example": "",
+                                            "Comments": ""
+                                        }
+									},
+									"name": {
+										"type": ["string", "null"],
+                                        "annotation": {
+                                            "Synonyms": "",
+                                            "Description":"" ,
+                                            "URI": "[value]",
+                                            "Required": "[value]",
+                                            "Example": "",
+                                            "Comments": ""
+                                        }
+									},
+									"arrangement": {
+										"type": "array",
+										"uniqueItems": true,
+										"items": {
+											"type": "object",
+											"properties": {
+												"regulators": {
+													"type": "array",
+													"uniqueItems": true,
+													"items": {
+														"type": "object",
+														"properties": {
+															"function": {
+																"type": ["string", "null"],
+																"enum": [
+																	"repressor",
+																	"activator",
+																	null
+																],
+                                                                "annotation": {
+                                                                    "Synonyms": "",
+                                                                    "Description":"" ,
+                                                                    "URI": "[value]",
+                                                                    "Required": "[value]",
+                                                                    "Example": "",
+                                                                    "Comments": ""
+                                                                }
+															},
+															"id": {
+																"type": ["string", "null"],
+																"pattern": "^RDB[A-Z0-9_]{5}[A-Z]{3}[0-9A-Z]{5}$",
+                                                                "annotation": {
+                                                                    "Synonyms": "",
+                                                                    "Description":"" ,
+                                                                    "URI": "[value]",
+                                                                    "Required": "[value]",
+                                                                    "Example": "",
+                                                                    "Comments": ""
+                                                                }
+															},
+															"name": {
+																"type": ["string", "null"],
+                                                                "annotation": {
+                                                                    "Synonyms": "",
+                                                                    "Description":"" ,
+                                                                    "URI": "[value]",
+                                                                    "Required": "[value]",
+                                                                    "Example": "",
+                                                                    "Comments": ""
+                                                                }
+															},
+															"type": {
+																"type": ["string", "null"],
+                                                                "annotation": {
+                                                                    "Synonyms": "",
+                                                                    "Description":"" ,
+                                                                    "URI": "[value]",
+                                                                    "Required": "[value]",
+                                                                    "Example": "",
+                                                                    "Comments": ""
+                                                                }
+															}
+														},
+														"additionalProperties": false
+													}
+												},
+												"promoters": {
+													"type": "array",
+													"uniqueItems": true,
+													"items": {
+														"type": "object",
+														"properties": {
+															"id": {
+																"type": ["string", "null"],
+																"pattern": "^RDB[A-Z0-9_]{5}[A-Z]{3}[0-9A-Z]{5}$",
+                                                                "annotation": {
+                                                                    "Synonyms": "",
+                                                                    "Description":"" ,
+                                                                    "URI": "[value]",
+                                                                    "Required": "[value]",
+                                                                    "Example": "",
+                                                                    "Comments": ""
+                                                                }
+															},
+															"name": {
+																"type": ["string", "null"],
+                                                                "annotation": {
+                                                                    "Synonyms": "",
+                                                                    "Description":"" ,
+                                                                    "URI": "[value]",
+                                                                    "Required": "[value]",
+                                                                    "Example": "",
+                                                                    "Comments": ""
+                                                                }
+															}
+														},
+														"additionalProperties": false
+													}
+												},
+												"transcriptionUnit": {
+													"type": "object",
+													"properties": {
+														"id": {
+															"type": ["string", "null"],
+															"pattern": "^RDB[A-Z0-9_]{5}[A-Z]{3}[0-9A-Z]{5}$",
+                                                            "annotation": {
+                                                                "Synonyms": "",
+                                                                "Description":"" ,
+                                                                "URI": "[value]",
+                                                                "Required": "[value]",
+                                                                "Example": "",
+                                                                "Comments": ""
+                                                            }
+														},
+														"name": {
+															"type": ["string", "null"],
+                                                            "annotation": {
+                                                                "Synonyms": "",
+                                                                "Description":"" ,
+                                                                "URI": "[value]",
+                                                                "Required": "[value]",
+                                                                "Example": "",
+                                                                "Comments": ""
+                                                            }
+														}
+													},
+													"additionalProperties": false
+												}
+											},
+											"additionalProperties": false
+										}
+									}
+								},
+								"additionalProperties": false
+							},
+							"regulators": {
+								"type": "array",
+								"uniqueItems": true,
+								"items": {
+									"type": "object",
+									"properties": {
+										"function": {
+											"type": ["string", "null"],
+											"enum": [
+												"repressor",
+												"activator",
+												null
+											],
+                                            "annotation": {
+                                                "Synonyms": "",
+                                                "Description":"" ,
+                                                "URI": "[value]",
+                                                "Required": "[value]",
+                                                "Example": "",
+                                                "Comments": ""
+                                            }
+										},
+										"id": {
+											"type": ["string", "null"],
+											"pattern": "^RDB[A-Z0-9_]{5}[A-Z]{3}[0-9A-Z]{5}$",
+                                            "annotation": {
+                                                "Synonyms": "",
+                                                "Description":"" ,
+                                                "URI": "[value]",
+                                                "Required": "[value]",
+                                                "Example": "",
+                                                "Comments": ""
+                                            }
+										},
+										"name": {
+											"type": ["string", "null"],
+                                            "annotation": {
+                                                "Synonyms": "",
+                                                "Description":"" ,
+                                                "URI": "[value]",
+                                                "Required": "[value]",
+                                                "Example": "",
+                                                "Comments": ""
+                                            }
+										},
+										"type": {
+											"type": ["string", "null"],
+                                            "annotation": {
+                                                "Synonyms": "",
+                                                "Description":"" ,
+                                                "URI": "[value]",
+                                                "Required": "[value]",
+                                                "Example": "",
+                                                "Comments": ""
+                                            }
+										}
+									},
+									"additionalProperties": false
+								}
+							},
+							"statistics": {
+								"type": "object",
+								"properties": {
+									"regulators": {
+										"type": "number",
+                                        "annotation": {
+                                            "Synonyms": "",
+                                            "Description":"" ,
+                                            "URI": "[value]",
+                                            "Required": "[value]",
+                                            "Example": "",
+                                            "Comments": ""
+                                        }
+									},
+									"regulatoryInteractions": {
+										"type": "number",
+                                        "annotation": {
+                                            "Synonyms": "",
+                                            "Description":"" ,
+                                            "URI": "[value]",
+                                            "Required": "[value]",
+                                            "Example": "",
+                                            "Comments": ""
+                                        }
+									},
+									"promoters": {
+										"type": "number",
+                                        "annotation": {
+                                            "Synonyms": "",
+                                            "Description":"" ,
+                                            "URI": "[value]",
+                                            "Required": "[value]",
+                                            "Example": "",
+                                            "Comments": ""
+                                        }
+									}
+								},
+								"additionalProperties": false
+							}
+						},
+						"additionalProperties": false
+					},
+					"growthConditions": {
+						"type": "array",
+						"uniqueItems": true,
+						"items": {
+							"type": "object",
+							"properties": {
+								"controlCondition": {
+									"type": ["string", "null"],
+                                    "annotation": {
+                                        "Synonyms": "",
+                                        "Description":"" ,
+                                        "URI": "[value]",
+                                        "Required": "[value]",
+                                        "Example": "",
+                                        "Comments": ""
+                                    }
+								},
+								"effect": {
+									"type": ["string", "null"],
+                                    "annotation": {
+                                        "Synonyms": "",
+                                        "Description":"" ,
+                                        "URI": "[value]",
+                                        "Required": "[value]",
+                                        "Example": "",
+                                        "Comments": ""
+                                    }
+								},
+								"citations": {
+                                    "type": "array",
+                                    "uniqueItems": true,
+                                    "items": {
+                                        "type": "object",
+                                        "properties": {
+                                            "publication": {
+                                                "type": "object",
+                                                "properties": {
+                                                    "authors": {
+                                                        "type": "array",
+                                                        "uniqueItems": true,
+                                                        "items": {
+                                                            "type": ["string", "null"]
+                                                        },
+                                                        "annotation": {
+                                                            "Synonyms": "",
+                                                            "Description":"" ,
+                                                            "URI": "[value]",
+                                                            "Required": "[value]",
+                                                            "Example": "",
+                                                            "Comments": ""
+                                                        }
+                                                    },
+                                                    "pmid": {
+                                                        "type": ["string", "null"],
+                                                        "annotation": {
+                                                            "Synonyms": "",
+                                                            "Description":"" ,
+                                                            "URI": "[value]",
+                                                            "Required": "[value]",
+                                                            "Example": "",
+                                                            "Comments": ""
+                                                        }
+                                                    },
+                                                    "id": {
+                                                        "type": ["string", "null"],
+                                                        "pattern": "^RDB[A-Z0-9_]{5}[A-Z]{3}[0-9A-Z]{5}$",
+                                                        "annotation": {
+                                                            "Synonyms": "",
+                                                            "Description":"" ,
+                                                            "URI": "[value]",
+                                                            "Required": "[value]",
+                                                            "Example": "",
+                                                            "Comments": ""
+                                                        }
+                                                    },
+                                                    "citation": {
+                                                        "type": ["string", "null"],
+                                                        "annotation": {
+                                                            "Synonyms": "",
+                                                            "Description":"" ,
+                                                            "URI": "[value]",
+                                                            "Required": "[value]",
+                                                            "Example": "",
+                                                            "Comments": ""
+                                                        }
+                                                    },
+                                                    "title": {
+                                                        "type": ["string", "null"],
+                                                        "annotation": {
+                                                            "Synonyms": "",
+                                                            "Description":"" ,
+                                                            "URI": "[value]",
+                                                            "Required": "[value]",
+                                                            "Example": "",
+                                                            "Comments": ""
+                                                        }
+                                                    },
+                                                    "url": {
+                                                        "type": ["string", "null"],
+                                                        "annotation": {
+                                                            "Synonyms": "",
+                                                            "Description":"" ,
+                                                            "URI": "[value]",
+                                                            "Required": "[value]",
+                                                            "Example": "",
+                                                            "Comments": ""
+                                                        }
+                                                    },
+                                                    "year": {
+                                                        "type": "number",
+                                                        "annotation": {
+                                                            "Synonyms": "",
+                                                            "Description":"" ,
+                                                            "URI": "[value]",
+                                                            "Required": "[value]",
+                                                            "Example": "",
+                                                            "Comments": ""
+                                                        }
+                                                    }
+                                                },
+                                                "additionalProperties": false
+                                            },
+                                            "evidence": {
+                                                "type": "object",
+                                                "properties": {
+                                                    "code": {
+                                                        "type": ["string", "null"]
+                                                    },
+                                                    "id": {
+                                                        "type": ["string", "null"],
+                                                        "pattern": "^RDB[A-Z0-9_]{5}[A-Z]{3}[0-9A-Z]{5}$",
+                                                        "annotation": {
+                                                            "Synonyms": "",
+                                                            "Description":"" ,
+                                                            "URI": "[value]",
+                                                            "Required": "[value]",
+                                                            "Example": "",
+                                                            "Comments": ""
+                                                        }
+                                                    },
+                                                    "name": {
+                                                        "type": ["string", "null"],
+                                                        "annotation": {
+                                                            "Synonyms": "",
+                                                            "Description":"" ,
+                                                            "URI": "[value]",
+                                                            "Required": "[value]",
+                                                            "Example": "",
+                                                            "Comments": ""
+                                                        }
+                                                    },
+                                                    "type": {
+                                                        "type": ["string", "null"],
+                                                        "annotation": {
+                                                            "Synonyms": "",
+                                                            "Description":"" ,
+                                                            "URI": "[value]",
+                                                            "Required": "[value]",
+                                                            "Example": "",
+                                                            "Comments": ""
+                                                        }
+                                                    }
+                                                },
+                                                "additionalProperties": false
+                                            }
+                                        },
+                                        "additionalProperties": false
+                                    }
+                                },
+								"experimentalCondition": {
+									"type": ["string", "null"],
+                                    "annotation": {
+                                        "Synonyms": "",
+                                        "Description":"" ,
+                                        "URI": "[value]",
+                                        "Required": "[value]",
+                                        "Example": "",
+                                        "Comments": ""
+                                    }
+								},
+								"id": {
+									"type": ["string", "null"],
+									"pattern": "^RDB[A-Z0-9_]{5}[A-Z]{3}[0-9A-Z]{5}$",
+                                    "annotation": {
+                                        "Synonyms": "",
+                                        "Description":"" ,
+                                        "URI": "[value]",
+                                        "Required": "[value]",
+                                        "Example": "",
+                                        "Comments": ""
+                                    }
+								}
+							},
+							"additionalProperties": false
+						}
+					},
+					"organism": {
+						"type": "object",
+						"properties": {
+							"id": {
+								"type": ["string", "null"],
+								"pattern": "^RDB[A-Z0-9_]{5}[A-Z]{3}[0-9A-Z]{5}$",
+                                "annotation": {
+                                    "Synonyms": "",
+                                    "Description":"" ,
+                                    "URI": "[value]",
+                                    "Required": "[value]",
+                                    "Example": "",
+                                    "Comments": ""
+                                }
+							},
+							"name": {
+								"type": ["string", "null"],
+                                "annotation": {
+                                    "Synonyms": "",
+                                    "Description":"" ,
+                                    "URI": "[value]",
+                                    "Required": "[value]",
+                                    "Example": "",
+                                    "Comments": ""
+                                }
+							}
+						}
+					},
+					"allCitations": {
+                        "type": "array",
+                        "uniqueItems": true,
+                        "items": {
+                            "type": "object",
+                            "properties": {
+                                "publication": {
+                                    "type": "object",
+                                    "properties": {
+                                        "authors": {
+                                            "type": "array",
+                                            "uniqueItems": true,
+                                            "items": {
+                                                "type": ["string", "null"]
+                                            },
+                                            "annotation": {
+                                                "Synonyms": "",
+                                                "Description":"" ,
+                                                "URI": "[value]",
+                                                "Required": "[value]",
+                                                "Example": "",
+                                                "Comments": ""
+                                            }
+                                        },
+                                        "pmid": {
+                                            "type": ["string", "null"],
+                                            "annotation": {
+                                                "Synonyms": "",
+                                                "Description":"" ,
+                                                "URI": "[value]",
+                                                "Required": "[value]",
+                                                "Example": "",
+                                                "Comments": ""
+                                            }
+                                        },
+                                        "id": {
+                                            "type": ["string", "null"],
+                                            "pattern": "^RDB[A-Z0-9_]{5}[A-Z]{3}[0-9A-Z]{5}$",
+                                            "annotation": {
+                                                "Synonyms": "",
+                                                "Description":"" ,
+                                                "URI": "[value]",
+                                                "Required": "[value]",
+                                                "Example": "",
+                                                "Comments": ""
+                                            }
+                                        },
+                                        "citation": {
+                                            "type": ["string", "null"],
+                                            "annotation": {
+                                                "Synonyms": "",
+                                                "Description":"" ,
+                                                "URI": "[value]",
+                                                "Required": "[value]",
+                                                "Example": "",
+                                                "Comments": ""
+                                            }
+                                        },
+                                        "title": {
+                                            "type": ["string", "null"],
+                                            "annotation": {
+                                                "Synonyms": "",
+                                                "Description":"" ,
+                                                "URI": "[value]",
+                                                "Required": "[value]",
+                                                "Example": "",
+                                                "Comments": ""
+                                            }
+                                        },
+                                        "url": {
+                                            "type": ["string", "null"],
+                                            "annotation": {
+                                                "Synonyms": "",
+                                                "Description":"" ,
+                                                "URI": "[value]",
+                                                "Required": "[value]",
+                                                "Example": "",
+                                                "Comments": ""
+                                            }
+                                        },
+                                        "year": {
+                                            "type": "number",
+                                            "annotation": {
+                                                "Synonyms": "",
+                                                "Description":"" ,
+                                                "URI": "[value]",
+                                                "Required": "[value]",
+                                                "Example": "",
+                                                "Comments": ""
+                                            }
+                                        }
+                                    },
+                                    "additionalProperties": false
+                                },
+                                "evidence": {
+                                    "type": "object",
+                                    "properties": {
+                                        "code": {
+                                            "type": ["string", "null"]
+                                        },
+                                        "id": {
+                                            "type": ["string", "null"],
+                                            "pattern": "^RDB[A-Z0-9_]{5}[A-Z]{3}[0-9A-Z]{5}$",
+                                            "annotation": {
+                                                "Synonyms": "",
+                                                "Description":"" ,
+                                                "URI": "[value]",
+                                                "Required": "[value]",
+                                                "Example": "",
+                                                "Comments": ""
+                                            }
+                                        },
+                                        "name": {
+                                            "type": ["string", "null"],
+                                            "annotation": {
+                                                "Synonyms": "",
+                                                "Description":"" ,
+                                                "URI": "[value]",
+                                                "Required": "[value]",
+                                                "Example": "",
+                                                "Comments": ""
+                                            }
+                                        },
+                                        "type": {
+                                            "type": ["string", "null"],
+                                            "annotation": {
+                                                "Synonyms": "",
+                                                "Description":"" ,
+                                                "URI": "[value]",
+                                                "Required": "[value]",
+                                                "Example": "",
+                                                "Comments": ""
+                                            }
+                                        }
+                                    },
+                                    "additionalProperties": false
+                                }
+                            },
+                            "additionalProperties": false
+                        }
+                    },
+					"schemaVersion": {
+						"type": "number"
+					}
+				},
+				"additionalProperties": false
+			}
+		},
+		"validationLevel": "strict",
+		"validationAction": "error"
+	}
+}

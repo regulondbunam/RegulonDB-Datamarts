@@ -1,0 +1,982 @@
+{
+	"geneDatamart": {
+		"validator": {
+			"$jsonSchema": {
+				"type": "object",
+				"required": [
+					"gene",
+					"organism"
+				],
+				"properties": {
+					"_id": {
+						"type": ["string", "null"],
+						"pattern": "^RDB[A-Z0-9_]{5}[A-Z]{3}[0-9A-Z]{5}$"
+					},
+					"gene": {
+						"type": "object",
+						"required": [
+							"id",
+							"strand"
+						],
+						"properties": {
+							"bnumber": {
+								"type": ["string", "null"]
+							},
+							"centisomePosition": {
+								"type": ["number", "null"]
+							},
+							"citations": {
+								"type": "array",
+								"uniqueItems": true,
+								"items": {
+									"type": "object",
+									"properties": {
+										"publication": {
+											"type": "object",
+											"properties": {
+                                                "authors": {
+                                                    "type": "array",
+                                                    "uniqueItems": true,
+                                                    "items": {
+                                                        "type": ["string", "null"]
+                                                    }
+                                                },
+												"pmid": {
+													"type": ["string", "null"]
+												},
+												"id": {
+													"type": ["string", "null"],
+													"pattern": "^RDB[A-Z0-9_]{5}[A-Z]{3}[0-9A-Z]{5}$"
+												},
+												"citation": {
+													"type": ["string", "null"]
+												},
+                                                "title": {
+                                                    "type": ["string", "null"]
+                                                },
+												"url": {
+													"type": ["string", "null"]
+												},
+                                                "year": {
+                                                    "type": "number"
+                                                }
+											},
+											"additionalProperties": false
+										},
+										"evidence": {
+											"type": "object",
+											"properties": {
+												"code": {
+													"type": ["string", "null"]
+												},
+												"id": {
+													"type": ["string", "null"],
+													"pattern": "^RDB[A-Z0-9_]{5}[A-Z]{3}[0-9A-Z]{5}$"
+												},
+												"name": {
+													"type": ["string", "null"]
+												},
+												"type": {
+													"type": ["string", "null"]
+												}
+											},
+											"additionalProperties": false
+										}
+									},
+									"additionalProperties": false
+								}
+							},
+							"externalCrossReferences": {
+								"type": "array",
+								"uniqueItems": true,
+								"items": {
+									"type": "object",
+									"properties": {
+										"externalCrossReferenceId": {
+											"type": ["string", "null"],
+											"pattern": "^RDB[A-Z0-9_]{5}[A-Z]{3}[0-9A-Z]{5}$"
+										},
+										"externalCrossReferenceName": {
+											"type": ["string", "null"]
+										},
+										"objectId": {
+											"type": ["string", "null"]
+										},
+										"url": {
+											"type": ["string", "null"]
+										}
+									},
+									"additionalProperties": false
+								}
+							},
+							"fragments":{
+								"type":"array",
+								"uniqueItems":true,
+								"items":{
+									"type": "object",
+									"properties":{
+										"id":{
+											"type":["string", "null"]
+										},
+										"name":{
+											"type": ["string", "null"]
+										},
+										"leftEndPosition":{
+											"type": ["number", "null"]
+										},
+										"rightEndPosition":{
+											"type": ["number", "null"]
+										},
+										"sequence": {
+											"type": ["string", "null"]
+										},
+										"centisomePosition":{
+											"type": ["number", "null"]
+										}
+									},
+									"additionalProperties":false
+								}
+							},
+							"gcContent": {
+								"type": ["number", "null"]
+							},
+							"id": {
+								"type": ["string", "null"],
+								"pattern": "^RDB[A-Z0-9_]{5}[A-Z]{3}[0-9A-Z]{5}$"
+							},
+							"leftEndPosition": {
+								"type": ["number", "null"],
+								"multipleOf": 1.0
+							},
+							"multifunTerms": {
+								"type": "array",
+								"uniqueItems": true,
+								"items": {
+									"type": "object",
+									"properties": {
+										"geneIds": {
+											"type": "array",
+											"uniqueItems": true,
+											"items": {
+												"type": ["string", "null"]
+											}
+										},
+										"id": {
+											"type": ["string", "null"],
+											"pattern": "^RDB[A-Z0-9_]{5}[A-Z]{3}[0-9A-Z]{5}$"
+										},
+										"label": {
+											"type": ["string", "null"]
+										},
+										"name": {
+											"type": ["string", "null"]
+										}
+									},
+									"additionalProperties": false
+								}
+							},
+							"name": {
+								"type": ["string", "null"]
+							},
+							"note": {
+								"type": ["string", "null"]
+							},
+							"rightEndPosition": {
+								"type": ["number", "null"],
+								"multipleOf": 1.0
+							},
+							"sequence": {
+								"type": ["string", "null"],
+								"pattern": "^[ATCGatcg]+$"
+							},
+							"strand": {
+								"type": ["string", "null"],
+								"enum": ["forward", "reverse"]
+							},
+							"synonyms": {
+								"type": "array",
+								"uniqueItems": true,
+								"items": {
+									"type": ["string", "null"]
+								}
+							},
+							"type": {
+								"type": ["string", "null"],
+								"enum": [
+									"pseudo",
+									"phantom",
+									"gene",
+									"truncated",
+									null
+								]
+							}
+						},
+						"additionalProperties": false
+					},
+					"products": {
+						"type": "array",
+						"uniqueItems": true,
+						"items": {
+							"type": "object",
+							"properties": {
+								"anticodon": {
+									"type": ["string", "null"]
+								},
+								"cellularLocations": {
+									"type": "array",
+									"uniqueItems": true,
+									"items": {
+										"type": ["string", "null"]
+									}
+								},
+								"citations": {
+									"type": "array",
+									"uniqueItems": true,
+									"items": {
+										"type": "object",
+										"properties": {
+											"publication": {
+												"type": "object",
+												"properties": {
+													"authors": {
+														"type": "array",
+														"uniqueItems": true,
+														"items": {
+															"type": ["string", "null"]
+														}
+													},
+													"pmid": {
+														"type": ["string", "null"]
+													},
+													"id": {
+														"type": ["string", "null"],
+														"pattern": "^RDB[A-Z0-9_]{5}[A-Z]{3}[0-9A-Z]{5}$"
+													},
+													"citation": {
+														"type": ["string", "null"]
+													},
+													"title": {
+														"type": ["string", "null"]
+													},
+													"url": {
+														"type": ["string", "null"]
+													},
+													"year": {
+														"type": "number"
+													}
+												},
+												"additionalProperties": false
+											},
+											"evidence": {
+												"type": "object",
+												"properties": {
+													"code": {
+														"type": ["string", "null"]
+													},
+													"id": {
+														"type": ["string", "null"],
+														"pattern": "^RDB[A-Z0-9_]{5}[A-Z]{3}[0-9A-Z]{5}$"
+													},
+													"name": {
+														"type": ["string", "null"]
+													},
+													"type": {
+														"type": ["string", "null"]
+													}
+												},
+												"additionalProperties": false
+											}
+										},
+										"additionalProperties": false
+									}
+								},
+								"externalCrossReferences": {
+									"type": "array",
+									"uniqueItems": true,
+									"items": {
+										"type": "object",
+										"properties": {
+											"externalCrossReferenceId": {
+												"type": ["string", "null"],
+												"pattern": "^RDB[A-Z0-9_]{5}[A-Z]{3}[0-9A-Z]{5}$"
+											},
+											"externalCrossReferenceName": {
+												"type": ["string", "null"]
+											},
+											"objectId": {
+												"type": ["string", "null"]
+											},
+											"url": {
+												"type": ["string", "null"]
+											}
+										},
+										"additionalProperties": false
+									}
+								},
+								"geneOntologyTerms": {
+									"type": "object",
+									"properties": {
+										"biologicalProcess": {
+											"type": "array",
+											"uniqueItems": true,
+											"items": {
+												"type": "object",
+												"properties": {
+													"citations": {
+														"type": "array",
+														"uniqueItems": true,
+														"items": {
+															"type": "object",
+															"properties": {
+																"publication": {
+																	"type": "object",
+																	"properties": {
+																		"authors": {
+																			"type": "array",
+																			"uniqueItems": true,
+																			"items": {
+																				"type": ["string", "null"]
+																			}
+																		},
+																		"pmid": {
+																			"type": ["string", "null"]
+																		},
+																		"id": {
+																			"type": ["string", "null"],
+																			"pattern": "^RDB[A-Z0-9_]{5}[A-Z]{3}[0-9A-Z]{5}$"
+																		},
+																		"citation": {
+																			"type": ["string", "null"]
+																		},
+																		"title": {
+																			"type": ["string", "null"]
+																		},
+																		"url": {
+																			"type": ["string", "null"]
+																		},
+																		"year": {
+																			"type": "number"
+																		}
+																	},
+																	"additionalProperties": false
+																},
+																"evidence": {
+																	"type": "object",
+																	"properties": {
+																		"code": {
+																			"type": ["string", "null"]
+																		},
+																		"id": {
+																			"type": ["string", "null"],
+																			"pattern": "^RDB[A-Z0-9_]{5}[A-Z]{3}[0-9A-Z]{5}$"
+																		},
+																		"name": {
+																			"type": ["string", "null"]
+																		},
+																		"type": {
+																			"type": ["string", "null"]
+																		}
+																	},
+																	"additionalProperties": false
+																}
+															},
+															"additionalProperties": false
+														}
+													},
+													"id": {
+														"type": ["string", "null"]
+													},
+													"name": {
+														"type": ["string", "null"]
+													},
+													"productIds": {
+														"type": "array",
+														"uniqueItems": true,
+														"items": {
+															"type": ["string", "null"]
+														}
+													}
+												},
+												"additionalProperties": false
+											}
+										},
+										"cellularComponent": {
+											"type": "array",
+											"uniqueItems": true,
+											"items": {
+												"type": "object",
+												"properties": {
+													"citations": {
+														"type": "array",
+														"uniqueItems": true,
+														"items": {
+															"type": "object",
+															"properties": {
+																"publication": {
+																	"type": "object",
+																	"properties": {
+																		"authors": {
+																			"type": "array",
+																			"uniqueItems": true,
+																			"items": {
+																				"type": ["string", "null"]
+																			}
+																		},
+																		"pmid": {
+																			"type": ["string", "null"]
+																		},
+																		"id": {
+																			"type": ["string", "null"],
+																			"pattern": "^RDB[A-Z0-9_]{5}[A-Z]{3}[0-9A-Z]{5}$"
+																		},
+																		"citation": {
+																			"type": ["string", "null"]
+																		},
+																		"title": {
+																			"type": ["string", "null"]
+																		},
+																		"url": {
+																			"type": ["string", "null"]
+																		},
+																		"year": {
+																			"type": "number"
+																		}
+																	},
+																	"additionalProperties": false
+																},
+																"evidence": {
+																	"type": "object",
+																	"properties": {
+																		"code": {
+																			"type": ["string", "null"]
+																		},
+																		"id": {
+																			"type": ["string", "null"],
+																			"pattern": "^RDB[A-Z0-9_]{5}[A-Z]{3}[0-9A-Z]{5}$"
+																		},
+																		"name": {
+																			"type": ["string", "null"]
+																		},
+																		"type": {
+																			"type": ["string", "null"]
+																		}
+																	},
+																	"additionalProperties": false
+																}
+															},
+															"additionalProperties": false
+														}
+													},
+													"id": {
+														"type": ["string", "null"]
+													},
+													"name": {
+														"type": ["string", "null"]
+													},
+													"productIds": {
+														"type": "array",
+														"uniqueItems": true,
+														"items": {
+															"type": ["string", "null"]
+														}
+													}
+												},
+												"additionalProperties": false
+											}
+										},
+										"molecularFunction": {
+											"type": "array",
+											"uniqueItems": true,
+											"items": {
+												"type": "object",
+												"properties": {
+													"citations": {
+														"type": "array",
+														"uniqueItems": true,
+														"items": {
+															"type": "object",
+															"properties": {
+																"publication": {
+																	"type": "object",
+																	"properties": {
+																		"authors": {
+																			"type": "array",
+																			"uniqueItems": true,
+																			"items": {
+																				"type": ["string", "null"]
+																			}
+																		},
+																		"pmid": {
+																			"type": ["string", "null"]
+																		},
+																		"id": {
+																			"type": ["string", "null"],
+																			"pattern": "^RDB[A-Z0-9_]{5}[A-Z]{3}[0-9A-Z]{5}$"
+																		},
+																		"citation": {
+																			"type": ["string", "null"]
+																		},
+																		"title": {
+																			"type": ["string", "null"]
+																		},
+																		"url": {
+																			"type": ["string", "null"]
+																		},
+																		"year": {
+																			"type": "number"
+																		}
+																	},
+																	"additionalProperties": false
+																},
+																"evidence": {
+																	"type": "object",
+																	"properties": {
+																		"code": {
+																			"type": ["string", "null"]
+																		},
+																		"id": {
+																			"type": ["string", "null"],
+																			"pattern": "^RDB[A-Z0-9_]{5}[A-Z]{3}[0-9A-Z]{5}$"
+																		},
+																		"name": {
+																			"type": ["string", "null"]
+																		},
+																		"type": {
+																			"type": ["string", "null"]
+																		}
+																	},
+																	"additionalProperties": false
+																}
+															},
+															"additionalProperties": false
+														}
+													},
+													"id": {
+														"type": [
+															"string",
+															"null"
+														]
+													},
+													"name": {
+														"type": [
+															"string",
+															"null"
+														]
+													},
+													"productIds": {
+														"type": "array",
+														"uniqueItems": true,
+														"items": {
+															"type": [
+																"string",
+																"null"
+															]
+														}
+													}
+												},
+												"additionalProperties": false
+											}
+										}
+									},
+									"additionalProperties": false
+								},
+								"id": {
+									"type": ["string", "null"],
+									"pattern": "^RDB[A-Z0-9_]{5}[A-Z]{3}[0-9A-Z]{5}$"
+								},
+								"isoelectricPoint": {
+									"type": ["number", "null"]
+								},
+								"isRegulator": {
+									"type": "boolean"
+								},
+								"molecularWeight": {
+									"type": ["number", "null"]
+								},
+								"motifs": {
+									"type": "array",
+									"uniqueItems": true,
+									"items": {
+										"type": "object",
+										"properties": {
+											"description": {
+												"type": ["string", "null"]
+											},
+											"id": {
+												"type": ["string", "null"],
+												"pattern": "^RDB[A-Z0-9_]{5}[A-Z]{3}[0-9A-Z]{5}$"
+											},
+											"leftEndPosition": {
+												"type": ["number", "null"]
+											},
+											"note": {
+												"type": ["string", "null"]
+											},
+											"rightEndPosition": {
+												"type": ["number", "null"]
+											},
+											"sequence": {
+												"type": ["string", "null"]
+											},
+											"type": {
+												"type": ["string", "null"]
+											}
+										},
+										"additionalProperties": false
+									}
+								},
+								"name": {
+									"type": ["string", "null"]
+								},
+								"note": {
+									"type": ["string", "null"]
+								},
+								"regulon_id": {
+									"type": ["string", "null"],
+									"pattern": "^RDB[A-Z0-9_]{5}[A-Z]{3}[0-9A-Z]{5}$"
+								},
+								"sequence": {
+									"type": ["string", "null"]
+								},
+								"synonyms": {
+									"type": "array",
+									"uniqueItems": true,
+									"items": {
+										"type": ["string", "null"]
+									}
+								},
+								"type": {
+									"type": ["string", "null"]
+								}
+							},
+							"additionalProperties": false
+						}
+					},
+					"shineDalgarnos": {
+						"type": "array",
+						"uniqueItems": true,
+						"items": {
+							"type": "object",
+							"properties": {
+								"distanceToGene": {
+									"type": "number"
+								},
+								"id": {
+									"type": "string",
+									"pattern": "^RDB[A-Z0-9_]{5}[A-Z]{3}[0-9A-Z]{5}$"
+								},
+								"leftEndPosition": {
+									"type": ["number", "null"]
+								},
+								"note": {
+									"type": ["string", "null"]
+								},
+								"rightEndPosition": {
+									"type": ["number", "null"]
+								},
+								"sequence": {
+									"type": ["string", "null"],
+									"pattern": "^[ATCGatcg]+$"
+								}
+							},
+							"additionalProperties": false
+						}
+					},
+					"regulation": {
+						"type": ["object", "null"],
+						"properties": {
+							"operon": {
+								"type": "object",
+								"properties": {
+									"id": {
+										"type": ["string", "null"],
+										"pattern": "^RDB[A-Z0-9_]{5}[A-Z]{3}[0-9A-Z]{5}$"
+									},
+									"name": {
+										"type": ["string", "null"]
+									},
+									"arrangement": {
+										"type": "array",
+										"uniqueItems": true,
+										"items": {
+											"type": "object",
+											"properties": {
+												"regulators": {
+													"type": "array",
+													"uniqueItems": true,
+													"items": {
+														"type": "object",
+														"properties": {
+															"function": {
+																"type": ["string", "null"],
+																"enum": [
+																	"repressor",
+																	"activator",
+																	null
+																]
+															},
+															"id": {
+																"type": ["string", "null"],
+																"pattern": "^RDB[A-Z0-9_]{5}[A-Z]{3}[0-9A-Z]{5}$"
+															},
+															"name": {
+																"type": ["string", "null"]
+															},
+															"type": {
+																"type": ["string", "null"]
+															}
+														},
+														"additionalProperties": false
+													}
+												},
+												"promoters": {
+													"type": "array",
+													"uniqueItems": true,
+													"items": {
+														"type": "object",
+														"properties": {
+															"id": {
+																"type": ["string", "null"],
+																"pattern": "^RDB[A-Z0-9_]{5}[A-Z]{3}[0-9A-Z]{5}$"
+															},
+															"name": {
+																"type": ["string", "null"]
+															}
+														},
+														"additionalProperties": false
+													}
+												},
+												"transcriptionUnit": {
+													"type": "object",
+													"properties": {
+														"id": {
+															"type": ["string", "null"],
+															"pattern": "^RDB[A-Z0-9_]{5}[A-Z]{3}[0-9A-Z]{5}$"
+														},
+														"name": {
+															"type": ["string", "null"]
+														}
+													},
+													"additionalProperties": false
+												}
+											},
+											"additionalProperties": false
+										}
+									}
+								},
+								"additionalProperties": false
+							},
+							"regulators": {
+								"type": "array",
+								"uniqueItems": true,
+								"items": {
+									"type": "object",
+									"properties": {
+										"function": {
+											"type": ["string", "null"],
+											"enum": [
+												"repressor",
+												"activator",
+												null
+											]
+										},
+										"id": {
+											"type": ["string", "null"],
+											"pattern": "^RDB[A-Z0-9_]{5}[A-Z]{3}[0-9A-Z]{5}$"
+										},
+										"name": {
+											"type": ["string", "null"]
+										},
+										"type": {
+											"type": ["string", "null"]
+										}
+									},
+									"additionalProperties": false
+								}
+							},
+							"statistics": {
+								"type": "object",
+								"properties": {
+									"regulators": {
+										"type": "number"
+									},
+									"regulatoryInteractions": {
+										"type": "number"
+									},
+									"promoters": {
+										"type": "number"
+									}
+								},
+								"additionalProperties": false
+							}
+						},
+						"additionalProperties": false
+					},
+					"growthConditions": {
+						"type": "array",
+						"uniqueItems": true,
+						"items": {
+							"type": "object",
+							"properties": {
+								"controlCondition": {
+									"type": ["string", "null"]
+								},
+								"effect": {
+									"type": ["string", "null"]
+								},
+								"citations": {
+									"type": "array",
+									"uniqueItems": true,
+									"items": {
+										"type": "object",
+										"properties": {
+											"publication": {
+												"type": "object",
+												"properties": {
+													"authors": {
+														"type": "array",
+														"uniqueItems": true,
+														"items": {
+															"type": ["string", "null"]
+														}
+													},
+													"pmid": {
+														"type": ["string", "null"]
+													},
+													"id": {
+														"type": ["string", "null"],
+														"pattern": "^RDB[A-Z0-9_]{5}[A-Z]{3}[0-9A-Z]{5}$"
+													},
+													"citation": {
+														"type": ["string", "null"]
+													},
+													"title": {
+														"type": ["string", "null"]
+													},
+													"url": {
+														"type": ["string", "null"]
+													},
+													"year": {
+														"type": "number"
+													}
+												},
+												"additionalProperties": false
+											},
+											"evidence": {
+												"type": "object",
+												"properties": {
+													"code": {
+														"type": ["string", "null"]
+													},
+													"id": {
+														"type": ["string", "null"],
+														"pattern": "^RDB[A-Z0-9_]{5}[A-Z]{3}[0-9A-Z]{5}$"
+													},
+													"name": {
+														"type": ["string", "null"]
+													},
+													"type": {
+														"type": ["string", "null"]
+													}
+												},
+												"additionalProperties": false
+											}
+										},
+										"additionalProperties": false
+									}
+								},
+								"experimentalCondition": {
+									"type": ["string", "null"]
+								},
+								"id": {
+									"type": ["string", "null"],
+									"pattern": "^RDB[A-Z0-9_]{5}[A-Z]{3}[0-9A-Z]{5}$"
+								}
+							},
+							"additionalProperties": false
+						}
+					},
+					"organism": {
+						"type": "object",
+						"properties": {
+							"id": {
+								"type": ["string", "null"],
+								"pattern": "^RDB[A-Z0-9_]{5}[A-Z]{3}[0-9A-Z]{5}$"
+							},
+							"name": {
+								"type": ["string", "null"]
+							}
+						}
+					},
+					"allCitations": {
+						"type": "array",
+						"uniqueItems": true,
+						"items": {
+							"type": "object",
+							"properties": {
+								"publication": {
+												"type": "object",
+												"properties": {
+													"authors": {
+														"type": "array",
+														"uniqueItems": true,
+														"items": {
+															"type": ["string", "null"]
+														}
+													},
+													"pmid": {
+														"type": ["string", "null"]
+													},
+													"id": {
+														"type": ["string", "null"],
+														"pattern": "^RDB[A-Z0-9_]{5}[A-Z]{3}[0-9A-Z]{5}$"
+													},
+													"citation": {
+														"type": ["string", "null"]
+													},
+													"title": {
+														"type": ["string", "null"]
+													},
+													"url": {
+														"type": ["string", "null"]
+													},
+													"year": {
+														"type": "number"
+													}
+												},
+												"additionalProperties": false
+											},
+								"evidence": {
+												"type": "object",
+												"properties": {
+													"code": {
+														"type": ["string", "null"]
+													},
+													"id": {
+														"type": ["string", "null"],
+														"pattern": "^RDB[A-Z0-9_]{5}[A-Z]{3}[0-9A-Z]{5}$"
+													},
+													"name": {
+														"type": ["string", "null"]
+													},
+													"type": {
+														"type": ["string", "null"]
+													}
+												},
+												"additionalProperties": false
+											}
+							},
+							"additionalProperties": false
+						}
+					},
+					"schemaVersion": {
+						"type": "number"
+					}
+				},
+				"additionalProperties": false
+			}
+		},
+		"validationLevel": "strict",
+		"validationAction": "error"
+	}
+}

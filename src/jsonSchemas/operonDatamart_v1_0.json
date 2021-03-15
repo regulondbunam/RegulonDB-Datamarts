@@ -1,0 +1,1258 @@
+{
+    "operonDatamart": {
+        "validator": {
+            "$jsonSchema":{
+                "type": "object",
+                "required": [
+                    "operon"
+                ],
+                "properties": {
+                    "_id": {
+                        "type": ["string", "null"],
+                        "pattern": "^RDB[A-Z0-9_]{5}[A-Z]{3}[0-9A-Z]{5}$"
+                    },
+                    "operon": {
+                        "type": "object",
+                        "required":[
+                            "id"
+                        ],
+                        "properties":{
+                            "id":{
+                                "type": ["string", "null"],
+                                "pattern":"^RDB[A-Z0-9_]{5}[A-Z]{3}[0-9A-Z]{5}$"
+                            },
+                            "citations": {
+								"type": "array",
+								"uniqueItems": true,
+								"items": {
+									"type": "object",
+									"properties": {
+										"publication": {
+											"type": "object",
+											"properties": {
+                                                "authors": {
+                                                    "type": "array",
+                                                    "uniqueItems": true,
+                                                    "items": {
+                                                        "type": ["string", "null"]
+                                                    }
+                                                },
+												"pmid": {
+													"type": ["string", "null"]
+												},
+												"id": {
+													"type": ["string", "null"],
+													"pattern": "^RDB[A-Z0-9_]{5}[A-Z]{3}[0-9A-Z]{5}$"
+												},
+												"citation": {
+													"type": ["string", "null"]
+												},
+                                                "title": {
+                                                    "type": ["string", "null"]
+                                                },
+												"url": {
+													"type": ["string", "null"]
+												},
+                                                "year": {
+                                                    "type": "number"
+                                                }
+											},
+											"additionalProperties": false
+										},
+										"evidence": {
+											"type": "object",
+											"properties": {
+												"code": {
+													"type": ["string", "null"]
+												},
+												"id": {
+													"type": ["string", "null"],
+													"pattern": "^RDB[A-Z0-9_]{5}[A-Z]{3}[0-9A-Z]{5}$"
+												},
+												"name": {
+													"type": ["string", "null"]
+												},
+												"type": {
+													"type": ["string", "null"]
+												}
+											},
+											"additionalProperties": false
+										}
+									},
+									"additionalProperties": false
+								}
+							},
+                            "name": {
+                                "type":["string", "null"]
+                            },
+                            "regulationPositions": {
+                                "type": "object",
+                                "properties": {
+                                    "leftEndPosition": {
+                                        "type":["number", "null"]
+                                    },
+                                    "rightEndPosition": {
+                                        "type":["number", "null"]
+                                    }
+                                },
+                                "additionalProperties": false
+                            },
+                            "strand": {
+                                "type":["string", "null"]
+                            },
+                            "statistics": {
+                                "type": "object",
+                                "properties": {
+                                    "transcriptionUnits": {
+                                        "type":["number", "null"]
+                                    },
+                                    "promoters": {
+                                        "type":["number", "null"]
+                                    },
+                                    "genes": {
+                                        "type":["number", "null"]
+                                    }
+                                },
+                                "additionalProperties": false
+                            }
+                        },
+                        "additionalProperties": false
+                    },
+                    "transcriptionUnits": {
+                        "type": "array",
+                        "uniqueItems": true,
+                        "items": {
+                            "type": "object",
+                            "properties": {
+                                "id": {
+                                    "type":["string", "null"],
+                                    "pattern":"^RDB[A-Z0-9_]{5}[A-Z]{3}[0-9A-Z]{5}$"
+                                },
+                                "name": {
+                                    "type":["string", "null"]
+                                },
+                                "citations": {
+                                    "type": "array",
+                                    "uniqueItems": true,
+                                    "items": {
+                                        "type": "object",
+                                        "properties": {
+                                            "publication": {
+                                                "type": "object",
+                                                "properties": {
+                                                    "authors": {
+                                                        "type": "array",
+                                                        "uniqueItems": true,
+                                                        "items": {
+                                                            "type": ["string", "null"]
+                                                        }
+                                                    },
+                                                    "pmid": {
+                                                        "type": ["string", "null"]
+                                                    },
+                                                    "id": {
+                                                        "type": ["string", "null"],
+                                                        "pattern": "^RDB[A-Z0-9_]{5}[A-Z]{3}[0-9A-Z]{5}$"
+                                                    },
+                                                    "citation": {
+                                                        "type": ["string", "null"]
+                                                    },
+                                                    "title": {
+                                                        "type": ["string", "null"]
+                                                    },
+                                                    "url": {
+                                                        "type": ["string", "null"]
+                                                    },
+                                                    "year": {
+                                                        "type": "number"
+                                                    }
+                                                },
+                                                "additionalProperties": false
+                                            },
+                                            "evidence": {
+                                                "type": "object",
+                                                "properties": {
+                                                    "code": {
+                                                        "type": ["string", "null"]
+                                                    },
+                                                    "id": {
+                                                        "type": ["string", "null"],
+                                                        "pattern": "^RDB[A-Z0-9_]{5}[A-Z]{3}[0-9A-Z]{5}$"
+                                                    },
+                                                    "name": {
+                                                        "type": ["string", "null"]
+                                                    },
+                                                    "type": {
+                                                        "type": ["string", "null"]
+                                                    }
+                                                },
+                                                "additionalProperties": false
+                                            }
+                                        },
+                                        "additionalProperties": false
+                                    }
+                                },
+                                "firstGene": {
+                                    "type": "object",
+                                    "properties": {
+                                        "distanceToPromoter": {
+                                            "type":["number", "null"]
+                                        },
+                                        "gene_id": {
+                                            "type":["string", "null"]
+                                        },
+                                        "gene_name": {
+                                            "type":["string", "null"]
+                                        }
+                                    },
+                                    "additionalProperties": false
+                                },
+                                "genes": {
+                                    "type": "array",
+                                    "uniqueItems": true,
+                                    "items": {
+                                        "type": "object",
+                                        "properties": {
+                                            "id": {
+                                                "type":["string", "null"],
+                                                "pattern":"^RDB[A-Z0-9_]{5}[A-Z]{3}[0-9A-Z]{5}$"
+                                            },
+                                            "name": {
+                                                "type":["string", "null"]
+                                            },
+                                            "regulatorBindingSites":{
+                                                "type": "array",
+                                                "uniqueItems":true,
+                                                "items": {
+                                                    "type": "object",
+                                                    "properties":{
+                                                        "regulator":{
+                                                            "type": "object",
+                                                            "properties": {
+                                                                "_id": {
+                                                                    "type":["string", "null"],
+                                                                    "pattern":"^RDB[A-Z0-9_]{5}[A-Z]{3}[0-9A-Z]{5}$"
+                                                                },
+                                                                "name": {
+                                                                    "type":["string", "null"]
+                                                                },
+                                                                "function":{
+                                                                    "type":["string", "null"]
+                                                                }
+                                                            },
+                                                            "additionalProperties": false
+                                                        },
+                                                        "regulatoryInteractions":{
+                                                            "type": "array",
+                                                            "uniqueItems": true,
+                                                            "items": {
+                                                                "type": "object",
+                                                                "properties": {
+                                                                    "_id":{
+                                                                        "type":["string", "null"],
+                                                                        "pattern":"^RDB[A-Z0-9_]{5}[A-Z]{3}[0-9A-Z]{5}$"
+                                                                    },
+                                                                    "centerPosition": {
+                                                                        "type":["number", "null"]
+                                                                    },
+                                                                    "citations": {
+                                                                        "type": "array",
+                                                                        "uniqueItems": true,
+                                                                        "items": {
+                                                                            "type": "object",
+                                                                            "properties": {
+                                                                                "publication": {
+                                                                                    "type": "object",
+                                                                                    "properties": {
+                                                                                        "authors": {
+                                                                                            "type": "array",
+                                                                                            "uniqueItems": true,
+                                                                                            "items": {
+                                                                                                "type": ["string", "null"]
+                                                                                            }
+                                                                                        },
+                                                                                        "pmid": {
+                                                                                            "type": ["string", "null"]
+                                                                                        },
+                                                                                        "id": {
+                                                                                            "type": ["string", "null"],
+                                                                                            "pattern": "^RDB[A-Z0-9_]{5}[A-Z]{3}[0-9A-Z]{5}$"
+                                                                                        },
+                                                                                        "citation": {
+                                                                                            "type": ["string", "null"]
+                                                                                        },
+                                                                                        "title": {
+                                                                                            "type": ["string", "null"]
+                                                                                        },
+                                                                                        "url": {
+                                                                                            "type": ["string", "null"]
+                                                                                        },
+                                                                                        "year": {
+                                                                                            "type": "number"
+                                                                                        }
+                                                                                    },
+                                                                                    "additionalProperties": false
+                                                                                },
+                                                                                "evidence": {
+                                                                                    "type": "object",
+                                                                                    "properties": {
+                                                                                        "code": {
+                                                                                            "type": ["string", "null"]
+                                                                                        },
+                                                                                        "id": {
+                                                                                            "type": ["string", "null"],
+                                                                                            "pattern": "^RDB[A-Z0-9_]{5}[A-Z]{3}[0-9A-Z]{5}$"
+                                                                                        },
+                                                                                        "name": {
+                                                                                            "type": ["string", "null"]
+                                                                                        },
+                                                                                        "type": {
+                                                                                            "type": ["string", "null"]
+                                                                                        }
+                                                                                    },
+                                                                                    "additionalProperties": false
+                                                                                }
+                                                                            },
+                                                                            "additionalProperties": false
+                                                                        }
+                                                                    },
+                                                                    "function": {
+                                                                        "type":["string", "null"]
+                                                                    },
+                                                                    "note": {
+                                                                        "type":["string", "null"]
+                                                                    },
+                                                                    "regulatorySite": {
+                                                                        "type": "object",
+                                                                        "properties": {
+                                                                            "_id": {
+                                                                                "type":["string", "null"],
+                                                                                "pattern":"^RDB[A-Z0-9_]{5}[A-Z]{3}[0-9A-Z]{5}$"
+                                                                            },
+                                                                            "absolutePosition": {
+                                                                                "type":["number", "null"]
+                                                                            },
+                                                                            "citations": {
+                                                                                "type": "array",
+                                                                                "uniqueItems": true,
+                                                                                "items": {
+                                                                                    "type": "object",
+                                                                                    "properties": {
+                                                                                        "publication": {
+                                                                                            "type": "object",
+                                                                                            "properties": {
+                                                                                                "authors": {
+                                                                                                    "type": "array",
+                                                                                                    "uniqueItems": true,
+                                                                                                    "items": {
+                                                                                                        "type": ["string", "null"]
+                                                                                                    }
+                                                                                                },
+                                                                                                "pmid": {
+                                                                                                    "type": ["string", "null"]
+                                                                                                },
+                                                                                                "id": {
+                                                                                                    "type": ["string", "null"],
+                                                                                                    "pattern": "^RDB[A-Z0-9_]{5}[A-Z]{3}[0-9A-Z]{5}$"
+                                                                                                },
+                                                                                                "citation": {
+                                                                                                    "type": ["string", "null"]
+                                                                                                },
+                                                                                                "title": {
+                                                                                                    "type": ["string", "null"]
+                                                                                                },
+                                                                                                "url": {
+                                                                                                    "type": ["string", "null"]
+                                                                                                },
+                                                                                                "year": {
+                                                                                                    "type": "number"
+                                                                                                }
+                                                                                            },
+                                                                                            "additionalProperties": false
+                                                                                        },
+                                                                                        "evidence": {
+                                                                                            "type": "object",
+                                                                                            "properties": {
+                                                                                                "code": {
+                                                                                                    "type": ["string", "null"]
+                                                                                                },
+                                                                                                "id": {
+                                                                                                    "type": ["string", "null"],
+                                                                                                    "pattern": "^RDB[A-Z0-9_]{5}[A-Z]{3}[0-9A-Z]{5}$"
+                                                                                                },
+                                                                                                "name": {
+                                                                                                    "type": ["string", "null"]
+                                                                                                },
+                                                                                                "type": {
+                                                                                                    "type": ["string", "null"]
+                                                                                                }
+                                                                                            },
+                                                                                            "additionalProperties": false
+                                                                                        }
+                                                                                    },
+                                                                                    "additionalProperties": false
+                                                                                }
+                                                                            },
+                                                                            "leftEndPosition": {
+                                                                                "type":["number", "null"]
+                                                                            },
+                                                                            "length": {
+                                                                                "type":["number", "null"]
+                                                                            },
+                                                                            "note": {
+                                                                                "type":["string", "null"]
+                                                                            },
+                                                                            "rightEndPosition": {
+                                                                                "type":["number", "null"]
+                                                                            },
+                                                                            "sequence": {
+                                                                                "type":["string", "null"]
+                                                                            }
+                                                                        },
+                                                                        "additionalProperties": false
+                                                                    },
+                                                                    "mechanism": {
+                                                                        "type":["string", "null"]
+                                                                    }
+                                                                },
+                                                                "additionalProperties": false
+                                                            }
+                                                        },
+                                                        "function": {
+                                                            "type": ["string", "null"]
+                                                        },
+                                                        "mechanism":{
+                                                            "type": ["string, null"]
+                                                        }
+                                                    },
+                                                    "additionalProperties": false
+                                                }
+                                            }
+                                        },
+                                        "additionalProperties": false
+                                    }
+                                },
+                                "note": {
+                                    "type": ["string", "null"]
+                                },
+                                "synonyms": {
+                                    "type": "array",
+                                    "uniqueItems": true,
+                                    "items": {
+                                        "type": ["string", "null"]
+                                    }
+                                },
+                                "promoter": {
+                                    "type": "object",
+                                    "properties": {
+                                        "_id": {
+                                            "type": ["string", "null"],
+                                            "pattern":"^RDB[A-Z0-9_]{5}[A-Z]{3}[0-9A-Z]{5}$"
+                                        },
+                                        "bindsSigmaFactor": {
+                                            "type": "object",
+                                            "properties": {
+                                                "sigmaFactor_id": {
+                                                    "type": ["string", "null"]
+                                                },
+                                                "citations": {
+                                                    "type": "array",
+                                                    "uniqueItems": true,
+                                                    "items": {
+                                                        "type": "object",
+                                                        "properties": {
+                                                            "publication": {
+                                                                "type": "object",
+                                                                "properties": {
+                                                                    "authors": {
+                                                                        "type": "array",
+                                                                        "uniqueItems": true,
+                                                                        "items": {
+                                                                            "type": ["string", "null"]
+                                                                        }
+                                                                    },
+                                                                    "pmid": {
+                                                                        "type": ["string", "null"]
+                                                                    },
+                                                                    "id": {
+                                                                        "type": ["string", "null"],
+                                                                        "pattern": "^RDB[A-Z0-9_]{5}[A-Z]{3}[0-9A-Z]{5}$"
+                                                                    },
+                                                                    "citation": {
+                                                                        "type": ["string", "null"]
+                                                                    },
+                                                                    "title": {
+                                                                        "type": ["string", "null"]
+                                                                    },
+                                                                    "url": {
+                                                                        "type": ["string", "null"]
+                                                                    },
+                                                                    "year": {
+                                                                        "type": "number"
+                                                                    }
+                                                                },
+                                                                "additionalProperties": false
+                                                            },
+                                                            "evidence": {
+                                                                "type": "object",
+                                                                "properties": {
+                                                                    "code": {
+                                                                        "type": ["string", "null"]
+                                                                    },
+                                                                    "id": {
+                                                                        "type": ["string", "null"],
+                                                                        "pattern": "^RDB[A-Z0-9_]{5}[A-Z]{3}[0-9A-Z]{5}$"
+                                                                    },
+                                                                    "name": {
+                                                                        "type": ["string", "null"]
+                                                                    },
+                                                                    "type": {
+                                                                        "type": ["string", "null"]
+                                                                    }
+                                                                },
+                                                                "additionalProperties": false
+                                                            }
+                                                        },
+                                                        "additionalProperties": false
+                                                    }
+                                                },
+                                                "sigmaFactor_name": {
+                                                    "type": ["string", "null"]
+                                                }
+                                            },
+                                            "additionalProperties": false
+                                        },
+                                        "citations": {
+                                            "type": "array",
+                                            "uniqueItems": true,
+                                            "items": {
+                                                "type": "object",
+                                                "properties": {
+                                                    "publication": {
+                                                        "type": "object",
+                                                        "properties": {
+                                                            "authors": {
+                                                                "type": "array",
+                                                                "uniqueItems": true,
+                                                                "items": {
+                                                                    "type": ["string", "null"]
+                                                                }
+                                                            },
+                                                            "pmid": {
+                                                                "type": ["string", "null"]
+                                                            },
+                                                            "id": {
+                                                                "type": ["string", "null"],
+                                                                "pattern": "^RDB[A-Z0-9_]{5}[A-Z]{3}[0-9A-Z]{5}$"
+                                                            },
+                                                            "citation": {
+                                                                "type": ["string", "null"]
+                                                            },
+                                                            "title": {
+                                                                "type": ["string", "null"]
+                                                            },
+                                                            "url": {
+                                                                "type": ["string", "null"]
+                                                            },
+                                                            "year": {
+                                                                "type": "number"
+                                                            }
+                                                        },
+                                                        "additionalProperties": false
+                                                    },
+                                                    "evidence": {
+                                                        "type": "object",
+                                                        "properties": {
+                                                            "code": {
+                                                                "type": ["string", "null"]
+                                                            },
+                                                            "id": {
+                                                                "type": ["string", "null"],
+                                                                "pattern": "^RDB[A-Z0-9_]{5}[A-Z]{3}[0-9A-Z]{5}$"
+                                                            },
+                                                            "name": {
+                                                                "type": ["string", "null"]
+                                                            },
+                                                            "type": {
+                                                                "type": ["string", "null"]
+                                                            }
+                                                        },
+                                                        "additionalProperties": false
+                                                    }
+                                                },
+                                                "additionalProperties": false
+                                            }
+                                        },
+                                        "name": {
+                                            "type": ["string", "null"]
+                                        },
+                                        "note": {
+                                            "type": ["string", "null"]
+                                        },
+                                        "boxes": {
+                                            "type": "array",
+                                            "uniqueItems":true,
+                                            "items": {
+                                                "type": "object",
+                                                "properties": {
+                                                    "leftEndPosition": {
+                                                        "type": ["number", "null"]
+                                                    },
+                                                    "rightEndPosition": {
+                                                        "type": ["number", "null"]
+                                                    },
+                                                    "sequence": {
+                                                        "type": ["string", "null"]
+                                                    },
+                                                    "type": {
+                                                        "type": ["string", "null"]
+                                                    }
+                                                },
+                                                "additionalProperties": false
+                                            }
+                                        },
+                                        "score": {
+                                            "type": ["number", "null"]
+                                        },
+                                        "sequence": {
+                                            "type": ["string", "null"]
+                                        },
+                                        "synonyms": {
+                                            "type": "array",
+                                            "uniqueItems": true,
+                                            "items": {
+                                                "type": ["string", "null"]
+                                            }
+                                        },
+                                        "regulatorBindingSites":{
+                                                "type": "array",
+                                                "uniqueItems":true,
+                                                "items": {
+                                                    "type": "object",
+                                                    "properties":{
+                                                        "regulator":{
+                                                            "type": "object",
+                                                            "properties": {
+                                                                "_id": {
+                                                                    "type":["string", "null"],
+                                                                    "pattern":"^RDB[A-Z0-9_]{5}[A-Z]{3}[0-9A-Z]{5}$"
+                                                                },
+                                                                "name": {
+                                                                    "type":["string", "null"]
+                                                                },
+                                                                "function":{
+                                                                    "type":["string", "null"]
+                                                                }
+                                                            },
+                                                            "additionalProperties": false
+                                                        },
+                                                        "regulatoryInteractions":{
+                                                            "type": "array",
+                                                            "uniqueItems": true,
+                                                            "items": {
+                                                                "type": "object",
+                                                                "properties": {
+                                                                    "_id":{
+                                                                        "type":["string", "null"],
+                                                                        "pattern":"^RDB[A-Z0-9_]{5}[A-Z]{3}[0-9A-Z]{5}$"
+                                                                    },
+                                                                    "centerPosition": {
+                                                                        "type":["number", "null"]
+                                                                    },
+                                                                    "citations": {
+                                                                        "type": "array",
+                                                                        "uniqueItems": true,
+                                                                        "items": {
+                                                                            "type": "object",
+                                                                            "properties": {
+                                                                                "publication": {
+                                                                                    "type": "object",
+                                                                                    "properties": {
+                                                                                        "authors": {
+                                                                                            "type": "array",
+                                                                                            "uniqueItems": true,
+                                                                                            "items": {
+                                                                                                "type": ["string", "null"]
+                                                                                            }
+                                                                                        },
+                                                                                        "pmid": {
+                                                                                            "type": ["string", "null"]
+                                                                                        },
+                                                                                        "id": {
+                                                                                            "type": ["string", "null"],
+                                                                                            "pattern": "^RDB[A-Z0-9_]{5}[A-Z]{3}[0-9A-Z]{5}$"
+                                                                                        },
+                                                                                        "citation": {
+                                                                                            "type": ["string", "null"]
+                                                                                        },
+                                                                                        "title": {
+                                                                                            "type": ["string", "null"]
+                                                                                        },
+                                                                                        "url": {
+                                                                                            "type": ["string", "null"]
+                                                                                        },
+                                                                                        "year": {
+                                                                                            "type": "number"
+                                                                                        }
+                                                                                    },
+                                                                                    "additionalProperties": false
+                                                                                },
+                                                                                "evidence": {
+                                                                                    "type": "object",
+                                                                                    "properties": {
+                                                                                        "code": {
+                                                                                            "type": ["string", "null"]
+                                                                                        },
+                                                                                        "id": {
+                                                                                            "type": ["string", "null"],
+                                                                                            "pattern": "^RDB[A-Z0-9_]{5}[A-Z]{3}[0-9A-Z]{5}$"
+                                                                                        },
+                                                                                        "name": {
+                                                                                            "type": ["string", "null"]
+                                                                                        },
+                                                                                        "type": {
+                                                                                            "type": ["string", "null"]
+                                                                                        }
+                                                                                    },
+                                                                                    "additionalProperties": false
+                                                                                }
+                                                                            },
+                                                                            "additionalProperties": false
+                                                                        }
+                                                                    },
+                                                                    "function": {
+                                                                        "type":["string", "null"]
+                                                                    },
+                                                                    "note": {
+                                                                        "type":["string", "null"]
+                                                                    },
+                                                                    "regulatorySite": {
+                                                                        "type": "object",
+                                                                        "properties": {
+                                                                            "_id": {
+                                                                                "type":["string", "null"],
+                                                                                "pattern":"^RDB[A-Z0-9_]{5}[A-Z]{3}[0-9A-Z]{5}$"
+                                                                            },
+                                                                            "absolutePosition": {
+                                                                                "type":["number", "null"]
+                                                                            },
+                                                                            "citations": {
+                                                                                "type": "array",
+                                                                                "uniqueItems": true,
+                                                                                "items": {
+                                                                                    "type": "object",
+                                                                                    "properties": {
+                                                                                        "publication": {
+                                                                                            "type": "object",
+                                                                                            "properties": {
+                                                                                                "authors": {
+                                                                                                    "type": "array",
+                                                                                                    "uniqueItems": true,
+                                                                                                    "items": {
+                                                                                                        "type": ["string", "null"]
+                                                                                                    }
+                                                                                                },
+                                                                                                "pmid": {
+                                                                                                    "type": ["string", "null"]
+                                                                                                },
+                                                                                                "id": {
+                                                                                                    "type": ["string", "null"],
+                                                                                                    "pattern": "^RDB[A-Z0-9_]{5}[A-Z]{3}[0-9A-Z]{5}$"
+                                                                                                },
+                                                                                                "citation": {
+                                                                                                    "type": ["string", "null"]
+                                                                                                },
+                                                                                                "title": {
+                                                                                                    "type": ["string", "null"]
+                                                                                                },
+                                                                                                "url": {
+                                                                                                    "type": ["string", "null"]
+                                                                                                },
+                                                                                                "year": {
+                                                                                                    "type": "number"
+                                                                                                }
+                                                                                            },
+                                                                                            "additionalProperties": false
+                                                                                        },
+                                                                                        "evidence": {
+                                                                                            "type": "object",
+                                                                                            "properties": {
+                                                                                                "code": {
+                                                                                                    "type": ["string", "null"]
+                                                                                                },
+                                                                                                "id": {
+                                                                                                    "type": ["string", "null"],
+                                                                                                    "pattern": "^RDB[A-Z0-9_]{5}[A-Z]{3}[0-9A-Z]{5}$"
+                                                                                                },
+                                                                                                "name": {
+                                                                                                    "type": ["string", "null"]
+                                                                                                },
+                                                                                                "type": {
+                                                                                                    "type": ["string", "null"]
+                                                                                                }
+                                                                                            },
+                                                                                            "additionalProperties": false
+                                                                                        }
+                                                                                    },
+                                                                                    "additionalProperties": false
+                                                                                }
+                                                                            },
+                                                                            "leftEndPosition": {
+                                                                                "type":["number", "null"]
+                                                                            },
+                                                                            "length": {
+                                                                                "type":["number", "null"]
+                                                                            },
+                                                                            "note": {
+                                                                                "type":["string", "null"]
+                                                                            },
+                                                                            "rightEndPosition": {
+                                                                                "type":["number", "null"]
+                                                                            },
+                                                                            "sequence": {
+                                                                                "type":["string", "null"]
+                                                                            }
+                                                                        }
+                                                                    },
+                                                                    "mechanism": {
+                                                                        "type":["string", "null"]
+                                                                    }
+                                                                }
+                                                            }
+                                                        },
+                                                        "function": {
+                                                            "type": ["string", "null"]
+                                                        },
+                                                        "mechanism":{
+                                                            "type": ["string, null"]
+                                                        }
+                                                    },
+                                                    "additionalProperties": false
+                                                }
+                                            },
+                                        "transcriptionStartSite":{
+                                            "type": "object",
+                                            "properties": {
+                                                "leftEndPosition": {
+                                                    "type": ["number", "null"]
+                                                },
+                                                "rightEndPosition": {
+                                                    "type": ["number", "null"]
+                                                },
+                                                "range": {
+                                                    "type": ["number", "null"]
+                                                },
+                                                "type": {
+                                                    "type": ["string", "null"]
+                                                }
+                                            },
+                                            "additionalProperties": false
+                                        }
+                                    },
+                                    "additionalProperties": false
+                                },
+                                "terminators": {
+                                    "type": "array",
+                                    "uniqueItems": true,
+                                    "items": {
+                                        "type": "object",
+                                        "properties": {
+                                            "_id": {
+                                                "type": ["string", "null"],
+                                                "pattern":"^RDB[A-Z0-9_]{5}[A-Z]{3}[0-9A-Z]{5}$"
+                                            },
+                                            "citations": {
+                                                "type": "array",
+                                                "uniqueItems": true,
+                                                "items": {
+                                                    "type": "object",
+                                                    "properties": {
+                                                        "publication": {
+                                                            "type": "object",
+                                                            "properties": {
+                                                                "authors": {
+                                                                    "type": "array",
+                                                                    "uniqueItems": true,
+                                                                    "items": {
+                                                                        "type": ["string", "null"]
+                                                                    }
+                                                                },
+                                                                "pmid": {
+                                                                    "type": ["string", "null"]
+                                                                },
+                                                                "id": {
+                                                                    "type": ["string", "null"],
+                                                                    "pattern": "^RDB[A-Z0-9_]{5}[A-Z]{3}[0-9A-Z]{5}$"
+                                                                },
+                                                                "citation": {
+                                                                    "type": ["string", "null"]
+                                                                },
+                                                                "title": {
+                                                                    "type": ["string", "null"]
+                                                                },
+                                                                "url": {
+                                                                    "type": ["string", "null"]
+                                                                },
+                                                                "year": {
+                                                                    "type": "number"
+                                                                }
+                                                            },
+                                                            "additionalProperties": false
+                                                        },
+                                                        "evidence": {
+                                                            "type": "object",
+                                                            "properties": {
+                                                                "code": {
+                                                                    "type": ["string", "null"]
+                                                                },
+                                                                "id": {
+                                                                    "type": ["string", "null"],
+                                                                    "pattern": "^RDB[A-Z0-9_]{5}[A-Z]{3}[0-9A-Z]{5}$"
+                                                                },
+                                                                "name": {
+                                                                    "type": ["string", "null"]
+                                                                },
+                                                                "type": {
+                                                                    "type": ["string", "null"]
+                                                                }
+                                                            },
+                                                            "additionalProperties": false
+                                                        }
+                                                    },
+                                                    "additionalProperties": false
+                                                }
+                                            },
+                                            "sequence": {
+                                                "type": ["string", "null"]
+                                            },
+                                            "transcriptionTerminationSite": {
+                                                "type": "object",
+                                                "properties": {
+                                                    "leftEndPosition": {
+                                                        "type": ["number", "null"]
+                                                    },
+                                                    "rightEndPosition": {
+                                                        "type": ["number", "null"]
+                                                    },
+                                                    "function": {
+                                                        "type": ["string", "null"]
+                                                    }
+                                                },
+                                                "additionalProperties": false
+                                            }
+                                        },
+                                        "additionalProperties": false
+                                    }
+                                },
+                                "regulatorBindingSites":{
+                                                "type": "array",
+                                                "uniqueItems":true,
+                                                "items": {
+                                                    "type": "object",
+                                                    "properties":{
+                                                        "regulator":{
+                                                            "type": "object",
+                                                            "properties": {
+                                                                "_id": {
+                                                                    "type":["string", "null"],
+                                                                    "pattern":"^RDB[A-Z0-9_]{5}[A-Z]{3}[0-9A-Z]{5}$"
+                                                                },
+                                                                "name": {
+                                                                    "type":["string", "null"]
+                                                                },
+                                                                "function":{
+                                                                    "type":["string", "null"]
+                                                                }
+                                                            },
+                                                            "additionalProperties": false
+                                                        },
+                                                        "regulatoryInteractions":{
+                                                            "type": "array",
+                                                            "uniqueItems": true,
+                                                            "items": {
+                                                                "type": "object",
+                                                                "properties": {
+                                                                    "_id":{
+                                                                        "type":["string", "null"],
+                                                                        "pattern":"^RDB[A-Z0-9_]{5}[A-Z]{3}[0-9A-Z]{5}$"
+                                                                    },
+                                                                    "centerPosition": {
+                                                                        "type":["number", "null"]
+                                                                    },
+                                                                    "citations": {
+                                                                        "type": "array",
+                                                                        "uniqueItems": true,
+                                                                        "items": {
+                                                                            "type": "object",
+                                                                            "properties": {
+                                                                                "publication": {
+                                                                                    "type": "object",
+                                                                                    "properties": {
+                                                                                        "authors": {
+                                                                                            "type": "array",
+                                                                                            "uniqueItems": true,
+                                                                                            "items": {
+                                                                                                "type": ["string", "null"]
+                                                                                            }
+                                                                                        },
+                                                                                        "pmid": {
+                                                                                            "type": ["string", "null"]
+                                                                                        },
+                                                                                        "id": {
+                                                                                            "type": ["string", "null"],
+                                                                                            "pattern": "^RDB[A-Z0-9_]{5}[A-Z]{3}[0-9A-Z]{5}$"
+                                                                                        },
+                                                                                        "citation": {
+                                                                                            "type": ["string", "null"]
+                                                                                        },
+                                                                                        "title": {
+                                                                                            "type": ["string", "null"]
+                                                                                        },
+                                                                                        "url": {
+                                                                                            "type": ["string", "null"]
+                                                                                        },
+                                                                                        "year": {
+                                                                                            "type": "number"
+                                                                                        }
+                                                                                    },
+                                                                                    "additionalProperties": false
+                                                                                },
+                                                                                "evidence": {
+                                                                                    "type": "object",
+                                                                                    "properties": {
+                                                                                        "code": {
+                                                                                            "type": ["string", "null"]
+                                                                                        },
+                                                                                        "id": {
+                                                                                            "type": ["string", "null"],
+                                                                                            "pattern": "^RDB[A-Z0-9_]{5}[A-Z]{3}[0-9A-Z]{5}$"
+                                                                                        },
+                                                                                        "name": {
+                                                                                            "type": ["string", "null"]
+                                                                                        },
+                                                                                        "type": {
+                                                                                            "type": ["string", "null"]
+                                                                                        }
+                                                                                    },
+                                                                                    "additionalProperties": false
+                                                                                }
+                                                                            },
+                                                                            "additionalProperties": false
+                                                                        }
+                                                                    },
+                                                                    "function": {
+                                                                        "type":["string", "null"]
+                                                                    },
+                                                                    "note": {
+                                                                        "type":["string", "null"]
+                                                                    },
+                                                                    "regulatorySite": {
+                                                                        "type": "object",
+                                                                        "properties": {
+                                                                            "_id": {
+                                                                                "type":["string", "null"],
+                                                                                "pattern":"^RDB[A-Z0-9_]{5}[A-Z]{3}[0-9A-Z]{5}$"
+                                                                            },
+                                                                            "absolutePosition": {
+                                                                                "type":["number", "null"]
+                                                                            },
+                                                                            "citations": {
+                                                                                "type": "array",
+                                                                                "uniqueItems": true,
+                                                                                "items": {
+                                                                                    "type": "object",
+                                                                                    "properties": {
+                                                                                        "publication": {
+                                                                                            "type": "object",
+                                                                                            "properties": {
+                                                                                                "authors": {
+                                                                                                    "type": "array",
+                                                                                                    "uniqueItems": true,
+                                                                                                    "items": {
+                                                                                                        "type": ["string", "null"]
+                                                                                                    }
+                                                                                                },
+                                                                                                "pmid": {
+                                                                                                    "type": ["string", "null"]
+                                                                                                },
+                                                                                                "id": {
+                                                                                                    "type": ["string", "null"],
+                                                                                                    "pattern": "^RDB[A-Z0-9_]{5}[A-Z]{3}[0-9A-Z]{5}$"
+                                                                                                },
+                                                                                                "citation": {
+                                                                                                    "type": ["string", "null"]
+                                                                                                },
+                                                                                                "title": {
+                                                                                                    "type": ["string", "null"]
+                                                                                                },
+                                                                                                "url": {
+                                                                                                    "type": ["string", "null"]
+                                                                                                },
+                                                                                                "year": {
+                                                                                                    "type": "number"
+                                                                                                }
+                                                                                            },
+                                                                                            "additionalProperties": false
+                                                                                        },
+                                                                                        "evidence": {
+                                                                                            "type": "object",
+                                                                                            "properties": {
+                                                                                                "code": {
+                                                                                                    "type": ["string", "null"]
+                                                                                                },
+                                                                                                "id": {
+                                                                                                    "type": ["string", "null"],
+                                                                                                    "pattern": "^RDB[A-Z0-9_]{5}[A-Z]{3}[0-9A-Z]{5}$"
+                                                                                                },
+                                                                                                "name": {
+                                                                                                    "type": ["string", "null"]
+                                                                                                },
+                                                                                                "type": {
+                                                                                                    "type": ["string", "null"]
+                                                                                                }
+                                                                                            },
+                                                                                            "additionalProperties": false
+                                                                                        }
+                                                                                    },
+                                                                                    "additionalProperties": false
+                                                                                }
+                                                                            },
+                                                                            "leftEndPosition": {
+                                                                                "type":["number", "null"]
+                                                                            },
+                                                                            "length": {
+                                                                                "type":["number", "null"]
+                                                                            },
+                                                                            "note": {
+                                                                                "type":["string", "null"]
+                                                                            },
+                                                                            "rightEndPosition": {
+                                                                                "type":["number", "null"]
+                                                                            },
+                                                                            "sequence": {
+                                                                                "type":["string", "null"]
+                                                                            }
+                                                                        },
+                                                                        "additionalProperties": false
+                                                                    },
+                                                                    "mechanism": {
+                                                                        "type":["string", "null"]
+                                                                    }
+                                                                },
+                                                                "additionalProperties": false
+                                                            }
+                                                        },
+                                                        "function": {
+                                                            "type": ["string", "null"]
+                                                        },
+                                                        "mechanism":{
+                                                            "type": ["string, null"]
+                                                        }
+                                                    },
+                                                    "additionalProperties": false
+                                                }
+                                            },
+                                "statistics": {
+                                    "type": "object",
+                                    "properties": {
+                                        "genes": {
+                                            "type": ["number", "null"]
+                                        },
+                                        "sites": {
+                                            "type": ["number", "null"]
+                                        },
+                                        "transcriptionFactors": {
+                                            "type": ["number", "null"]
+                                        }
+                                    },
+                                    "additionalProperties": false
+                                }
+                            },
+                            "additionalProperties": false
+                        }
+                    },
+                    "organism": {
+						"type": "object",
+						"properties": {
+							"id": {
+								"type": ["string", "null"],
+								"pattern": "^RDB[A-Z0-9_]{5}[A-Z]{3}[0-9A-Z]{5}$"
+							},
+							"name": {
+								"type": ["string", "null"]
+							}
+						},
+                        "additionalProperties": false
+					},
+					"allCitations": {
+						"type": "array",
+						"uniqueItems": true,
+						"items": {
+							"type": "object",
+							"properties": {
+                                "publication": {
+                                    "type": "object",
+                                    "properties": {
+                                        "authors": {
+                                            "type": "array",
+                                            "uniqueItems": true,
+                                            "items": {
+                                                "type": ["string", "null"]
+                                            }
+                                        },
+                                        "pmid": {
+                                            "type": ["string", "null"]
+                                        },
+                                        "id": {
+                                            "type": ["string", "null"],
+                                            "pattern": "^RDB[A-Z0-9_]{5}[A-Z]{3}[0-9A-Z]{5}$"
+                                        },
+                                        "citation": {
+                                            "type": ["string", "null"]
+                                        },
+                                        "title": {
+                                            "type": ["string", "null"]
+                                        },
+                                        "url": {
+                                            "type": ["string", "null"]
+                                        },
+                                        "year": {
+                                            "type": "number"
+                                        }
+                                    },
+                                    "additionalProperties": false
+                                },
+                                "evidence": {
+                                    "type": "object",
+                                    "properties": {
+                                        "code": {
+                                            "type": ["string", "null"]
+                                        },
+                                        "id": {
+                                            "type": ["string", "null"],
+                                            "pattern": "^RDB[A-Z0-9_]{5}[A-Z]{3}[0-9A-Z]{5}$"
+                                        },
+                                        "name": {
+                                            "type": ["string", "null"]
+                                        },
+                                        "type": {
+                                            "type": ["string", "null"]
+                                        }
+                                    },
+                                    "additionalProperties": false
+                                }
+							},
+							"additionalProperties": false
+						}
+					},
+                    "schemaVersion": {
+                        "type": ["number", "null"]
+                    }
+                },
+                "additionalProperties": false
+            }
+        },
+        "validationLevel": "strict",
+        "validationAction": "error"
+    }
+}
