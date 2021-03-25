@@ -21,8 +21,6 @@ class Terms():
     @multifun.setter
     def multifun(self, products_ids):
         self._multifun = []
-        gene_ids = []
-
         for product_id in products_ids:
             product = multigenomic_api.products.find_by_id(product_id)
             gene = multigenomic_api.genes.find_by_id(product.genes_id)
@@ -32,7 +30,7 @@ class Terms():
                     'term_id': term.terms_id,
                     'name': term.terms_name,
                     #TODO a que se refieren los gene_ids?
-                    'gene_ids': []
+                    'gene_id': gene.id
                 }
                 self._multifun.append(term.copy())
 
@@ -71,7 +69,6 @@ class Term(BiologicalBase):
     def to_dict(self):
         term = {
             'id': self.term.terms_id,
-            'name': self.term.terms_name,
-            #'genes_ids': self.product_ids,
+            'name': self.term.terms_name
         }
         return term

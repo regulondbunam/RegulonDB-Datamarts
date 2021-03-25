@@ -1,27 +1,30 @@
 import multigenomic_api
 from src.datamarts.domain.general.biological_base import BiologicalBase
 
-class Regulator(BiologicalBase):
-    def __init__(self, regulator):
-        super().__init__(regulator.external_cross_references, regulator.citations, regulator.note)
-        self.regulator = regulator
-        self.conformations = regulator.active_conformations + regulator.inactive_conformations
-        self.genes = regulator.products_ids
-        self.operons = regulator.products_ids
+
+class TranscriptionFactor(BiologicalBase):
+    def __init__(self, transcription_factor):
+        super().__init__(transcription_factor.external_cross_references, transcription_factor.citations, transcription_factor.note)
+        self.transcription_factor = transcription_factor
+        self.conformations = transcription_factor.active_conformations + transcription_factor.inactive_conformations
+        self.genes = transcription_factor.products_ids
+        self.operons = transcription_factor.products_ids
 
     def to_dict(self):
-        regulator = {
-            "name": self.regulator.name,
-            "synonyms": self.regulator.synonyms,
-            "note": self.regulator.note,
+        transcription_factor = {
+            "name": self.transcription_factor.name,
+            "synonyms": self.transcription_factor.synonyms,
+            "note": self.transcription_factor.note,
             "conformations": self.conformations,
-            "genes": self.genes,
-            "operons": self.operons,
-            # TODO Defined on multigenomic/models but not found
+            "encodedFrom": {
+                "genes": self.genes,
+                "operon": self.operons
+            }
+            # TODO: This will be added later by local process
             # "sensingClass": self.regulator.sensing_class,
             # "connectivityClass": self.regulator.connectivity_class
         }
-        return regulator
+        return transcription_factor
 
     @property
     def conformations(self):
@@ -36,19 +39,8 @@ class Regulator(BiologicalBase):
                 product = multigenomic_api.products.find_by_id(conformation.id)
             elif conformation.type == "regulatoryComplex":
                 product = multigenomic_api.regulatory_complexes.find_by_id(conformation.id)
-
-            super().__init__(product.external_cross_references, product.citations, product.note)
-            conformation = {
-                "id": product.id,
-                "name": product.abbreviated_name or product.name,
-                "type": conformation.type,
-                "citations": self.citations,
-                # TODO: This will be added later
-                # "effectorInteractionType": None,
-                # TODO: This will be added later
-                # "functionalType": None
-            }
-            self._conformations.append(conformation.copy())
+            conformation_object = Conformation(product, conformation.type)
+            self._conformations.append(conformation_object.to_dict().copy())
 
     @property
     def genes(self):
@@ -59,9 +51,11 @@ class Regulator(BiologicalBase):
         self._genes = []
         for product_id in products_ids:
             product = multigenomic_api.products.find_by_id(product_id)
+            gene = multigenomic_api.genes.find_by_id(product.genes_id)
             gene_properties = self.get_gene_properties(multigenomic_api.genes.find_by_id(product.genes_id))
             gene = {
-                "id": product.genes_id,
+                "gene_id": product.genes_id,
+                "gene_name": gene.name,
                 "genomePosition": gene_properties[0],
                 "length": gene_properties[1]
             }
@@ -83,8 +77,8 @@ class Regulator(BiologicalBase):
             tus_encoding_reg = []
             global promoter
             for transcription_unit in transcription_units:
-                if transcription_unit.promoters_ids:
-                    promoter = multigenomic_api.promoters.find_by_id(transcription_unit.promoters_ids[0])
+                if transcription_unit.promoters_id:
+                    promoter = multigenomic_api.promoters.find_by_id(transcription_unit.promoters_id)
                 tu_dict = {
                     "transcriptionUnitName": transcription_unit.name,
                     "promoterName": promoter.name
@@ -116,3 +110,22 @@ class Regulator(BiologicalBase):
             length = abs(gene.right_end_position - gene.left_end_position) + 1
         return [genome_pos, length]
 
+
+class Conformation(BiologicalBase):
+    def __init__(self, product, type):
+        super().__init__([], product.citations, [])
+        self.product = product
+        self.type = type
+
+    def to_dict(self):
+        conformation = {
+            "id": self.product.id,
+            "name": self.product.abbreviated_name or self.product.name,
+            "type": self.type,
+            "citations": self.citations,
+            # TODO: This will be added later by local process
+            # "effectorInteractionType": None,
+            # TODO: This will be added later by local process
+            # "functionalType": None
+        }
+        return conformation

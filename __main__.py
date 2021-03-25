@@ -4,7 +4,7 @@ import os
 
 import multigenomic_api
 
-from src.datamarts.collections import gene_datamarts, operon_datamarts
+from src.datamarts.collections import gene_datamarts, operon_datamarts, regulon_datamart
 
 
 def load_arguments_parser():
@@ -44,8 +44,9 @@ if __name__ == '__main__':
 
     datamart_files = dict()
 
-    datamart_files["geneDatamart"] = gene_datamarts.all_genes_datamarts()
-    datamart_files["operonDatamart"] = operon_datamarts.all_operon_datamarts()
+    #datamart_files["geneDatamart"] = gene_datamarts.all_genes_datamarts()
+    #datamart_files["operonDatamart"] = operon_datamarts.all_operon_datamarts()
+    datamart_files["regulonDatamart"] = regulon_datamart.all_regulon_datamarts()
     for collection_name, objects in datamart_files.items():
         print("Writing {} json file,".format(collection_name))
         objects_to_json = []
