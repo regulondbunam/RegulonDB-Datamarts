@@ -13,6 +13,7 @@ class GeneDatamarts:
         for gene_object in gene_objects:
             gene_datamart = GeneDatamarts.GeneDatamart(gene_object)
             yield gene_datamart
+        del gene_objects
 
     class GeneDatamart:
 

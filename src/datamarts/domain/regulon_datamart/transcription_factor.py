@@ -94,14 +94,16 @@ class TranscriptionFactor(BiologicalBase):
 
     @staticmethod
     def get_gene_properties(gene):
-        global genome_pos, length
+        genome_pos = ""
+        length = 0
         if gene.fragments:
             for fragment in gene.fragments:
                 if fragment.strand == "forward":
                     genome_pos = genome_pos + f"{fragment.left_end_position} -> {fragment.right_end_position};"
                 elif fragment.strand == "reverse":
                     genome_pos = genome_pos + f"{fragment.left_end_position} <- {fragment.right_end_position};"
-                length = abs(gene.right_end_position - gene.left_end_position) + 1
+                if gene.right_end_position and gene.left_end_position:
+                    length = abs(gene.right_end_position - gene.left_end_position) + 1
         else:
             if gene.strand == "forward":
                 genome_pos = f"{gene.left_end_position} -> {gene.right_end_position}"

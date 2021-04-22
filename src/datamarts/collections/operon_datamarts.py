@@ -12,6 +12,7 @@ class OperonDatamarts:
         for operon_object in operon_objects:
             operon_datamart = OperonDatamarts.OperonDatamart(operon_object)
             yield operon_datamart
+        del operon_objects
 
     class OperonDatamart:
 
