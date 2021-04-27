@@ -1,7 +1,5 @@
 import multigenomic_api
 from src.datamarts.domain.general.biological_base import BiologicalBase
-from src.datamarts.domain.regulon_datamart.terms import Term
-
 
 class Regulates(BiologicalBase):
     def __init__(self, regulator):
@@ -42,15 +40,15 @@ class Regulates(BiologicalBase):
                             term = {
                                 'id': term.terms_id,
                                 'name': term.terms_name
-                                # 'gene_ids': []
                             }
                             terms_list.append(term.copy())
+                        products = multigenomic_api.products.find_by_gene_id(gene_id)
                         gene_object = {
                             "id": gene.id,
                             "name": gene.name,
                             "terms": {
                                 "multifun": terms_list,
-                                # "geneOntology": gene_ontology_extrac(product[0].terms)
+                                "geneOntology": gene_ontology_extrac(products)
                             },
                             "function": tu_object["function"]
                         }
@@ -167,25 +165,41 @@ def get_all_transcription_units(tf_active_conformations):
     return all_transcription_units
 
 
-def gene_ontology_extrac(terms):
+def gene_ontology_extrac(products):
     terms_dict = {
         'biologicalProcess': [],
         'cellularComponent': [],
         'molecularFunction': []
     }
-    if terms:
-        for term in terms.biological_process:
-            term = Term(term)
-            terms_dict['biologicalProcess'].append(term.to_dict())
+    for product in products:
+        terms = product.terms
+        if terms:
+            for term in terms.biological_process:
+                term = Term(term)
+                terms_dict['biologicalProcess'].append(term.to_dict())
 
-        for term in terms.cellular_component:
-            term = Term(term)
-            terms_dict['cellularComponent'].append(term.to_dict())
+            for term in terms.cellular_component:
+                term = Term(term)
+                terms_dict['cellularComponent'].append(term.to_dict())
 
-        for term in terms.molecular_function:
-            term = Term(term)
-            terms_dict['molecularFunction'].append(term.to_dict())
+            for term in terms.molecular_function:
+                term = Term(term)
+                terms_dict['molecularFunction'].append(term.to_dict())
     return terms_dict
+
+
+class Term(BiologicalBase):
+
+    def __init__(self, term):
+        super().__init__([], term.citations, [])
+        self.term = term
+
+    def to_dict(self):
+        term = {
+            'term_id': self.term.terms_id,
+            'name': self.term.terms_name
+        }
+        return term
 
 
 def get_first_gene_of_tu(transcription_unit, promoter):

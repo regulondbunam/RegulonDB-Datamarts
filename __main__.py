@@ -73,4 +73,3 @@ if __name__ == '__main__':
         }
         create_json(objects_to_json, collection_name, "build")
     write_summary(datamartsData)
-
