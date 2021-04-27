@@ -81,7 +81,7 @@ class Regulator_Binding_Sites(BiologicalBase):
             if len(activator_ris) != 0:
                 transcription_factor_binding_sites.append({
                     "regulator": {
-                        "id": trans_factor.id,
+                        "_id": trans_factor.id,
                         "name": trans_factor.name,
                         "function": "activator"
                     },
