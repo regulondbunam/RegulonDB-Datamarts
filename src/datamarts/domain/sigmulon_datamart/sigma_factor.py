@@ -12,7 +12,7 @@ class SigmaFactor(BiologicalBase):
         self.sigmulon_genes = promoters
 
     def to_dict(self):
-        sigmulon = {
+        sigma_factor = {
             "_id": self.sigma_factor.id,
             "name": self.sigma_factor.name,
             "synonyms": self.sigma_factor.synonyms,
@@ -20,7 +20,7 @@ class SigmaFactor(BiologicalBase):
             "sigmulonRegulators": self.sigmulon_regulators,
             "sigmulonGenes": self.sigmulon_genes
         }
-        return sigmulon
+        return sigma_factor
 
     @property
     def gene(self):
@@ -74,4 +74,3 @@ class SigmaFactor(BiologicalBase):
                         }
                         if gene_object not in self._sigmulon_genes:
                             self.sigmulon_genes.append(gene_object)
-        print(len(self._sigmulon_genes))
