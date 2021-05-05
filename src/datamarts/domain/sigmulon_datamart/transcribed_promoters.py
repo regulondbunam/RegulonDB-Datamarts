@@ -9,14 +9,19 @@ class TranscribedPromoters(BiologicalBase):
         self.promoter = promoter
         self.transcribed_genes = promoter
         self.boxes = promoter.boxes
+        self.operon_id = promoter.id
 
     def to_dict(self):
+        TSSPos = None
+        if self.promoter.transcription_start_site:
+            TSSPos = self.promoter.transcription_start_site.left_end_position
         transcribed_promoters = {
             "_id": self.promoter.id,
             "name": self.promoter.name,
             "transcribedGenes": self.transcribed_genes,
-            "operon_id": "",
+            "operon_id": self.operon_id,
             "sequence": self.promoter.sequence,
+            "TSSPosition": TSSPos,
             "boxes": self.boxes,
             "citations": self.citations
         }
@@ -57,11 +62,25 @@ class TranscribedPromoters(BiologicalBase):
                 "type": box.type
             })
 
+    @property
+    def operon_id(self):
+        return self._operon_id
+
+    @operon_id.setter
+    def operon_id(self, promoter_id):
+        self._operon_id = None
+        operons_ids = []
+        trans_units = multigenomic_api.transcription_units.find_by_promoter_id(promoter_id)
+        for tu in trans_units:
+            if tu.operons_id not in operons_ids:
+                operons_ids.append(tu.operons_id)
+        if len(operons_ids) == 1:
+            self._operon_id = operons_ids[0]
 
 def get_distance_from_tss(promoter, gene):
     distance = 0
     if not promoter.transcription_start_site:
-        return 0
+        return distance
     if gene.strand == "forward":
         if gene.left_end_position:
             distance = promoter.transcription_start_site.left_end_position - gene.left_end_position

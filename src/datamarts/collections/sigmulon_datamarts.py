@@ -1,6 +1,8 @@
 import multigenomic_api
 from src.datamarts.domain.sigmulon_datamart.sigma_factor import SigmaFactor
 from src.datamarts.domain.sigmulon_datamart.transcribed_promoters import TranscribedPromoters
+from src.datamarts.domain.sigmulon_datamart.statistics import Statistics
+from src.datamarts.domain.general.biological_base import BiologicalBase
 
 
 class SigmulonDatamarts:
@@ -19,7 +21,7 @@ class SigmulonDatamarts:
             self.id = sigma_factor.id
             self.sigma_factor = sigma_factor
             self.transcribed_promoters = sigma_factor
-            self.statistics = sigma_factor
+            self.statistics = sigma_factor.id
 
         @property
         def sigma_factor(self):
@@ -37,22 +39,26 @@ class SigmulonDatamarts:
         def transcribed_promoters(self, sigma_factor):
             self._transcribed_promoters = []
             trans_promoters = get_transcribed_promoters(sigma_factor.id)
-            cont = 0
             for promoter_id in trans_promoters:
                 promoter = multigenomic_api.promoters.find_by_id(promoter_id)
-                if len(promoter.boxes) > 2:
-                    cont += 1
                 promoter = TranscribedPromoters(promoter).to_dict()
                 self._transcribed_promoters.append(promoter)
-            # print(sigma_factor.id, len(trans_promoters))
+
+        @property
+        def statistics(self):
+            return self._statistics
+
+        @statistics.setter
+        def statistics(self, sigmulon_id):
+            self._statistics = Statistics(sigmulon_id).to_dict()
 
         def to_dict(self):
             sigmulon_datamart = {
                 "_id": self.id,
                 "sigmaFactor": self.sigma_factor,
                 "transcribedPromoters": self.transcribed_promoters,
-                # "statistics": self.statistics,
-                # "citations": self.citations
+                "statistics": self.statistics,
+                "allCitations": BiologicalBase.get_all_citations()
             }
             return sigmulon_datamart
 
@@ -83,30 +89,4 @@ def get_transcribed_promoters(sigma_factor_id):
         trans_units = multigenomic_api.transcription_units.find_by_promoter_id(promoter.id)
         if len(trans_units) > 0:
             trans_promoters.append(promoter.id)
-        if len(trans_units) > 1:
-            for trans_unit in trans_units:
-                if trans_unit.genes_ids:
-                    for gene_id in trans_unit.genes_ids:
-                        products = multigenomic_api.products.find_by_gene_id(gene_id)
-                        for product in products:
-                            reg_ints = multigenomic_api.regulatory_interactions.find_by_regulator_id(product.id)
-                            for reg_int in reg_ints:
-                                if reg_int.regulated_entity.type == "promoter":
-                                    if reg_int.regulated_entity.id not in trans_promoters:
-                                        trans_promoters.append(reg_int.regulated_entity.id)
-                            trans_factors = multigenomic_api.transcription_factors.find_tf_id_by_product_id(product.id)
-                            for trans_factor in trans_factors:
-                                reg_ints = multigenomic_api.regulatory_interactions.find_by_regulator_id(
-                                    trans_factor.id)
-                                for reg_int in reg_ints:
-                                    if reg_int.regulated_entity.type == "promoter":
-                                        if reg_int.regulated_entity.id not in trans_promoters:
-                                            trans_promoters.append(reg_int.regulated_entity.id)
-                            complexes = multigenomic_api.regulatory_complexes.find_by_product_id(product.id)
-                            for reg_complex in complexes:
-                                reg_ints = multigenomic_api.regulatory_interactions.find_by_regulator_id(reg_complex.id)
-                                for reg_int in reg_ints:
-                                    if reg_int.regulated_entity.type == "promoter":
-                                        if reg_int.regulated_entity.id not in trans_promoters:
-                                            trans_promoters.append(reg_int.regulated_entity.id)
     return trans_promoters
