@@ -4,12 +4,13 @@ class Statistics():
 
     def __init__(self, sigmulon_id):
         promoters = multigenomic_api.promoters.find_by_sigma_factor_id(sigmulon_id)
-        self.genes = promoters
-        self.transcription_factors = promoters
+        transcription_units = get_tus_from_promoters(promoters)
+        self.genes = transcription_units
+        self.transcription_factors = transcription_units
         self.promoters = promoters
-        self.transcription_units = promoters
+        self.transcription_units = transcription_units
         self.cotranscription_factors = promoters
-        self.sigma_factors = promoters
+        self.sigma_factors = transcription_units
 
     def to_dict(self):
         statistics = {
@@ -27,15 +28,13 @@ class Statistics():
         return len(self._genes)
 
     @genes.setter
-    def genes(self, promoters):
+    def genes(self, trans_units):
         self._genes = []
-        for promoter in promoters:
-            trans_units = multigenomic_api.transcription_units.find_by_promoter_id(promoter.id)
-            for tu in trans_units:
-                if tu.genes_ids:
-                    for gene_id in tu.genes_ids:
-                        if gene_id not in self._genes:
-                            self._genes.append(gene_id)
+        for tu in trans_units:
+            if tu.genes_ids:
+                for gene_id in tu.genes_ids:
+                    if gene_id not in self._genes:
+                        self._genes.append(gene_id)
 
     @property
     def promoters(self):
@@ -50,19 +49,17 @@ class Statistics():
         return len(self._transcription_factors)
 
     @transcription_factors.setter
-    def transcription_factors(self, promoters):
+    def transcription_factors(self, trans_units):
         self._transcription_factors = []
-        for promoter in promoters:
-            trans_units = multigenomic_api.transcription_units.find_by_promoter_id(promoter.id)
-            for tu in trans_units:
-                if tu.genes_ids:
-                    for gene_id in tu.genes_ids:
-                        products = multigenomic_api.products.find_by_gene_id(gene_id)
-                        for product in products:
-                            trans_factors = multigenomic_api.transcription_factors.find_tf_id_by_product_id(product.id)
-                            for tf in trans_factors:
-                                if tf.id not in self._transcription_factors:
-                                    self._transcription_factors.append(tf.id)
+        for tu in trans_units:
+            if tu.genes_ids:
+                for gene_id in tu.genes_ids:
+                    products = multigenomic_api.products.find_by_gene_id(gene_id)
+                    for product in products:
+                        trans_factors = multigenomic_api.transcription_factors.find_tf_id_by_product_id(product.id)
+                        for tf in trans_factors:
+                            if tf.id not in self._transcription_factors:
+                                self._transcription_factors.append(tf.id)
 
     @property
     def cotranscription_factors(self):
@@ -85,20 +82,31 @@ class Statistics():
         return len(self._transcription_units)
 
     @transcription_units.setter
-    def transcription_units(self, promoters):
-        self._transcription_units = []
-        for promoter in promoters:
-            trans_units = multigenomic_api.transcription_units.find_by_promoter_id(promoter.id)
-            for tu in trans_units:
-                if tu.id not in self._transcription_units:
-                    self._transcription_units.append(tu.id)
+    def transcription_units(self, trans_units):
+        self._transcription_units = trans_units
 
     @property
     def sigma_factors(self):
         return len(self._sigma_factors)
 
     @sigma_factors.setter
-    def sigma_factors(self, promoters):
+    def sigma_factors(self, trans_units):
         self._sigma_factors = []
-        # TODO: add this later
-        pass
+        for tu in trans_units:
+            if not tu.genes_ids:
+                continue
+            for gene_id in tu.genes_ids:
+                sigma = multigenomic_api.sigma_factors.find_by_gene_id(gene_id)
+                if sigma:
+                    if sigma.id not in self._sigma_factors:
+                        self._sigma_factors.append(sigma.id)
+
+
+def get_tus_from_promoters(promoters):
+    tus = []
+    for promoter in promoters:
+        trans_units = multigenomic_api.transcription_units.find_by_promoter_id(promoter.id)
+        for tu in trans_units:
+            if tu not in tus:
+                tus.append(tu)
+    return tus

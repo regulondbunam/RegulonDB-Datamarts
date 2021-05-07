@@ -52,7 +52,9 @@ class Product(BiologicalBase):
 
     def get_regulon_id(self):
         tf = multigenomic_api.transcription_factors.find_tf_id_by_product_id(self.product.id)
-        return tf
+        if tf:
+            return tf[0].id
+        return None
 
     def to_dict(self):
         product = {
