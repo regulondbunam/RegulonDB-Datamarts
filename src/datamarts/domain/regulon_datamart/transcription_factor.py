@@ -12,6 +12,7 @@ class TranscriptionFactor(BiologicalBase):
 
     def to_dict(self):
         transcription_factor = {
+            "citations": self.citations,
             "name": self.transcription_factor.name,
             "synonyms": self.transcription_factor.synonyms,
             "note": self.transcription_factor.note,
@@ -90,7 +91,8 @@ class TranscriptionFactor(BiologicalBase):
                 "name": operon.name,
                 "tusEncodingRegulator": tus_encoding_reg
             }
-            self._operons.append(operon_dict.copy())
+            if operon_dict not in self._operons:
+                self._operons.append(operon_dict.copy())
 
     @staticmethod
     def get_gene_properties(gene):

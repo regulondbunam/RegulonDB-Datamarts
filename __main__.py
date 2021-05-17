@@ -16,15 +16,15 @@ def load_arguments_parser():
         "-db", "--database",
         help="Database where the multigenomic data is been stored",
         metavar="multigenomic",
-        default="regulondbmultigenomic",
+        default="",
         required=False
     )
 
     parser.add_argument(
         "-u", "--url",
         help="URL to establish a connection between the process and MongoDB",
-        metavar="mongodb://andresloal:15091052@localhost:27017/regulondbmultigenomic",
-        default="mongodb://andresloal:15091052@localhost:27017/regulondbmultigenomic",
+        metavar="mongodb://user:pass@localhost:27017/regulondbmultigenomic",
+        default="",
         required=False
     )
 

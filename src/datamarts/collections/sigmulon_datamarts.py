@@ -1,8 +1,9 @@
+from src.datamarts.domain.general.biological_base import BiologicalBase
 import multigenomic_api
+
 from src.datamarts.domain.sigmulon_datamart.sigma_factor import SigmaFactor
 from src.datamarts.domain.sigmulon_datamart.transcribed_promoters import TranscribedPromoters
 from src.datamarts.domain.sigmulon_datamart.statistics import Statistics
-from src.datamarts.domain.general.biological_base import BiologicalBase
 
 
 class SigmulonDatamarts:

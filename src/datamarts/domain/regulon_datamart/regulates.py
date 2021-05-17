@@ -176,15 +176,18 @@ def gene_ontology_extrac(products):
         if terms:
             for term in terms.biological_process:
                 term = Term(term)
-                terms_dict['biologicalProcess'].append(term.to_dict())
+                if term.to_dict() not in terms_dict['biologicalProcess']:
+                    terms_dict['biologicalProcess'].append(term.to_dict())
 
             for term in terms.cellular_component:
                 term = Term(term)
-                terms_dict['cellularComponent'].append(term.to_dict())
+                if term.to_dict() not in terms_dict['cellularComponent']:
+                    terms_dict['cellularComponent'].append(term.to_dict())
 
             for term in terms.molecular_function:
                 term = Term(term)
-                terms_dict['molecularFunction'].append(term.to_dict())
+                if term.to_dict() not in terms_dict['molecularFunction']:
+                    terms_dict['molecularFunction'].append(term.to_dict())
     return terms_dict
 
 

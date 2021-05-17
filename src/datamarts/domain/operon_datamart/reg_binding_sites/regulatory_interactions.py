@@ -9,7 +9,7 @@ class RegulatoryInteractions(BiologicalBase):
     def to_dict(self):
         reg_int_dict = {
             "_id": self.regulatory_interactions.id,
-            "centerPosition": self.regulatory_interactions.center_position,
+            "centerPosition": self.regulatory_interactions.absolute_center_position,
             "citations": self.citations,
             "function": self.regulatory_interactions.function,
             "note": self.regulatory_interactions.note,

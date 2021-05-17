@@ -1,4 +1,6 @@
+from src.datamarts.domain.general.biological_base import BiologicalBase
 import multigenomic_api
+
 from src.datamarts.domain.regulon_datamart.transcription_factor import TranscriptionFactor
 from src.datamarts.domain.regulon_datamart.regulates import Regulates
 from src.datamarts.domain.regulon_datamart.terms import Terms
@@ -89,7 +91,8 @@ class RegulonDatamarts:
                 # "alignmentMatrix": [],
                 # "evolutionaryConservation":[],
                 "organism": self.organism,
-                "summary": self.summary
+                "summary": self.summary,
+                "allCitations": BiologicalBase.get_all_citations()
             }
             return regulon_datamart
 
