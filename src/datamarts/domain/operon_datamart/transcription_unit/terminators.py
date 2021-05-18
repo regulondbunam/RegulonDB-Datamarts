@@ -25,6 +25,7 @@ class Terminators(BiologicalBase):
             "_id": self.terminator.id,
             "citations": self.citations,
             "sequence": self.terminator.sequence,
-            "transcriptionTerminationSite": self.transcription_termination_site
+            "transcriptionTerminationSite": self.transcription_termination_site,
+            "class": self.terminator.class_
         }
         return terminator_dict
