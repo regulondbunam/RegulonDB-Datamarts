@@ -1,6 +1,7 @@
 import multigenomic_api
 from src.datamarts.domain.general.biological_base import BiologicalBase
 
+
 class RegulatoryInteractions(BiologicalBase):
     def __init__(self, reg_int):
         super().__init__(reg_int.external_cross_references, reg_int.citations, reg_int.note)
@@ -94,6 +95,7 @@ def dna_seq_to_rna_seq(dna_seq):
         for k, v in alt_map.items():
             bases = bases.replace(v, k)
         return bases
+
 
 def get_first_gene_of_tu(genes, promoter):
     first_gene = multigenomic_api.genes.find_by_id(genes[0])

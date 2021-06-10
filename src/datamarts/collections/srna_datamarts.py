@@ -1,8 +1,9 @@
 import multigenomic_api
 
-from src.datamarts.domain.general.biological_base import BiologicalBase
-from src.datamarts.domain.srna_datamart.regulatory_interactions import RegulatoryInteractions
 from src.datamarts.domain.srna_datamart.summary import Summary
+
+from src.datamarts.domain.srna_datamart.regulatory_interactions import RegulatoryInteractions
+from src.datamarts.domain.general.biological_base import BiologicalBase
 
 
 class SrnaDatamarts:
@@ -10,7 +11,7 @@ class SrnaDatamarts:
     @property
     def objects(self):
         srna_objects = multigenomic_api.products.get_all_srnas()
-        ##for srna in srna_objects[24:25]:
+        # for srna in srna_objects[24:25]:
         for srna in srna_objects:
             if srna.type == "small RNA":
                 srna_datamart = SrnaDatamarts.srnaDatamart(srna)
