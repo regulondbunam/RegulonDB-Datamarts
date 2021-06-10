@@ -7,7 +7,7 @@ database = client["regulondbdatamarts"]
 
 collection = database["geneCoexpressions"]
 
-#gene_datamart = open("/Users/pablo/Proyectos/RegulonDB/Results/datamarts/geneDatamart.json", "r")
+#gene_datamart = open("/Users/pablo/Proyectos/RegulonDB/Results/datamarts/genes.json", "r")
 gene_datamart = open("/Users/pablo/Dropbox (UNAM-CCG)/PGC_CO/Proyectos/12.UBI/RegulonDB-Datamarts/4.Seguimiento/CoExpression/coexpression_example.json", "r")
 genes = json.loads(gene_datamart.read())
 genes = genes["geneCoexpressions"]
