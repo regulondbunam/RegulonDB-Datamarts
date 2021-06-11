@@ -1,7 +1,7 @@
 # DatamartsExtractorSummary 
-Creation date: 2021-05-18
+Creation date: 2021-06-10
  
-Creation time: 13:21:25
+Creation time: 22:03:31
  
 RegulonDB Version: 10.8 
 
@@ -15,3 +15,5 @@ RegulonDB Version: 10.8
  222 Total Objects Generated
  ### sigmulonDatamart: 
  7 Total Objects Generated
+ ### srnaDatamart: 
+ 94 Total Objects Generated

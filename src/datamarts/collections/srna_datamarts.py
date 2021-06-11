@@ -67,15 +67,18 @@ class SrnaDatamarts:
 
         @summary.setter
         def summary(self, srna):
-            summary = Summary(srna, self.regulatory_interactions).to_dict()
-            self._summary = summary
+            self._summary = {}
+            if len(self.regulatory_interactions) > 0:
+                summary = Summary(srna, self.regulatory_interactions).to_dict()
+                self._summary = summary
 
         def to_dict(self):
             srna_datamart = {
                 "_id": self.id,
                 "product": self.product,
                 "regulatoryInteractions": self.regulatory_interactions,
-                "summary": self.summary
+                "summary": self.summary,
+                "allCitations": BiologicalBase.get_all_citations()
             }
             return srna_datamart
 

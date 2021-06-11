@@ -57,10 +57,10 @@ if __name__ == '__main__':
 
     datamart_files = dict()
 
-    #datamart_files["geneDatamart"] = gene_datamarts.all_genes_datamarts()
-    #datamart_files["operonDatamart"] = operon_datamarts.all_operon_datamarts()
-    #datamart_files["regulonDatamart"] = regulon_datamart.all_regulon_datamarts()
-    #datamart_files["sigmulonDatamart"] = sigmulon_datamarts.all_sigmulon_datamarts()
+    datamart_files["geneDatamart"] = gene_datamarts.all_genes_datamarts()
+    datamart_files["operonDatamart"] = operon_datamarts.all_operon_datamarts()
+    datamart_files["regulonDatamart"] = regulon_datamart.all_regulon_datamarts()
+    datamart_files["sigmulonDatamart"] = sigmulon_datamarts.all_sigmulon_datamarts()
     datamart_files["srnaDatamart"] = srna_datamarts.all_srna_datamarts()
     datamartsData = ""
     for collection_name, objects in datamart_files.items():
@@ -74,4 +74,4 @@ if __name__ == '__main__':
             collection_name: objects_to_json
         }
         create_json(objects_to_json, collection_name, "build")
-    #write_summary(datamartsData)
+    write_summary(datamartsData)
