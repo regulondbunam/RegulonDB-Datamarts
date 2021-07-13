@@ -15,7 +15,7 @@ class TranscriptionFactor(BiologicalBase):
             "citations": self.citations,
             "name": self.transcription_factor.name,
             "synonyms": self.transcription_factor.synonyms,
-            "note": self.transcription_factor.note,
+            "note": self.formatted_note,
             "conformations": self.conformations,
             "encodedFrom": {
                 "genes": self.genes,

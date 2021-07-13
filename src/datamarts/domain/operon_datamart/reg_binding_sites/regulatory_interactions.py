@@ -12,7 +12,7 @@ class RegulatoryInteractions(BiologicalBase):
             "centerPosition": self.regulatory_interactions.absolute_center_position,
             "citations": self.citations,
             "function": self.regulatory_interactions.function,
-            "note": self.regulatory_interactions.note,
+            "note": self.formatted_note,
             "mechanism": self.regulatory_interactions.mechanism,
             "regulatorySite": self.regulatory_sites
         }

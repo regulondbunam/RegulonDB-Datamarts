@@ -76,7 +76,7 @@ class Promoters(BiologicalBase):
             "citations": self.citations,
             "bindsSigmaFactor": self.binds_sigma_factor,
             "name": self.promoter.name,
-            "note": self.promoter.note,
+            "note": self.formatted_note,
             "boxes": self.boxes,
             "score": self.promoter.score,
             "sequence": self.promoter.sequence,

@@ -44,7 +44,7 @@ class SrnaDatamarts:
                 "gene": genes,
                 "name": srna.name,
                 "synonyms": srna.synonyms,
-                "note": srna.note,
+                "note": self.formatted_note,
                 "sequence": srna.sequence,
                 "citations": self.citations,
                 "externalCrossReferences": self.external_cross_references

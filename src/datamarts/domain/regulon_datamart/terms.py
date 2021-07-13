@@ -28,10 +28,11 @@ class Terms():
             terms = gene_dict.terms
             for term in terms:
                 members_genes = get_members_from_term(term.terms_id)
+                genes = intersection_genes(regulated_genes, members_genes)
                 term = {
                     'id': term.terms_id,
                     'name': term.terms_name,
-                    'gene_ids': intersection_genes(regulated_genes, members_genes)
+                    'genes': gene_object(genes)
                 }
                 if term not in self._multifun:
                     self._multifun.append(term.copy())
@@ -77,10 +78,11 @@ class Term(BiologicalBase):
 
     def to_dict(self):
         product_term_members = get_members_from_term(self.term.terms_id)
+        genes = intersection_genes(self.regulated_genes, product_term_members)
         term = {
             'term_id': self.term.terms_id,
             'name': self.term.terms_name,
-            'gene_ids': intersection_genes(self.regulated_genes, product_term_members)
+            'genes': gene_object(genes)
         }
         return term
 
@@ -128,3 +130,14 @@ def get_genes(active_conformations):
 def intersection_genes(regulated_genes, gene_members):
     intersected_genes = [value for value in regulated_genes if value in gene_members]
     return intersected_genes
+
+
+def gene_object(genes):
+    gene_list = []
+    for gene_id in genes:
+        gene = multigenomic_api.genes.find_by_id(gene_id)
+        gene_list.append({
+            "gene_id": gene.id,
+            "gene_name": gene.name
+        })
+    return gene_list

@@ -123,7 +123,7 @@ class TranscriptionUnit(BiologicalBase):
             "citations": self.citations,
             "firstGene": self.first_gene,
             "genes": self.genes,
-            "note": self.transcription_unit.note,
+            "note": self.formatted_note,
             "synonyms": self.transcription_unit.synonyms,
             "promoter": self.promoter,
             "statistics": {
