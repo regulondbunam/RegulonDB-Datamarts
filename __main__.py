@@ -5,7 +5,7 @@ from datetime import datetime
 
 import multigenomic_api
 
-from src.datamarts.collections import gene_datamarts, operon_datamarts, regulon_datamart, sigmulon_datamarts, srna_datamarts
+from src.datamarts.collections import gene_datamarts, operon_datamarts, regulon_datamart, sigmulon_datamarts, srna_datamarts, dttDatamart
 
 
 def load_arguments_parser():
@@ -62,6 +62,7 @@ if __name__ == '__main__':
     datamart_files["regulonDatamart"] = regulon_datamart.all_regulon_datamarts()
     datamart_files["sigmulonDatamart"] = sigmulon_datamarts.all_sigmulon_datamarts()
     datamart_files["srnaDatamart"] = srna_datamarts.all_srna_datamarts()
+    datamart_files["dnaFeatures"] = dttDatamart.all_dtt_datamarts()
     datamartsData = ""
     for collection_name, objects in datamart_files.items():
         print("Writing {} json file,".format(collection_name))
