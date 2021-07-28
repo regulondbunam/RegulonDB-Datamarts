@@ -5,7 +5,7 @@ from datetime import datetime
 
 import multigenomic_api
 
-from src.datamarts.collections import gene_datamarts, operon_datamarts, regulon_datamart, sigmulon_datamarts
+from src.datamarts.collections import gene_datamarts, operon_datamarts, regulon_datamart, sigmulon_datamarts, srna_datamarts, dttDatamart
 
 
 def load_arguments_parser():
@@ -16,7 +16,7 @@ def load_arguments_parser():
         "-db", "--database",
         help="Database where the multigenomic data is been stored",
         metavar="multigenomic",
-        default="",
+        default="regulondbmultigenomic",
         required=False
     )
 
@@ -24,7 +24,7 @@ def load_arguments_parser():
         "-u", "--url",
         help="URL to establish a connection between the process and MongoDB",
         metavar="mongodb://user:pass@localhost:27017/regulondbmultigenomic",
-        default="",
+        default="mongodb://andresloal:15091052@localhost:27017/regulondbmultigenomic",
         required=False
     )
 
@@ -61,6 +61,8 @@ if __name__ == '__main__':
     datamart_files["operonDatamart"] = operon_datamarts.all_operon_datamarts()
     datamart_files["regulonDatamart"] = regulon_datamart.all_regulon_datamarts()
     datamart_files["sigmulonDatamart"] = sigmulon_datamarts.all_sigmulon_datamarts()
+    datamart_files["srnaDatamart"] = srna_datamarts.all_srna_datamarts()
+    datamart_files["dnaFeatures"] = dttDatamart.all_dtt_datamarts()
     datamartsData = ""
     for collection_name, objects in datamart_files.items():
         print("Writing {} json file,".format(collection_name))

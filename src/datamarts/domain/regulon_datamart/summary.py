@@ -1,4 +1,4 @@
-class Summary():
+class Summary:
     def __init__(self, regulated_objects, reg_ints):
         self.regulated_objects = regulated_objects
         self.reg_ints = reg_ints

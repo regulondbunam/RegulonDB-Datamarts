@@ -1,6 +1,7 @@
 import multigenomic_api
 from src.datamarts.domain.general.biological_base import BiologicalBase
 
+
 class RegulatoryInteractions(BiologicalBase):
     def __init__(self, reg_int):
         super().__init__(reg_int.external_cross_references, reg_int.citations, reg_int.note)
@@ -34,13 +35,15 @@ class RegulatoryInteractions(BiologicalBase):
 
     @regulatory_binding_sites.setter
     def regulatory_binding_sites(self, reg_site_id):
-        reg_site = multigenomic_api.regulatory_sites.find_by_id(reg_site_id)
-        self._regulatory_binding_sites = {
-            "absolutePosition": reg_site.absolute_position,
-            "leftEndPosition": reg_site.left_end_position,
-            "rightEndPosition": reg_site.right_end_position,
-            "sequence": dna_seq_to_rna_seq(reg_site.sequence)
-        }
+        self._regulatory_binding_sites = {}
+        if reg_site_id:
+            reg_site = multigenomic_api.regulatory_sites.find_by_id(reg_site_id)
+            self._regulatory_binding_sites = {
+                "absolutePosition": reg_site.absolute_position,
+                "leftEndPosition": reg_site.left_end_position,
+                "rightEndPosition": reg_site.right_end_position,
+                "sequence": dna_seq_to_rna_seq(reg_site.sequence)
+            }
 
     @property
     def distance_to_gene(self):
@@ -49,21 +52,23 @@ class RegulatoryInteractions(BiologicalBase):
     @distance_to_gene.setter
     def distance_to_gene(self, reg_int):
         self._distance_to_gene = 0
-        reg_site = multigenomic_api.regulatory_sites.find_by_id(reg_int.regulatory_sites_id)
-        if reg_int.regulated_entity.type == "gene":
-            gene = multigenomic_api.genes.find_by_id(reg_int.regulated_entity.id)
-            self._distance_to_gene = ((reg_site.left_end_position + reg_site.right_end_position)/2) - gene.left_end_position
-        elif reg_int.regulated_entity.type == "transcriptionUnit":
-            trans_unit = multigenomic_api.transcription_units.find_by_id(reg_int.regulated_entity.id)
-            if len(trans_unit.genes_ids) > 1:
-                print(trans_unit.id)
-                promoter = multigenomic_api.promoters.find_by_id(trans_unit.promoters_id)
-                first_gene = get_first_gene_of_tu(trans_unit.genes_ids, promoter)
-                self._distance_to_gene = ((reg_site.left_end_position + reg_site.right_end_position)/2) - first_gene["leftEndPosition"]
-            else:
-                gene = multigenomic_api.genes.find_by_id(trans_unit.genes_ids[0])
-                self._distance_to_gene = ((
-                                                      reg_site.left_end_position + reg_site.right_end_position) / 2) - gene.left_end_position
+        if reg_int.regulatory_sites_id:
+            reg_site = multigenomic_api.regulatory_sites.find_by_id(reg_int.regulatory_sites_id)
+            if reg_int.regulated_entity.type == "gene":
+                gene = multigenomic_api.genes.find_by_id(reg_int.regulated_entity.id)
+                self._distance_to_gene = ((reg_site.left_end_position + reg_site.right_end_position)/2) - gene.left_end_position
+            elif reg_int.regulated_entity.type == "transcriptionUnit":
+                trans_unit = multigenomic_api.transcription_units.find_by_id(reg_int.regulated_entity.id)
+                if len(trans_unit.genes_ids) > 1:
+                    if trans_unit.promoters_id:
+                        promoter = multigenomic_api.promoters.find_by_id(trans_unit.promoters_id)
+                        first_gene = get_first_gene_of_tu(trans_unit.genes_ids, promoter)
+                        self._distance_to_gene = ((reg_site.left_end_position + reg_site.right_end_position)/2) - first_gene["leftEndPosition"]
+                else:
+                    gene = multigenomic_api.genes.find_by_id(trans_unit.genes_ids[0])
+                    # TODO: add a way to identify when gene has fragments instead left and right end positions
+                    if gene.left_end_position:
+                        self._distance_to_gene = ((reg_site.left_end_position + reg_site.right_end_position) / 2) - gene.left_end_position
 
     def to_dict(self):
         regulatory_interactions = {
@@ -90,6 +95,7 @@ def dna_seq_to_rna_seq(dna_seq):
         for k, v in alt_map.items():
             bases = bases.replace(v, k)
         return bases
+
 
 def get_first_gene_of_tu(genes, promoter):
     first_gene = multigenomic_api.genes.find_by_id(genes[0])

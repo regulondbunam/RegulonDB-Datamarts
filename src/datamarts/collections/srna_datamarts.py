@@ -1,4 +1,7 @@
 import multigenomic_api
+
+from src.datamarts.domain.srna_datamart.summary import Summary
+
 from src.datamarts.domain.srna_datamart.regulatory_interactions import RegulatoryInteractions
 from src.datamarts.domain.general.biological_base import BiologicalBase
 
@@ -8,7 +11,8 @@ class SrnaDatamarts:
     @property
     def objects(self):
         srna_objects = multigenomic_api.products.get_all_srnas()
-        for srna in srna_objects[24:25]:
+        # for srna in srna_objects[24:25]:
+        for srna in srna_objects:
             if srna.type == "small RNA":
                 srna_datamart = SrnaDatamarts.srnaDatamart(srna)
                 yield srna_datamart
@@ -20,6 +24,7 @@ class SrnaDatamarts:
             self.id = srna.id
             self.product = srna
             self.regulatory_interactions = srna
+            self.summary = srna
 
         @property
         def product(self):
@@ -33,13 +38,13 @@ class SrnaDatamarts:
                 "name": gene.name,
                 "genomePosition": f"{gene.left_end_position} --> {gene.right_end_position}",
                 "strand": gene.strand,
-                "gcConte": gene.gc_content
+                "gcContent": gene.gc_content
             }
             self._small_rna = {
                 "gene": genes,
                 "name": srna.name,
                 "synonyms": srna.synonyms,
-                "note": srna.note,
+                "note": self.formatted_note,
                 "sequence": srna.sequence,
                 "citations": self.citations,
                 "externalCrossReferences": self.external_cross_references
@@ -56,12 +61,24 @@ class SrnaDatamarts:
             for ri in reg_ints:
                 self._regulatory_interactions.append(RegulatoryInteractions(ri).to_dict())
 
+        @property
+        def summary(self):
+            return self._summary
+
+        @summary.setter
+        def summary(self, srna):
+            self._summary = {}
+            if len(self.regulatory_interactions) > 0:
+                summary = Summary(srna, self.regulatory_interactions).to_dict()
+                self._summary = summary
+
         def to_dict(self):
             srna_datamart = {
                 "_id": self.id,
                 "product": self.product,
                 "regulatoryInteractions": self.regulatory_interactions,
-                "statistics": {}
+                "summary": self.summary,
+                "allCitations": BiologicalBase.get_all_citations()
             }
             return srna_datamart
 
