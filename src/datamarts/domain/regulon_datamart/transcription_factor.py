@@ -12,6 +12,7 @@ class TranscriptionFactor(BiologicalBase):
 
     def to_dict(self):
         transcription_factor = {
+            "_id": self.transcription_factor.id,
             "citations": self.citations,
             "name": self.transcription_factor.name,
             "synonyms": self.transcription_factor.synonyms,
