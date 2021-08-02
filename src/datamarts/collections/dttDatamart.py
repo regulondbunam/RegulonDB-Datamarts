@@ -4,6 +4,7 @@ from random import randint
 from src.datamarts.domain.dnaFeatures_datamart.gene_items import GeneDnaFeatures
 from src.datamarts.domain.dnaFeatures_datamart.promoter_items import PromoterDnaFeatures
 from src.datamarts.domain.dnaFeatures_datamart.terminator_items import TerminatorDNAFeatures
+from src.datamarts.domain.dnaFeatures_datamart.reg_int_items import RegIntDnaFeatures
 
 
 def all_dtt_datamarts():
@@ -11,6 +12,7 @@ def all_dtt_datamarts():
     gene_items = GeneDnaFeatures(dict_colors)
     promoter_items = PromoterDnaFeatures(dict_colors)
     terminator_items = TerminatorDNAFeatures()
+    reg_int_items = RegIntDnaFeatures(dict_colors)
     json_items = []
 
     for gene in gene_items.objects:
@@ -22,6 +24,9 @@ def all_dtt_datamarts():
     for terminator in terminator_items.objects:
         terminator = remove_none_fields_empty_lists(terminator.to_dict())
         json_items.append(terminator.copy())
+    for reg_int in reg_int_items.objects:
+        reg_int = remove_none_fields_empty_lists(reg_int.to_dict())
+        json_items.append(reg_int.copy())
     return json_items
 
 
