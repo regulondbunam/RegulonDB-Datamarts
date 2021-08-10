@@ -26,6 +26,7 @@ class RegIntDnaFeatures(object):
             self.linked_object_when_no_positions = entity
             self.regulator = entity
             self.tooltip = entity
+            self.line_type = entity.citations
 
         @property
         def objectRGBColor(self):
@@ -111,6 +112,24 @@ class RegIntDnaFeatures(object):
                         if gene_object not in self._related_genes:
                             self._related_genes.append(gene_object)
 
+        @property
+        def line_type(self):
+            return self._line_type
+
+        @line_type.setter
+        def line_type(self, citations):
+            self._line_type = 1
+            if citations:
+                for citation in citations:
+                    if citation.evidences_id:
+                        evidence = multigenomic_api.evidences.find_by_id(citation.evidences_id)
+                        if evidence.type == "S":
+                            self._line_type = 2
+                            break
+                        elif evidence.type == "C":
+                            self._line_type = 3
+                            break
+
         def to_dict(self):
             dttDatamart = {
                 "_id": self.entity.id,
@@ -121,7 +140,7 @@ class RegIntDnaFeatures(object):
                 "leftEndPosition": self.positions["leftEndPosition"],
                 "lineRGBColor": "0,0,0",
                 # TODO: this gonna be defined by evidence, if is weak or strong
-                "lineType": 1,
+                "lineType": self.line_type,
                 "lineWidth": 1,
                 "linkedObjectWhenNoPositions": [],
                 "objectType": "tf_binding_site",
