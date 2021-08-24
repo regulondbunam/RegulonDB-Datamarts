@@ -12,7 +12,6 @@ class PromoterDnaFeatures(object):
         for promoter in promoter_objects:
             dtt_datamart = PromoterDnaFeatures.DTTDatamart(promoter, self.dict_colors)
             yield dtt_datamart
-            print(promoter.id)
         del promoter_objects
 
     class DTTDatamart:

@@ -10,7 +10,6 @@ class TerminatorDNAFeatures:
         for terminator in terminator_objects:
             dtt_datamart = TerminatorDNAFeatures.DTTDatamart(terminator)
             yield dtt_datamart
-            print(terminator.id)
         del terminator_objects
 
     class DTTDatamart:

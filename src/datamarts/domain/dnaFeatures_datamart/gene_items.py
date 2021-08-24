@@ -12,7 +12,6 @@ class GeneDnaFeatures(object):
             if gene.left_end_position:
                 dtt_datamart = GeneDnaFeatures.DTTDatamart(gene, self.dict_colors)
                 yield dtt_datamart
-                print(gene.id)
         del gene_objects
 
     class DTTDatamart:
