@@ -1,5 +1,8 @@
+import string
+
 import multigenomic_api
 import re
+
 
 class RegIntDnaFeatures(object):
     def __init__(self, dict_colors):
@@ -12,9 +15,9 @@ class RegIntDnaFeatures(object):
         reg_int_objects = find_dual_reg_ints(reg_int_objects)
         for reg_int in reg_int_objects:
             if reg_int.regulator:
-                if reg_int.regulator.type == "product" or reg_int.regulator.type == "regulatoryComplex":
-                    dtt_datamart = RegIntDnaFeatures.DTTDatamart(reg_int, self.dict_colors)
-                    yield dtt_datamart
+                # print(reg_int.id)
+                dtt_datamart = RegIntDnaFeatures.DTTDatamart(reg_int, self.dict_colors)
+                yield dtt_datamart
         del reg_int_objects
 
     class DTTDatamart:
@@ -22,22 +25,23 @@ class RegIntDnaFeatures(object):
         def __init__(self, entity, dict_colors):
             self.entity = entity
             self.dict_colors = dict_colors
-            self.objectRGBColor = entity.function
+            self.object_rgb_color = entity.function
             self.positions = entity
             self.related_genes = entity
             self.linked_object_when_no_positions = entity
             self.regulator = entity
             self.tooltip = entity
+            self.strand = entity.regulated_entity
             self.line_type = entity.citations
-            self.object_type = entity.regulator
+            self.object_type = entity
             self.name = self.object_type
 
         @property
-        def objectRGBColor(self):
+        def object_rgb_color(self):
             return self._color
 
-        @objectRGBColor.setter
-        def objectRGBColor(self, entity_function):
+        @object_rgb_color.setter
+        def object_rgb_color(self, entity_function):
             self._color = ""
             if entity_function == "activator":
                 self._color = "10, 255, 5"
@@ -45,6 +49,8 @@ class RegIntDnaFeatures(object):
                 self._color = "243, 10, 2"
             elif entity_function == "dual":
                 self._color = "163, 167, 167"
+            else:
+                self._color = "165, 166, 166"
 
         @property
         def positions(self):
@@ -73,6 +79,8 @@ class RegIntDnaFeatures(object):
                 self._regulator = multigenomic_api.products.find_by_id(entity.regulator.id)
             elif entity.regulator.type == "regulatoryComplex":
                 self._regulator = multigenomic_api.regulatory_complexes.find_by_id(entity.regulator.id)
+            elif entity.regulator.type == "regulatoryContinuant":
+                self._regulator = entity.regulator
 
         @property
         def tooltip(self):
@@ -119,6 +127,38 @@ class RegIntDnaFeatures(object):
                             self._related_genes.append(gene_object)
 
         @property
+        def linked_object_when_no_positions(self):
+            return self._linked_object_when_no_positions
+
+        @linked_object_when_no_positions.setter
+        def linked_object_when_no_positions(self, entity):
+            self._linked_object_when_no_positions = {}
+            if self.positions["leftEndPosition"] is None and self.positions["rightEndPosition"] is None:
+                if entity.regulated_entity.type == "promoter":
+                    promoter = multigenomic_api.promoters.find_by_id(entity.regulated_entity.id)
+                    if promoter.transcription_start_site:
+                        self._linked_object_when_no_positions = {
+                            "_id": promoter.id,
+                            "leftEndPosition": promoter.transcription_start_site.left_end_position or None,
+                            "name": promoter.name,
+                            "rightEndPosition": promoter.transcription_start_site.right_end_position or None,
+                            "strand": promoter.strand,
+                            "type": "promoter"
+                        }
+                    else:
+                        self._linked_object_when_no_positions = linked_gene_to_promoter(promoter)
+                elif entity.regulated_entity.type == "gene":
+                    gene = multigenomic_api.genes.find_by_id(entity.regulated_entity.id)
+                    self._linked_object_when_no_positions = {
+                        "_id": gene.id,
+                        "leftEndPosition": gene.left_end_position or None,
+                        "name": gene.name,
+                        "rightEndPosition": gene.right_end_position or None,
+                        "strand": gene.strand,
+                        "type": "gene"
+                    }
+
+        @property
         def line_type(self):
             return self._line_type
 
@@ -141,13 +181,17 @@ class RegIntDnaFeatures(object):
             return self._object_type
 
         @object_type.setter
-        def object_type(self, regulator):
+        def object_type(self, reg_int):
             self._object_type = "tf_binding_site"
-            if regulator.type == "product":
-                product = multigenomic_api.products.find_by_id(regulator.id)
+            if reg_int.regulator.type == "product":
+                product = multigenomic_api.products.find_by_id(reg_int.regulator.id)
                 if product.type:
                     if product.type == "small RNA":
                         self._object_type = "srna"
+            elif reg_int.mechanism:
+                self._object_type = "translational_tf_binding_site"
+            elif reg_int.regulator.type == "regulatoryContinuant":
+                self._object_type = "ppGpp"
 
         @property
         def name(self):
@@ -155,23 +199,73 @@ class RegIntDnaFeatures(object):
 
         @name.setter
         def name(self, obj_type):
-            self._name = None
-            if obj_type == "srna":
+            self._name = self.entity.regulator.name
+            pattern = re.compile("[A-Z][a-z]{2}[A-Z]")
+            if obj_type == "ppGpp":
+                self._name = self.regulator.name
+            elif obj_type == 'translational_tf_binding_site':
+                reg_complex = multigenomic_api.regulatory_complexes.find_by_id(self.regulator.id)
+                if reg_complex.abbreviated_name:
+                    self._name = reg_complex.abbreviated_name
+                else:
+                    prod = reg_complex.products[0]
+                    product = multigenomic_api.products.find_by_id(prod.products_id)
+                    if pattern.search(product.name[-4:]):
+                        self._name = product.name[-4:]
+                    else:
+                        gene = multigenomic_api.genes.find_by_id(product.genes_id)
+                        name = gene.name[:1].upper() + gene.name[1:]
+                        self._name = name
+            elif obj_type == "srna":
                 product = multigenomic_api.products.find_by_id(self.regulator.id)
-                pattern = re.compile("[A-Z][a-z]{2}[A-Z]")
                 if pattern.search(product.name[-4:]):
                     self._name = product.name[-4:]
                 else:
-                    self._name = product.synonyms[0]
+                    gene = multigenomic_api.genes.find_by_id(product.genes_id)
+                    name = gene.name[:1].upper() + gene.name[1:]
+                    if pattern.search(name):
+                        self._name = name
             else:
                 tf = multigenomic_api.transcription_factors.find_tf_id_by_active_conformation_id(self.regulator.id)
-                self._name = self.regulator.abbreviated_name
+                if self.regulator.abbreviated_name:
+                    self._name = self.regulator.abbreviated_name
                 if tf:
                     self._name = tf[0].name
+                else:
+                    product = {}
+                    if self.entity.regulator.type == "regulatoryComplex":
+                        reg_complex = multigenomic_api.regulatory_complexes.find_by_id(self.regulator.id)
+                        product = multigenomic_api.products.find_by_id(reg_complex.products[0].products_id)
+                    if self.entity.regulator.type == "product":
+                        product = multigenomic_api.products.find_by_id(self.regulator.id)
+                    gene = multigenomic_api.genes.find_by_id(product.genes_id)
+                    name = gene.name[:1].upper() + gene.name[1:]
+                    if pattern.search(name):
+                        self._name = name
+
+        @property
+        def strand(self):
+            return self._strand
+
+        @strand.setter
+        def strand(self, regulated_entity):
+            if regulated_entity.type == "promoter":
+                promoter = multigenomic_api.promoters.find_by_id(regulated_entity.id)
+                self._strand = promoter.strand
+            elif regulated_entity.type == "transcriptionUnit":
+                trans_unit = multigenomic_api.transcription_units.find_by_id(regulated_entity.id)
+                if trans_unit.operons_id:
+                    operon = multigenomic_api.operons.find_by_id(trans_unit.operons_id)
+                    self._strand = operon.strand
+                else:
+                    gene = multigenomic_api.genes.find_by_id(trans_unit.genes_ids)
+                    self._strand = gene.strand
+            elif regulated_entity.type == "gene":
+                gene = multigenomic_api.genes.find_by_id(regulated_entity.id)
+                self._strand = gene.strand
 
         def to_dict(self):
-
-            dttDatamart = {
+            dtt_datamart = {
                 "_id": self.entity.id,
                 "labelFont": "arial",
                 "labelRGBColor": "0,0,0",
@@ -181,7 +275,7 @@ class RegIntDnaFeatures(object):
                 "lineRGBColor": "0,0,0",
                 "lineType": self.line_type,
                 "lineWidth": 1,
-                "linkedObjectWhenNoPositions": [],
+                "linkedObjectWhenNoPositions": self.linked_object_when_no_positions,
                 "objectType": self.object_type,
                 "objectRGBColor": self._color,
                 "organism": {
@@ -189,11 +283,11 @@ class RegIntDnaFeatures(object):
                 },
                 "relatedGenes": self.related_genes,
                 "rightEndPosition": self.positions["rightEndPosition"],
-                "strand": self.entity.strand,
+                "strand": self.strand,
                 # TODO: ask what will be showed on this tooltip
                 "tooltip": self.tooltip
             }
-            return dttDatamart
+            return dtt_datamart
 
 
 def find_dual_reg_ints(reg_ints_items):
@@ -212,3 +306,55 @@ def find_dual_reg_ints(reg_ints_items):
                     final_reg_items.remove(reg_int)
                     break
     return final_reg_items
+
+
+def linked_gene_to_promoter(promoter):
+    trans_units = multigenomic_api.transcription_units.find_by_promoter_id(promoter.id)
+    gene = get_first_gene_of_tu(trans_units, promoter.strand)
+    if gene.fragments:
+        gene = get_first_fragment_position(gene)
+    return {
+        "_id": gene.id,
+        "leftEndPosition": gene.left_end_position,
+        "name": gene.name,
+        "rightEndPosition": gene.right_end_position,
+        "strand": gene.strand,
+        "type": "gene"
+    }
+
+
+def get_first_fragment_position(gene):
+    gene.left_end_position = gene.fragments[0].left_end_position
+    for fragment in gene.fragments:
+        if fragment.left_end_position < gene.left_end_position:
+            gene.left_end_position = fragment.left_end_position
+            gene.right_end_position = fragment.right_end_position
+    return gene
+
+
+def get_first_gene_of_tu(trans_units, strand):
+    first_gene = multigenomic_api.genes.find_by_id(trans_units[0].genes_ids[0])
+    if first_gene.fragments:
+        first_gene = get_first_fragment_position(first_gene)
+    first_gene = {
+        "gene_id": first_gene.id,
+        "leftEndPosition": first_gene.left_end_position
+    }
+    for tu in trans_units:
+        for gene_id in tu.genes_ids:
+            gene = multigenomic_api.genes.find_by_id(gene_id)
+            if gene.fragments:
+                gene = get_first_fragment_position(gene)
+            if strand == "forward":
+                if first_gene["leftEndPosition"] > gene.left_end_position:
+                    first_gene = {
+                        "gene_id": gene.id,
+                        "leftEndPosition": gene.left_end_position
+                    }
+            elif strand == "reverse":
+                if first_gene["leftEndPosition"] < gene.left_end_position:
+                    first_gene = {
+                        "gene_id": gene.id,
+                        "leftEndPosition": gene.left_end_position
+                    }
+    return multigenomic_api.genes.find_by_id(first_gene["gene_id"])
