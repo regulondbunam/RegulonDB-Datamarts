@@ -15,7 +15,7 @@ class RegIntDnaFeatures(object):
         reg_int_objects = find_dual_reg_ints(reg_int_objects)
         for reg_int in reg_int_objects:
             if reg_int.regulator:
-                # print(reg_int.id)
+                print(reg_int.id)
                 dtt_datamart = RegIntDnaFeatures.DTTDatamart(reg_int, self.dict_colors)
                 yield dtt_datamart
         del reg_int_objects
@@ -147,6 +147,17 @@ class RegIntDnaFeatures(object):
                         }
                     else:
                         self._linked_object_when_no_positions = linked_gene_to_promoter(promoter)
+                elif entity.regulated_entity.type == "transcriptionUnit":
+                    tu = multigenomic_api.transcription_units.find_by_id(entity.regulated_entity.id)
+                    gene = multigenomic_api.genes.find_by_id(tu.genes_ids[0])
+                    self._linked_object_when_no_positions = {
+                        "_id": gene.id,
+                        "leftEndPosition": gene.left_end_position or None,
+                        "name": gene.name,
+                        "rightEndPosition": gene.right_end_position or None,
+                        "strand": gene.strand,
+                        "type": "gene"
+                    }
                 elif entity.regulated_entity.type == "gene":
                     gene = multigenomic_api.genes.find_by_id(entity.regulated_entity.id)
                     self._linked_object_when_no_positions = {
@@ -183,12 +194,9 @@ class RegIntDnaFeatures(object):
         @object_type.setter
         def object_type(self, reg_int):
             self._object_type = "tf_binding_site"
-            if reg_int.regulator.type == "product":
-                product = multigenomic_api.products.find_by_id(reg_int.regulator.id)
-                if product.type:
-                    if product.type == "small RNA":
-                        self._object_type = "srna"
-            elif reg_int.mechanism:
+            if reg_int.regulation_type == "sRNA-Regulation":
+                self._object_type = "srna"
+            elif reg_int.regulation_type == "Protein-Regulation":
                 self._object_type = "translational_tf_binding_site"
             elif reg_int.regulator.type == "regulatoryContinuant":
                 self._object_type = "ppGpp"
@@ -204,12 +212,16 @@ class RegIntDnaFeatures(object):
             if obj_type == "ppGpp":
                 self._name = self.regulator.name
             elif obj_type == 'translational_tf_binding_site':
-                reg_complex = multigenomic_api.regulatory_complexes.find_by_id(self.regulator.id)
-                if reg_complex.abbreviated_name:
-                    self._name = reg_complex.abbreviated_name
-                else:
-                    prod = reg_complex.products[0]
-                    product = multigenomic_api.products.find_by_id(prod.products_id)
+                product = None
+                if self.entity.regulator.type == "regulatoryComplex":
+                    reg_complex = multigenomic_api.regulatory_complexes.find_by_id(self.regulator.id)
+                    if reg_complex.abbreviated_name:
+                        self._name = reg_complex.abbreviated_name
+                    else:
+                        product = multigenomic_api.products.find_by_id(reg_complex.products[0].products_id)
+                if self.entity.regulator.type == "product":
+                    product = multigenomic_api.products.find_by_id(self.regulator.id)
+                if product:
                     if pattern.search(product.name[-4:]):
                         self._name = product.name[-4:]
                     else:
