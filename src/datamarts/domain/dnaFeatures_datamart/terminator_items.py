@@ -1,4 +1,5 @@
 import multigenomic_api
+import numpy as np
 
 
 class TerminatorDNAFeatures:
@@ -17,6 +18,7 @@ class TerminatorDNAFeatures:
         def __init__(self, entity):
             self.entity = entity
             self.line_type = entity.citations
+            self.strand = entity
 
         @property
         def line_type(self):
@@ -36,6 +38,26 @@ class TerminatorDNAFeatures:
                             self._line_type = 3
                             break
 
+        @property
+        def strand(self):
+            return self._strand
+
+        @strand.setter
+        def strand(self, entity):
+            self._strand = ""
+            trans_units = multigenomic_api.transcription_units.find_by_terminator_id(entity.id)
+            if len(trans_units) > 1:
+                print(entity.id)
+                gene = get_common_gene_of_tu_list(trans_units)
+                if len(gene) > 0:
+                    gene = gene.pop()
+                else:
+                    gene = trans_units[0].genes_ids[0]
+            else:
+                gene = trans_units[0].genes_ids[0]
+            gene = multigenomic_api.genes.find_by_id(gene)
+            self._strand = gene.strand
+
         def to_dict(self):
             dttDatamart = {
                 "_id": self.entity.id,
@@ -44,7 +66,6 @@ class TerminatorDNAFeatures:
                 "labelSize": 12,
                 "leftEndPosition": self.entity.transcriptionTerminationSite.left_end_position,
                 "lineRGBColor": "0,0,0",
-                # TODO: this gonna be defined by evidence, if is weak or strong
                 "lineType": self._line_type,
                 "lineWidth": 1,
                 "objectType": "terminator",
@@ -52,11 +73,18 @@ class TerminatorDNAFeatures:
                 "organism": {
                     "organism_id": self.entity.organisms_id
                 },
+                "strand": self.strand,
                 "rightEndPosition": self.entity.transcriptionTerminationSite.right_end_position,
-                # TODO: ask what will be showed on this tooltip
                 "tooltip": f"{self.entity.class_}; \n"
                            f"Genome Position: "
                            f"{self.entity.transcriptionTerminationSite.left_end_position}-"
                            f"{self.entity.transcriptionTerminationSite.right_end_position}; "
             }
             return dttDatamart
+
+
+def get_common_gene_of_tu_list(trans_units_list):
+    list_of_genes = []
+    for tu in trans_units_list:
+        list_of_genes.append(tu.genes_ids)
+    return set(list_of_genes[0]).intersection(*list_of_genes)

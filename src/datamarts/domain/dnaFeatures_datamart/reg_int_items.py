@@ -1,5 +1,3 @@
-import string
-
 import multigenomic_api
 import re
 
@@ -89,7 +87,7 @@ class RegIntDnaFeatures(object):
         @tooltip.setter
         def tooltip(self, entity):
             self._tooltip = f"{self.regulator.name,}; \n"\
-                            f"Distance to transcription start site: {self.entity.absolute_center_position} \n"\
+                            f"Distance to transcription start site: {entity.absolute_center_position} \n"\
                             f"Evidence:"  # TODO: add evidences
 
         @property
@@ -108,7 +106,6 @@ class RegIntDnaFeatures(object):
                         color = ""
                         if terms:
                             color = self.dict_colors[terms[0].id]
-                        location = ""
                         if gene.strand == "forward":
                             location = f"{gene.left_end_position}->{gene.right_end_position}"
                         else:
@@ -198,7 +195,7 @@ class RegIntDnaFeatures(object):
                 self._object_type = "srna"
             elif reg_int.regulation_type == "Protein-Regulation":
                 self._object_type = "translational_tf_binding_site"
-            elif reg_int.regulator.type == "regulatoryContinuant":
+            elif reg_int.regulator.type == "regulatoryContinuant" or reg_int.regulator.name == "DksA-ppGpp":
                 self._object_type = "ppGpp"
 
         @property
