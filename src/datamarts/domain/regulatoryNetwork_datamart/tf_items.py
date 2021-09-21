@@ -1,4 +1,5 @@
 import multigenomic_api
+from src.datamarts.domain.general.biological_base import BiologicalBase
 
 
 class RegulatoryNetworkTF:
@@ -12,9 +13,10 @@ class RegulatoryNetworkTF:
             yield reg_network_node
         del tf_objects
 
-    class NodeItem:
+    class NodeItem(BiologicalBase):
 
         def __init__(self, node_object):
+            super().__init__(node_object.external_cross_references, node_object.citations, node_object.note)
             self.id = node_object.id
             self.node = node_object
             self.outdegree = node_object
@@ -46,7 +48,8 @@ class RegulatoryNetworkTF:
                 "name": self.node.name,
                 "type": "Transcription Factor",
                 "indegree": self.indegree,
-                "outdegree": self.outdegree
+                "outdegree": self.outdegree,
+                # "citations": self.citations
             }
             return reg_network_node
 
@@ -59,17 +62,17 @@ def outdegree_genes(node_object, outdegree):
                 tus = multigenomic_api.transcription_units.find_by_promoter_id(ri.regulated_entity.id)
                 for tu in tus:
                     for gene_id in tu.genes_ids:
-                        gene_outdegree_item = build_outdegree_gene_dict(gene_id, ri.function, node_object.name)
+                        gene_outdegree_item = outdegree_gene(gene_id, ri.function, node_object.name)
                         if gene_outdegree_item not in outdegree:
                             outdegree.append(gene_outdegree_item.copy())
             elif ri.regulated_entity.type == "transcriptionUnit":
                 tu = multigenomic_api.transcription_units.find_by_id(ri.regulated_entity.id)
                 for gene_id in tu.genes_ids:
-                    gene_outdegree_item = build_outdegree_gene_dict(gene_id, ri.function, node_object.name)
+                    gene_outdegree_item = outdegree_gene(gene_id, ri.function, node_object.name)
                     if gene_outdegree_item not in outdegree:
                         outdegree.append(gene_outdegree_item.copy())
             elif ri.regulated_entity.type == "gene":
-                gene_outdegree_item = build_outdegree_gene_dict(ri.regulated_entity.id, ri.function, node_object.name)
+                gene_outdegree_item = outdegree_gene(ri.regulated_entity.id, ri.function, node_object.name)
                 if gene_outdegree_item not in outdegree:
                     outdegree.append(gene_outdegree_item.copy())
     return outdegree
@@ -83,61 +86,33 @@ def outdegree_tfs(node_object, outdegree):
                 tus = multigenomic_api.transcription_units.find_by_promoter_id(ri.regulated_entity.id)
                 for tu in tus:
                     for gene_id in tu.genes_ids:
-                        outdegree = build_outdegree_tf_dict(gene_id, ri.function, node_object.name, outdegree)
+                        outdegree = outdegree_tf(gene_id, ri.function, node_object.name, outdegree)
             elif ri.regulated_entity.type == "transcriptionUnit":
                 tu = multigenomic_api.transcription_units.find_by_id(ri.regulated_entity.id)
                 for gene_id in tu.genes_ids:
-                    outdegree = build_outdegree_tf_dict(gene_id, ri.function, node_object.name, outdegree)
+                    outdegree = outdegree_tf(gene_id, ri.function, node_object.name, outdegree)
             elif ri.regulated_entity.type == "gene":
-                outdegree = build_outdegree_tf_dict(ri.regulated_entity.id, ri.function, node_object.name, outdegree)
+                outdegree = outdegree_tf(ri.regulated_entity.id, ri.function, node_object.name, outdegree)
     return outdegree
 
 
-def build_outdegree_gene_dict(gene_id, reg_int_function, object_name):
-    tooltip = ""
+def outdegree_gene(gene_id, reg_int_function, object_name):
     gene = multigenomic_api.genes.find_by_id(gene_id)
-    if reg_int_function == "repressor":
-        tooltip = f"Transcription factor {object_name} represses gene {gene.name}"
-    elif reg_int_function == "activator":
-        tooltip = f"Transcription factor {object_name} activates gene {gene.name}"
-    else:
-        tooltip = f"Transcription factor {object_name} function to gene {gene.name} is unknown"
-    gene_outdegree_item = {
-        "_id": gene.id,
-        "name": gene.name,
-        "type": "Gene",
-        "regulatoryEffect": reg_int_function or "unknown",
-        "citations": [],
-        "tooltip": tooltip,
-        "networkType": "TF-Gene"
-    }
+    tooltip = define_tooltip(reg_int_function, f"Transcription Factor{object_name}", f"Gene {gene.name}")
+    gene_outdegree_item = Build_Dict(gene, "Gene", reg_int_function, tooltip, "TF-Gene").to_dict()
     return gene_outdegree_item
 
 
-def build_outdegree_tf_dict(gene_id, reg_int_function, object_name, outdegree_lits):
-    tooltip = ""
+def outdegree_tf(gene_id, reg_int_function, object_name, outdegree_list):
     products = multigenomic_api.products.find_by_gene_id(gene_id)
     for product in products:
         trans_factors = multigenomic_api.transcription_factors.find_tf_id_by_active_conformation_id(product.id)
         for tf in trans_factors:
-            if reg_int_function == "repressor":
-                tooltip = f"Transcription factor {object_name} represses Transcription factor {tf.name}"
-            elif reg_int_function == "activator":
-                tooltip = f"Transcription factor {object_name} activates Transcription factor {tf.name}"
-            else:
-                tooltip = f"Transcription factor {object_name} function to Transcription factor {tf.name} is unknown"
-            tf_outdegree_item = {
-                "_id": tf.id,
-                "name": tf.name,
-                "type": "Transcription Factor",
-                "regulatoryEffect": reg_int_function or "unknown",
-                "citations": [],
-                "tooltip": tooltip,
-                "networkType": "TF-TF"
-            }
-            if tf_outdegree_item not in outdegree_lits:
-                outdegree_lits.append(tf_outdegree_item)
-    return outdegree_lits
+            tooltip = define_tooltip(reg_int_function, f"Transcription Factor {object_name}", f"Transcription Factor {tf.name}")
+            tf_outdegree_item = Build_Dict(tf, "Transcription Factor", reg_int_function, tooltip, "TF-TF").to_dict()
+            if tf_outdegree_item not in outdegree_list:
+                outdegree_list.append(tf_outdegree_item)
+    return outdegree_list
 
 
 def indegree_items(node_object, indegree):
@@ -145,61 +120,37 @@ def indegree_items(node_object, indegree):
         product = multigenomic_api.products.find_by_id(product_id)
         reg_ints = multigenomic_api.regulatory_interactions.find_regulatory_interactions_by_reg_entity_id(product.genes_id)
         if len(reg_ints) > 0:
-            indegree = build_indegree_tf_dict(reg_ints, indegree, node_object)
-            indegree = build_indegree_gene_dict(reg_ints, indegree, node_object)
+            indegree = indegree_tf(reg_ints, indegree, node_object)
+            indegree = indegree_gene(reg_ints, indegree, node_object)
         trans_units = multigenomic_api.transcription_units.find_by_gene_id(product.genes_id)
         if len(trans_units):
             for tu in trans_units:
                 reg_ints = multigenomic_api.regulatory_interactions. \
                     find_regulatory_interactions_by_reg_entity_id(tu.id)
                 if len(reg_ints) > 0:
-                    indegree = build_indegree_tf_dict(reg_ints, indegree, node_object)
-                    indegree = build_indegree_gene_dict(reg_ints, indegree, node_object)
+                    indegree = indegree_tf(reg_ints, indegree, node_object)
+                    indegree = indegree_gene(reg_ints, indegree, node_object)
                 reg_ints = multigenomic_api.regulatory_interactions. \
                     find_regulatory_interactions_by_reg_entity_id(tu.promoters_id)
                 if len(reg_ints) > 0:
-                    indegree = build_indegree_tf_dict(reg_ints, indegree, node_object)
-                    indegree = build_indegree_gene_dict(reg_ints, indegree, node_object)
+                    indegree = indegree_tf(reg_ints, indegree, node_object)
+                    indegree = indegree_gene(reg_ints, indegree, node_object)
     return indegree
 
 
-def remove_none_fields_empty_lists(gene_object):
-    if isinstance(gene_object, dict):
-        return {property: remove_none_fields_empty_lists(property_value) for property, property_value in gene_object.items() if property_value}
-    elif isinstance(gene_object, list):
-        if len(gene_object) != 0:
-            return [remove_none_fields_empty_lists(v) for v in gene_object]
-    else:
-        return gene_object
-
-
-def build_indegree_tf_dict(reg_ints, indegree_list, node_object):
+def indegree_tf(reg_ints, indegree_list, node_object):
     for ri in reg_ints:
         if ri.regulator:
             trans_factors = multigenomic_api.transcription_factors.find_tf_id_by_active_conformation_id(ri.regulator.id)
             for tf in trans_factors:
-                tooltip = ""
-                if ri.function == "repressor":
-                    tooltip = f"Transcription factor {tf.name} represses Transcription Factor {node_object.name}"
-                elif ri.function == "activator":
-                    tooltip = f"Transcription factor {tf.name} activates Transcription Factor {node_object.name}"
-                else:
-                    tooltip = f"Transcription factor {tf.name} function to Transcription Factor {node_object.name} is unknown"
-                gene_indegree_item = {
-                    "_id": tf.id,
-                    "name": tf.name,
-                    "type": "Transcription Factor",
-                    "regulatoryEffect": ri.function or "unknown",
-                    "citations": [],
-                    "tooltip": tooltip,
-                    "networkType": "TF-TF"
-                }
+                tooltip = define_tooltip(ri.function, f"Transcription Factor {tf.name}", f"Transcription Factor {node_object.name}")
+                gene_indegree_item = Build_Dict(tf, "Transcription Factor", ri.function, tooltip, "TF-TF").to_dict()
                 if gene_indegree_item not in indegree_list:
                     indegree_list.append(gene_indegree_item.copy())
     return indegree_list
 
 
-def build_indegree_gene_dict(reg_ints, indegree_list, node_object):
+def indegree_gene(reg_ints, indegree_list, node_object):
     for ri in reg_ints:
         if ri.regulator:
             products = []
@@ -213,23 +164,42 @@ def build_indegree_gene_dict(reg_ints, indegree_list, node_object):
                         products.append(multigenomic_api.products.find_by_id(product.products_id))
             for product in products:
                 gene = multigenomic_api.genes.find_by_id(product.genes_id)
-                tooltip = ""
-                if ri.function == "repressor":
-                    tooltip = f"Gene {gene.name} represses Transcription Factor {node_object.name}"
-                elif ri.function == "activator":
-                    tooltip = f"Gene {gene.name} activates Transcription Factor {node_object.name}"
-                else:
-                    tooltip = f"Gene {gene.name} function to Transcription Factor {node_object.name} is unknown"
-                gene_indegree_item = {
-                    "_id": gene.id,
-                    "name": gene.name,
-                    "type": "Gene",
-                    "regulatoryEffect": ri.function or "unknown",
-                    "citations": [],
-                    "tooltip": tooltip,
-                    "networkType": "Gene-TF"
-                }
+                tooltip = define_tooltip(ri.function, f"Gene {gene.name}", f"Transcription Factor {node_object.name}")
+                gene_indegree_item = Build_Dict(gene, "Gene", ri.function, tooltip, "Gene-TF").to_dict()
                 if gene_indegree_item not in indegree_list:
                     indegree_list.append(gene_indegree_item.copy())
     return indegree_list
+
+
+def define_tooltip(function, regulator, regulated):
+    tooltip = ""
+    if function == "repressor":
+        tooltip = f"{regulator} represses {regulated}"
+    elif function == "activator":
+        tooltip = f"{regulator} activates {regulated}"
+    else:
+        tooltip = f"{regulator} function to {regulated} is unknown"
+    return tooltip
+
+
+class Build_Dict(BiologicalBase):
+    def __init__(self, item, item_type, reg_int_function, tooltip, network_type):
+        super().__init__([], item.citations, [])
+        self.item = item
+        self.item_type = item_type
+        self.reg_int_function = reg_int_function,
+        self.tooltip = tooltip
+        self.network_type = network_type
+
+    def to_dict(self):
+        item_dict = {
+            "_id": self.item.id,
+            "name": self.item.name,
+            "type": self.item_type,
+            "regulatoryEffect": self.reg_int_function[0] or "unknown",
+            "citations": self.citations,
+            "tooltip": self.tooltip,
+            "networkType": self.network_type
+        }
+        return item_dict
 

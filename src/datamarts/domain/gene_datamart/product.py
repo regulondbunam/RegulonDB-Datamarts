@@ -77,6 +77,7 @@ class Product(BiologicalBase):
         }
         return product
 
+
 class Term(BiologicalBase):
 
     def __init__(self, term):
