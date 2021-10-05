@@ -2,7 +2,7 @@ import multigenomic_api
 from src.datamarts.domain.general.biological_base import BiologicalBase
 
 
-class Terms():
+class Terms:
     def __init__(self, transcription_factor):
         super().__init__()
         regulated_genes = get_genes(transcription_factor.active_conformations)
@@ -90,10 +90,11 @@ class Term(BiologicalBase):
 def get_members_from_term(term_id):
     term_doc = multigenomic_api.terms.find_by_id(term_id)
     if term_doc.members.genes:
-     return term_doc.members.genes
+        return term_doc.members.genes
     else:
         products = term_doc.members.products
         return get_genes_of_products(products)
+
 
 def get_genes_of_products(products):
     genes = []
@@ -102,6 +103,7 @@ def get_genes_of_products(products):
         if product_dict.genes_id not in genes:
             genes.append(product_dict.genes_id)
     return genes
+
 
 def get_genes(active_conformations):
     all_transcription_units = []
@@ -120,10 +122,10 @@ def get_genes(active_conformations):
                     if tu not in all_transcription_units:
                         all_transcription_units.append(tu)
     for tu in all_transcription_units:
-            for gene_id in tu.genes_ids:
-                gene = multigenomic_api.genes.find_by_id(gene_id)
-                if gene.id not in genes:
-                    genes.append(gene.id)
+        for gene_id in tu.genes_ids:
+            gene = multigenomic_api.genes.find_by_id(gene_id)
+            if gene.id not in genes:
+                genes.append(gene.id)
     return genes
 
 

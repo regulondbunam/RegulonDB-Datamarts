@@ -85,4 +85,3 @@ class Promoters(BiologicalBase):
             "transcriptionStartSite": self.transcription_start_site
         }
         return promoter_dict
-

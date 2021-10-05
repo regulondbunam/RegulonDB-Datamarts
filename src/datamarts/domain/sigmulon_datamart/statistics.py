@@ -1,6 +1,7 @@
 import multigenomic_api
 
-class Statistics():
+
+class Statistics:
 
     def __init__(self, sigmulon_id):
         promoters = multigenomic_api.promoters.find_by_sigma_factor_id(sigmulon_id)
@@ -72,7 +73,7 @@ class Statistics():
             reg_interactions = multigenomic_api.regulatory_interactions.find_regulatory_interactions_by_reg_entity_id(promoter.id)
             for ri in reg_interactions:
                 if ri.regulator:
-                    trans_factors = multigenomic_api.transcription_factors.find_tf_id_by_active_conformation_id(ri.regulator.id)
+                    trans_factors = multigenomic_api.transcription_factors.find_tf_id_by_conformation_id(ri.regulator.id)
                     for tf in trans_factors:
                         if tf.id not in self._cotranscription_factors:
                             self._cotranscription_factors.append(tf.id)

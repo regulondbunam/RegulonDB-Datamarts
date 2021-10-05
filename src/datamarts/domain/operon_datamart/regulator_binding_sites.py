@@ -26,7 +26,7 @@ class Regulator_Binding_Sites(BiologicalBase):
                 if ri.mechanism == "Translation":
                     tf_ri_dict.setdefault(ri.regulator.id, []).append(ri)
                 else:
-                    trans_factors = multigenomic_api.transcription_factors.find_tf_id_by_active_conformation_id(ri.regulator.id)
+                    trans_factors = multigenomic_api.transcription_factors.find_tf_id_by_conformation_id(ri.regulator.id)
                     for trans_factor in trans_factors:
                         tf_ri_dict.setdefault(trans_factor.id, []).append(ri)
         tf_binding_sites_dict = self.fill_tf_binding_sites_dict(tf_ri_dict)

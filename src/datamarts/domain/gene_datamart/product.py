@@ -88,7 +88,7 @@ class Term(BiologicalBase):
         term = {
             'id': self.term.terms_id,
             'name': self.term.terms_name,
-            #'productIds': self.product_ids,
+            # 'productIds': self.product_ids,
             'citations': self.citations
         }
         return term

@@ -136,3 +136,4 @@ class Operon:
             "arrangement": self.arrangement
         }
         return operon
+

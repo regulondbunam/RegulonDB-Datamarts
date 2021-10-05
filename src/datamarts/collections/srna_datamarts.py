@@ -99,3 +99,4 @@ def remove_none_fields_empty_lists(gene_object):
             return [remove_none_fields_empty_lists(v) for v in gene_object]
     else:
         return gene_object
+

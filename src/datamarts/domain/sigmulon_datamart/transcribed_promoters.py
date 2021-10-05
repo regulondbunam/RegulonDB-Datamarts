@@ -12,16 +12,16 @@ class TranscribedPromoters(BiologicalBase):
         self.operon_id = promoter.id
 
     def to_dict(self):
-        TSSPos = None
+        tss_pos = None
         if self.promoter.transcription_start_site:
-            TSSPos = self.promoter.transcription_start_site.left_end_position
+            tss_pos = self.promoter.transcription_start_site.left_end_position
         transcribed_promoters = {
             "_id": self.promoter.id,
             "name": self.promoter.name,
             "transcribedGenes": self.transcribed_genes,
             "operon_id": self.operon_id,
             "sequence": self.promoter.sequence,
-            "TSSPosition": TSSPos,
+            "TSSPosition": tss_pos,
             "boxes": self.boxes,
             "citations": self.citations
         }
@@ -76,6 +76,7 @@ class TranscribedPromoters(BiologicalBase):
                 operons_ids.append(tu.operons_id)
         if len(operons_ids) == 1:
             self._operon_id = operons_ids[0]
+
 
 def get_distance_from_tss(promoter, gene):
     distance = 0

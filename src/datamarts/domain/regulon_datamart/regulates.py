@@ -1,6 +1,7 @@
 import multigenomic_api
 from src.datamarts.domain.general.biological_base import BiologicalBase
 
+
 class Regulates(BiologicalBase):
     def __init__(self, regulator):
         super().__init__(regulator.external_cross_references, regulator.citations, regulator.note)
@@ -68,7 +69,7 @@ class Regulates(BiologicalBase):
                     for gene_id in tu.genes_ids:
                         products = multigenomic_api.products.find_by_gene_id(gene_id)
                         for product in products:
-                            trans_factors = multigenomic_api.transcription_factors.find_tf_id_by_active_conformation_id(product.id)
+                            trans_factors = multigenomic_api.transcription_factors.find_tf_id_by_conformation_id(product.id)
                             for tf in trans_factors:
                                 tf_object = {
                                     "id": tf.id,

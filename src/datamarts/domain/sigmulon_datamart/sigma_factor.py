@@ -1,6 +1,7 @@
 from src.datamarts.domain.general.biological_base import BiologicalBase
 import multigenomic_api
 
+
 class SigmaFactor(BiologicalBase):
 
     def __init__(self, sigma_factor):
@@ -45,7 +46,7 @@ class SigmaFactor(BiologicalBase):
             reg_ints = multigenomic_api.regulatory_interactions.find_regulatory_interactions_by_reg_entity_id(promoter.id)
             for reg_int in reg_ints:
                 if reg_int.regulator:
-                    trans_factors = multigenomic_api.transcription_factors.find_tf_id_by_active_conformation_id(reg_int.regulator.id)
+                    trans_factors = multigenomic_api.transcription_factors.find_tf_id_by_conformation_id(reg_int.regulator.id)
                     if trans_factors:
                         for trans_factor in trans_factors:
                             tf_object = {
