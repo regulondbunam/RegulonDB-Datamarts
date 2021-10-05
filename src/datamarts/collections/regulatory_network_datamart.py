@@ -1,6 +1,5 @@
 from src.datamarts.domain.regulatoryNetwork_datamart.tf_items import RegulatoryNetworkTF
 from src.datamarts.domain.regulatoryNetwork_datamart.gene_items import RegulatoryNetworkGene
-from src.datamarts.domain.general.biological_base import BiologicalBase
 
 
 def all_regulatory_network_nodes():
@@ -55,4 +54,3 @@ def locate_dual_items(item):
                         node["tooltip"] = node["tooltip"].replace("activates", "activates and represses")
                         item.indegree.remove(first_node)
     return item
-
