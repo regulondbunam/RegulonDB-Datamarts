@@ -51,14 +51,14 @@ class Regulator_Binding_Sites(BiologicalBase):
                 mechanism = ri.mechanism
                 if ri.regulatory_sites_id:
                     reg_sites = multigenomic_api.regulatory_sites.find_by_id(ri.regulatory_sites_id)
-                    super().__init__([], reg_sites.citations, None)
+                    super().__init__([], reg_sites.citations, reg_sites.note)
                     reg_sites_dict = {
                         "_id": reg_sites.id,
                         "absolutePosition": reg_sites.absolute_position,
                         "citations": self.citations,
                         "leftEndPosition": reg_sites.left_end_position,
                         "length": reg_sites.length,
-                        "note": reg_sites.note,
+                        "note": self.formatted_note,
                         "rightEndPosition": reg_sites.right_end_position,
                         "sequence": reg_sites.sequence
                     }
