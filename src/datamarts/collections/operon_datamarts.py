@@ -78,6 +78,7 @@ def all_operon_datamarts():
         json_operon.append(remove_none_fields_empty_lists(operon_dict))
     return json_operon
 
+
 def remove_none_fields_empty_lists(gene_object):
     if isinstance(gene_object, dict):
         return {property: remove_none_fields_empty_lists(property_value) for property, property_value in gene_object.items() if property_value}

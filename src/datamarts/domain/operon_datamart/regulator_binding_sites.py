@@ -22,7 +22,6 @@ class Regulator_Binding_Sites(BiologicalBase):
         regulatory_int = multigenomic_api.regulatory_interactions.find_regulatory_interactions_by_reg_entity_id(reg_entity)
         for ri in regulatory_int:
             if ri.regulator:
-                # Aqui la nota 2
                 if ri.mechanism == "Translation":
                     tf_ri_dict.setdefault(ri.regulator.id, []).append(ri)
                 else:
@@ -50,18 +49,8 @@ class Regulator_Binding_Sites(BiologicalBase):
             for ri in ris:
                 mechanism = ri.mechanism
                 if ri.regulatory_sites_id:
-                    reg_sites = multigenomic_api.regulatory_sites.find_by_id(ri.regulatory_sites_id)
-                    super().__init__([], reg_sites.citations, reg_sites.note)
-                    reg_sites_dict = {
-                        "_id": reg_sites.id,
-                        "absolutePosition": reg_sites.absolute_position,
-                        "citations": self.citations,
-                        "leftEndPosition": reg_sites.left_end_position,
-                        "length": reg_sites.length,
-                        "note": self.formatted_note,
-                        "rightEndPosition": reg_sites.right_end_position,
-                        "sequence": reg_sites.sequence
-                    }
+                    reg_site = multigenomic_api.regulatory_sites.find_by_id(ri.regulatory_sites_id)
+                    reg_sites_dict = RegulatorySites(reg_site).to_dict()
                 reg_int = RegulatoryInteractions(ri, reg_sites_dict).to_dict()
                 if ri.function == "repressor":
                     repressor_ris.append(reg_int)
@@ -90,3 +79,22 @@ class Regulator_Binding_Sites(BiologicalBase):
                     "mechanism": mechanism
                 })
         return transcription_factor_binding_sites
+
+
+class RegulatorySites(BiologicalBase):
+    def __init__(self, reg_site):
+        super().__init__([], reg_site.citations, reg_site.note)
+        self.reg_site = reg_site
+
+    def to_dict(self):
+        reg_sites_dict = {
+            "_id": self.reg_site.id,
+            "absolutePosition": self.reg_site.absolute_position,
+            "citations": self.citations,
+            "leftEndPosition": self.reg_site.left_end_position,
+            "length": self.reg_site.length,
+            "note": self.formatted_note,
+            "rightEndPosition": self.reg_site.right_end_position,
+            "sequence": self.reg_site.sequence
+        }
+        return reg_sites_dict
