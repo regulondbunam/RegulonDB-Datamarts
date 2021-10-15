@@ -1,6 +1,6 @@
 import multigenomic_api
 from src.datamarts.domain.general.biological_base import BiologicalBase
-# TODO: Check how are obtained this docs
+
 
 class RegulatoryNetworkTF:
 
@@ -29,6 +29,7 @@ class RegulatoryNetworkTF:
         @outdegree.setter
         def outdegree(self, node_object):
             self._outdegree = []
+            genes_ids = []
             for conformation in node_object.active_conformations:
                 reg_ints = multigenomic_api.regulatory_interactions.find_by_regulator_id(conformation.id)
                 for ri in reg_ints:
@@ -36,22 +37,19 @@ class RegulatoryNetworkTF:
                         tus = multigenomic_api.transcription_units.find_by_promoter_id(ri.regulated_entity.id)
                         for tu in tus:
                             for gene_id in tu.genes_ids:
-                                self._outdegree = outdegree_tf(gene_id, ri.function, node_object.name, self._outdegree)
-                                gene_outdegree_item = outdegree_gene(gene_id, ri.function, node_object.name)
-                                if gene_outdegree_item not in self._outdegree:
-                                    self._outdegree.append(gene_outdegree_item.copy())
+                                genes_ids.append(gene_id)
                     elif ri.regulated_entity.type == "transcriptionUnit":
                         tu = multigenomic_api.transcription_units.find_by_id(ri.regulated_entity.id)
                         for gene_id in tu.genes_ids:
-                            self._outdegree = outdegree_tf(gene_id, ri.function, node_object.name, self._outdegree)
-                            gene_outdegree_item = outdegree_gene(gene_id, ri.function, node_object.name)
-                            if gene_outdegree_item not in self._outdegree:
-                                self._outdegree.append(gene_outdegree_item.copy())
+                            genes_ids.append(gene_id)
                     elif ri.regulated_entity.type == "gene":
-                        self._outdegree = outdegree_tf(ri.regulated_entity.id, ri.function, node_object.name, self._outdegree)
-                        gene_outdegree_item = outdegree_gene(ri.regulated_entity.id, ri.function, node_object.name)
+                        genes_ids.append(ri.regulated_entity.id)
+                    for gene_id in genes_ids:
+                        self._outdegree = outdegree_tf(gene_id, ri.function, node_object.name, self._outdegree)
+                        gene_outdegree_item = outdegree_gene(gene_id, ri.function, node_object.name)
                         if gene_outdegree_item not in self._outdegree:
                             self._outdegree.append(gene_outdegree_item.copy())
+
 
         @property
         def indegree(self):
