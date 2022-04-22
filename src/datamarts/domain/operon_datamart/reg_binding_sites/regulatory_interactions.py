@@ -1,5 +1,6 @@
 from src.datamarts.domain.general.biological_base import BiologicalBase
 
+
 class RegulatoryInteractions(BiologicalBase):
     def __init__(self, reg_int, regulatory_sites):
         super().__init__(reg_int.external_cross_references, reg_int.citations, reg_int.note)

@@ -3,6 +3,7 @@ from src.datamarts.domain.gene_datamart.gene import Gene
 from src.datamarts.domain.gene_datamart.product import Product
 from src.datamarts.domain.gene_datamart.regulation import Regulation
 from src.datamarts.domain.general.biological_base import BiologicalBase
+from src.datamarts.domain.general.remove_items import remove_empty_items
 
 
 class GeneDatamarts:
@@ -11,6 +12,7 @@ class GeneDatamarts:
     def objects(self):
         gene_objects = multigenomic_api.genes.get_all()
         for gene_object in gene_objects:
+            print(gene_object.id)
             gene_datamart = GeneDatamarts.GeneDatamart(gene_object)
             yield gene_datamart
         del gene_objects
@@ -84,12 +86,12 @@ class GeneDatamarts:
                 "_id": self.id,
                 "gene": self.gene,
                 "products": self.products,
-                #TODO: falta implementar shine dalgarnos, no se encuentra en multigenomic
+                # TODO: functions extraction for shine dalgarnos are missing, not exists in MG
                 "shineDalgarnos": [],
                 "regulation": self.regulation,
-                #TODO: falta implementar growth conditions, no se encuentra en multigenomic
+                # TODO: functions extraction for growth conditions are missing, not exists in MG
                 "growthConditions": [],
-                #TODO: falta implementar organism dentro de multigenomic, por ahora solo ocupa el organism_id del gene
+                # TODO: organism docs aren't in collection, instead ID is used
                 "organism": self.organism,
                 "allCitations": BiologicalBase.get_all_citations()
             }
@@ -100,16 +102,6 @@ def all_genes_datamarts():
     genes = GeneDatamarts()
     json_genes = []
     for gene in genes.objects:
-        gene_dict = remove_none_fields_empty_lists(gene.to_dict().copy())
-        json_genes.append(remove_none_fields_empty_lists(gene_dict))
+        gene_dict = remove_empty_items(gene.to_dict().copy())
+        json_genes.append(remove_empty_items(gene_dict))
     return json_genes
-
-
-def remove_none_fields_empty_lists(gene_object):
-    if isinstance(gene_object, dict):
-        return {property: remove_none_fields_empty_lists(property_value) for property, property_value in gene_object.items() if property_value}
-    elif isinstance(gene_object, list):
-        if len(gene_object) != 0:
-            return [remove_none_fields_empty_lists(v) for v in gene_object]
-    else:
-        return gene_object

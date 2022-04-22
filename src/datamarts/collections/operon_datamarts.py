@@ -3,6 +3,8 @@ from src.datamarts.domain.operon_datamart.operon import Operon
 from src.datamarts.domain.operon_datamart.transcription_units import TranscriptionUnit
 from src.datamarts.domain.general.biological_base import BiologicalBase
 
+from src.datamarts.domain.general.remove_items import remove_empty_items
+
 
 class OperonDatamarts:
 
@@ -10,6 +12,7 @@ class OperonDatamarts:
     def objects(self):
         operon_objects = multigenomic_api.operons.get_all()
         for operon_object in operon_objects:
+            print(operon_object.id)
             operon_datamart = OperonDatamarts.OperonDatamart(operon_object)
             yield operon_datamart
         del operon_objects
@@ -74,16 +77,6 @@ def all_operon_datamarts():
     operons = OperonDatamarts()
     json_operon = []
     for operon in operons.objects:
-        operon_dict = remove_none_fields_empty_lists(operon.to_dict().copy())
-        json_operon.append(remove_none_fields_empty_lists(operon_dict))
+        operon_dict = remove_empty_items(operon.to_dict().copy())
+        json_operon.append(remove_empty_items(operon_dict))
     return json_operon
-
-
-def remove_none_fields_empty_lists(gene_object):
-    if isinstance(gene_object, dict):
-        return {property: remove_none_fields_empty_lists(property_value) for property, property_value in gene_object.items() if property_value}
-    elif isinstance(gene_object, list):
-        if len(gene_object) != 0:
-            return [remove_none_fields_empty_lists(v) for v in gene_object]
-    else:
-        return gene_object

@@ -5,21 +5,22 @@ from src.datamarts.domain.general.biological_base import BiologicalBase
 from src.datamarts.domain.operon_datamart.transcription_unit.promoters import Promoters
 from src.datamarts.domain.operon_datamart.transcription_unit.terminators import Terminators
 
-from src.datamarts.domain.operon_datamart.regulator_binding_sites import Regulator_Binding_Sites
+from src.datamarts.domain.operon_datamart.regulator_binding_sites import RegulatoryBindingSites
 
 
 class TranscriptionUnit(BiologicalBase):
 
-    def __init__(self, transcription_unit):
-        super().__init__(transcription_unit.external_cross_references, transcription_unit.citations, transcription_unit.note)
-        regulatory_int = multigenomic_api.regulatory_interactions.find_regulatory_interactions_by_reg_entity_id(transcription_unit.id)
-        self.transcription_unit = transcription_unit
-        self.first_gene = transcription_unit
-        self.genes = transcription_unit.genes_ids
-        self.promoter = transcription_unit
-        self.regulator_binding_sites = transcription_unit.id
+    def __init__(self, trans_unit):
+        super().__init__(trans_unit.external_cross_references, trans_unit.citations, trans_unit.note)
+        regulatory_int = \
+            multigenomic_api.regulatory_interactions.find_regulatory_interactions_by_reg_entity_id(trans_unit.id)
+        self.transcription_unit = trans_unit
+        self.first_gene = trans_unit
+        self.genes = trans_unit.genes_ids
+        self.promoter = trans_unit
+        self.regulator_binding_sites = trans_unit.id
         self.sites = regulatory_int
-        self.terminators = transcription_unit.terminators_ids
+        self.terminators = trans_unit.terminators_ids
         self.transcription_factors = regulatory_int
 
     @property
@@ -29,12 +30,17 @@ class TranscriptionUnit(BiologicalBase):
     @first_gene.setter
     def first_gene(self, transcription_unit):
         self._first_gene = {}
+        dist = None
         if transcription_unit.promoters_id:
             promoter = multigenomic_api.promoters.find_by_id(transcription_unit.promoters_id)
             first_gene = get_first_gene_of_tu(transcription_unit, promoter)
             if promoter.transcription_start_site:
+                if promoter.strand == "forward":
+                    dist = abs(first_gene["leftEndPosition"] - promoter.transcription_start_site.left_end_position)
+                if promoter.strand == "reverse":
+                    dist = abs(first_gene["rightEndPosition"] - promoter.transcription_start_site.right_end_position)
                 self._first_gene = {
-                    "distanceToPromoter": abs(first_gene["pos"] - promoter.transcription_start_site.left_end_position),
+                    "distanceToPromoter": dist,
                     "gene_id": first_gene["id"],
                     "gene_name": first_gene["name"]
                 }
@@ -48,7 +54,7 @@ class TranscriptionUnit(BiologicalBase):
         self._genes = []
         for gene_id in gene_ids:
             gene = multigenomic_api.genes.find_by_id(gene_id)
-            tf_binding_sites = Regulator_Binding_Sites(gene_id)
+            tf_binding_sites = RegulatoryBindingSites(gene_id)
             gene = {
                 "id": gene.id,
                 "name": gene.name,
@@ -79,7 +85,6 @@ class TranscriptionUnit(BiologicalBase):
             if ri.regulatory_sites_id:
                 self._sites.append(ri.regulatory_sites_id)
 
-
     @property
     def terminators(self):
         return self._terminators
@@ -105,7 +110,6 @@ class TranscriptionUnit(BiologicalBase):
                 self._transcription_factors.extend(trans_factor)
         self._transcription_factors = set(list(self._transcription_factors))
 
-
     @property
     def regulator_binding_sites(self):
         return self._regulator_binding_sites
@@ -113,7 +117,7 @@ class TranscriptionUnit(BiologicalBase):
     @regulator_binding_sites.setter
     def regulator_binding_sites(self, transcription_unit_id):
         self._regulator_binding_sites = []
-        tf_binding_sites_dict = Regulator_Binding_Sites(transcription_unit_id)
+        tf_binding_sites_dict = RegulatoryBindingSites(transcription_unit_id)
         self._regulator_binding_sites = tf_binding_sites_dict.to_dict()
 
     def to_dict(self):
@@ -137,11 +141,13 @@ class TranscriptionUnit(BiologicalBase):
         return transcription_unit
 
 
-def get_first_gene_of_tu(transcription_unit, promoter):
+# TODO: remove this function after successfully test extraction
+def get_first_gene_deprecated(transcription_unit, promoter):
     first_gene = multigenomic_api.genes.find_by_id(transcription_unit.genes_ids[0])
     if promoter.strand == "reverse":
-        first_gene.left_end_position = first_gene.right_end_position
-    first_gene.left_end_position = first_gene.left_end_position or first_gene.fragments[0].left_end_position
+        first_gene.left_end_position = first_gene.right_end_position or first_gene.fragments[0].right_end_position
+    else:
+        first_gene.left_end_position = first_gene.left_end_position or first_gene.fragments[0].left_end_position
 
     for gene in transcription_unit.genes_ids:
         current_gene = multigenomic_api.genes.find_by_id(gene)
@@ -174,3 +180,25 @@ def get_first_gene_of_tu(transcription_unit, promoter):
     }
     return first_gene
 
+
+def get_first_gene_of_tu(transcription_unit, promoter):
+    dict_genes = []
+    first_gene = {}
+    for gene in transcription_unit.genes_ids:
+        gene_object = multigenomic_api.genes.find_by_id(gene)
+        if gene_object.fragments:
+            min_left_pos = min(gene_object.fragments, key=lambda x: x.left_end_position)
+            max_right_pos = max(gene_object.fragments, key=lambda x: x.right_end_position)
+            gene_object.left_end_position = min_left_pos.left_end_position
+            gene_object.right_end_position = max_right_pos.right_end_position
+        dict_genes.append({
+            "id": gene_object.id,
+            "name": gene_object.name,
+            "leftEndPosition": gene_object.left_end_position,
+            "rightEndPosition": gene_object.right_end_position
+        })
+    if promoter.strand == "forward":
+        first_gene = (min(dict_genes, key=lambda x: x["leftEndPosition"]))
+    if promoter.strand == "reverse":
+        first_gene = (max(dict_genes, key=lambda x: x["rightEndPosition"]))
+    return first_gene

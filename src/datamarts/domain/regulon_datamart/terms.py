@@ -55,18 +55,21 @@ class Terms:
             terms = product.terms
             for term in terms.biological_process:
                 term = Term(term, regulated_genes)
-                if term.to_dict() not in self._gene_ontology['biologicalProcess']:
-                    self._gene_ontology['biologicalProcess'].append(term.to_dict())
+                term_dict = term.to_dict()
+                if term_dict not in self._gene_ontology['biologicalProcess']:
+                    self._gene_ontology['biologicalProcess'].append(term_dict)
 
             for term in terms.cellular_component:
                 term = Term(term, regulated_genes)
-                if term.to_dict() not in self._gene_ontology['cellularComponent']:
-                    self._gene_ontology['cellularComponent'].append(term.to_dict())
+                term_dict = term.to_dict()
+                if term_dict not in self._gene_ontology['cellularComponent']:
+                    self._gene_ontology['cellularComponent'].append(term_dict)
 
             for term in terms.molecular_function:
                 term = Term(term, regulated_genes)
-                if term.to_dict() not in self._gene_ontology['molecularFunction']:
-                    self._gene_ontology['molecularFunction'].append(term.to_dict())
+                term_dict = term.to_dict()
+                if term_dict not in self._gene_ontology['molecularFunction']:
+                    self._gene_ontology['molecularFunction'].append(term_dict)
 
 
 class Term(BiologicalBase):

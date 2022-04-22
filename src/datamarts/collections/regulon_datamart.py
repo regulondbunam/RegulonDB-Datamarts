@@ -7,6 +7,8 @@ from src.datamarts.domain.regulon_datamart.terms import Terms
 from src.datamarts.domain.regulon_datamart.regulatory_interactions import RegulatoryInteractions
 from src.datamarts.domain.regulon_datamart.summary import Summary
 
+from src.datamarts.domain.general.remove_items import remove_empty_items
+
 
 class RegulonDatamarts:
 
@@ -14,6 +16,7 @@ class RegulonDatamarts:
     def objects(self):
         regulator_objects = multigenomic_api.transcription_factors.get_all()
         for regulator_object in regulator_objects:
+            print(regulator_object.id)
             regulon_datamart = RegulonDatamarts.RegulonDatamart(regulator_object)
             yield regulon_datamart
         del regulator_objects
@@ -101,16 +104,6 @@ def all_regulon_datamarts():
     regulons = RegulonDatamarts()
     json_regulons = []
     for regulon in regulons.objects:
-        regulon_dict = remove_none_fields_empty_lists(regulon.to_dict().copy())
-        json_regulons.append(remove_none_fields_empty_lists(regulon_dict))
+        regulon_dict = remove_empty_items(regulon.to_dict().copy())
+        json_regulons.append(remove_empty_items(regulon_dict))
     return json_regulons
-
-
-def remove_none_fields_empty_lists(regulon_object):
-    if isinstance(regulon_object, dict):
-        return {property: remove_none_fields_empty_lists(property_value) for property, property_value in regulon_object.items() if property_value}
-    elif isinstance(regulon_object, list):
-        if len(regulon_object) != 0:
-            return [remove_none_fields_empty_lists(v) for v in regulon_object]
-    else:
-        return regulon_object

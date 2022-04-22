@@ -3,12 +3,13 @@ from src.datamarts.domain.general.biological_base import BiologicalBase
 
 
 class TranscriptionFactor(BiologicalBase):
-    def __init__(self, transcription_factor):
-        super().__init__(transcription_factor.external_cross_references, transcription_factor.citations, transcription_factor.note)
-        self.transcription_factor = transcription_factor
-        self.conformations = transcription_factor.active_conformations + transcription_factor.inactive_conformations
-        self.genes = transcription_factor.products_ids
-        self.operons = transcription_factor.products_ids
+    def __init__(self, trans_factor):
+        super().__init__(trans_factor.external_cross_references, trans_factor.citations, trans_factor.note)
+        self.transcription_factor = trans_factor
+        self.conformations = trans_factor.active_conformations + trans_factor.inactive_conformations
+        self.genes = trans_factor.products_ids
+        self.operons = trans_factor.products_ids
+        self.products = trans_factor.products_ids
 
     def to_dict(self):
         transcription_factor = {
@@ -21,10 +22,11 @@ class TranscriptionFactor(BiologicalBase):
             "encodedFrom": {
                 "genes": self.genes,
                 "operon": self.operons
-            }
+            },
             # TODO: This will be added later by local process
             # "sensingClass": self.regulator.sensing_class,
-            # "connectivityClass": self.regulator.connectivity_class
+            # "connectivityClass": self.regulator.connectivity_class,
+            "products": self.products
         }
         return transcription_factor
 
@@ -34,7 +36,7 @@ class TranscriptionFactor(BiologicalBase):
 
     @conformations.setter
     def conformations(self, conformations):
-        global product
+        product = None
         self._conformations = []
         for conformation in conformations:
             if conformation.type == "product":
@@ -52,11 +54,11 @@ class TranscriptionFactor(BiologicalBase):
     def genes(self, products_ids):
         self._genes = []
         for product_id in products_ids:
-            product = multigenomic_api.products.find_by_id(product_id)
-            gene = multigenomic_api.genes.find_by_id(product.genes_id)
-            gene_properties = self.get_gene_properties(multigenomic_api.genes.find_by_id(product.genes_id))
+            prod = multigenomic_api.products.find_by_id(product_id)
+            gene = multigenomic_api.genes.find_by_id(prod.genes_id)
+            gene_properties = self.get_gene_properties(multigenomic_api.genes.find_by_id(prod.genes_id))
             gene = {
-                "gene_id": product.genes_id,
+                "gene_id": prod.genes_id,
                 "gene_name": gene.name,
                 "genomePosition": gene_properties[0],
                 "length": gene_properties[1]
@@ -71,20 +73,20 @@ class TranscriptionFactor(BiologicalBase):
     def operons(self, products_ids):
         self._operons = []
         for product_id in products_ids:
-            product = multigenomic_api.products.find_by_id(product_id)
-            transcription_units = multigenomic_api.transcription_units.find_by_gene_id(product.genes_id)
-            operons_id = multigenomic_api.transcription_units.get_operons_id_by_gene_id(product.genes_id)
+            prod = multigenomic_api.products.find_by_id(product_id)
+            transcription_units = multigenomic_api.transcription_units.find_by_gene_id(prod.genes_id)
+            operons_id = multigenomic_api.transcription_units.get_operons_id_by_gene_id(prod.genes_id)
             # operons_id = list(set(operons_id))
             operon = multigenomic_api.operons.find_by_id(operons_id)
             tus_encoding_reg = []
-            global promoter
+            promoter = None
             for transcription_unit in transcription_units:
+                tu_dict = {
+                    "transcriptionUnitName": transcription_unit.name
+                }
                 if transcription_unit.promoters_id:
                     promoter = multigenomic_api.promoters.find_by_id(transcription_unit.promoters_id)
-                tu_dict = {
-                    "transcriptionUnitName": transcription_unit.name,
-                    "promoterName": promoter.name
-                }
+                    tu_dict["promoterName"]: promoter.name
                 if tu_dict not in tus_encoding_reg:
                     tus_encoding_reg.append(tu_dict)
             operon_dict = {
@@ -94,6 +96,23 @@ class TranscriptionFactor(BiologicalBase):
             }
             if operon_dict not in self._operons:
                 self._operons.append(operon_dict.copy())
+
+    # TODO: Check if this is correctly obtained
+    @property
+    def products(self):
+        return self._products
+
+    @products.setter
+    def products(self, products_ids):
+        self._products = []
+        for product_id in products_ids:
+            prod = multigenomic_api.products.find_by_id(product_id)
+            prod_dict = {
+                "_id": prod.id,
+                "name": prod.name
+            }
+            if prod_dict not in self._products:
+                self._products.append(prod_dict.copy())
 
     @staticmethod
     def get_gene_properties(gene):
@@ -117,10 +136,10 @@ class TranscriptionFactor(BiologicalBase):
 
 
 class Conformation(BiologicalBase):
-    def __init__(self, product, type):
+    def __init__(self, product, conformation_type):
         super().__init__([], product.citations, [])
         self.product = product
-        self.type = type
+        self.type = conformation_type
 
     def to_dict(self):
         conformation = {

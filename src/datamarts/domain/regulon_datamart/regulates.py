@@ -69,7 +69,8 @@ class Regulates(BiologicalBase):
                     for gene_id in tu.genes_ids:
                         products = multigenomic_api.products.find_by_gene_id(gene_id)
                         for product in products:
-                            trans_factors = multigenomic_api.transcription_factors.find_tf_id_by_conformation_id(product.id)
+                            trans_factors = multigenomic_api.transcription_factors.\
+                                find_tf_id_by_conformation_id(product.id)
                             for tf in trans_factors:
                                 tf_object = {
                                     "id": tf.id,
@@ -135,7 +136,8 @@ class Regulates(BiologicalBase):
                     promoter = multigenomic_api.promoters.find_by_id(tu.promoters_id)
                     if promoter.binds_sigma_factor:
                         first_gene = get_first_gene_of_tu(tu, promoter)
-                        sigma_factor = multigenomic_api.sigma_factors.find_by_id(promoter.binds_sigma_factor.sigma_factors_id)
+                        sigma_factor = multigenomic_api.\
+                            sigma_factors.find_by_id(promoter.binds_sigma_factor.sigma_factors_id)
                         sigma_factor_object = {
                             "id": sigma_factor.id,
                             "name": sigma_factor.name,
@@ -177,18 +179,21 @@ def gene_ontology_extrac(products):
         if terms:
             for term in terms.biological_process:
                 term = Term(term)
-                if term.to_dict() not in terms_dict['biologicalProcess']:
-                    terms_dict['biologicalProcess'].append(term.to_dict())
+                term_dict = term.to_dict()
+                if term_dict not in terms_dict['biologicalProcess']:
+                    terms_dict['biologicalProcess'].append(term_dict)
 
             for term in terms.cellular_component:
                 term = Term(term)
-                if term.to_dict() not in terms_dict['cellularComponent']:
-                    terms_dict['cellularComponent'].append(term.to_dict())
+                term_dict = term.to_dict()
+                if term_dict not in terms_dict['cellularComponent']:
+                    terms_dict['cellularComponent'].append(term_dict)
 
             for term in terms.molecular_function:
                 term = Term(term)
-                if term.to_dict() not in terms_dict['molecularFunction']:
-                    terms_dict['molecularFunction'].append(term.to_dict())
+                term_dict = term.to_dict()
+                if term_dict not in terms_dict['molecularFunction']:
+                    terms_dict['molecularFunction'].append(term_dict)
     return terms_dict
 
 

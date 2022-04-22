@@ -10,7 +10,7 @@ class Product(BiologicalBase):
         self.product = product
         self.motifs = product.id
         self.terms = product.terms
-        #self.terms = product.genes_id
+        # self.terms = product.genes_id
 
     @property
     def motifs(self):

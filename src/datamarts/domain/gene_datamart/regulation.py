@@ -62,7 +62,7 @@ class Operon:
         self.regulators = []
         self.operon = operon
         self.transcription_units = multigenomic_api.transcription_units.find_by_operon_id(operon.id)
-        self.arrangement = operon.id
+        self.arrangement = self.transcription_units
         self.regulatory_interactions = self.transcription_units
 
     @property
@@ -70,9 +70,9 @@ class Operon:
         return self._arrangement
 
     @arrangement.setter
-    def arrangement(self, operon_id):
+    def arrangement(self, transcription_units):
         self._arrangement = []
-        for transcription_unit in self.transcription_units:
+        for transcription_unit in transcription_units:
             arrangement = {
                 'transcriptionUnit': {
                     "id": transcription_unit.id,
@@ -89,12 +89,13 @@ class Operon:
 
     @regulatory_interactions.setter
     def regulatory_interactions(self, transcription_units):
-        regulated_entities = []
+        reg_entities = []
         for transcription_unit in transcription_units:
             promoter_id = transcription_unit.promoters_id
-            regulated_entities = [promoter_id] + [transcription_unit.id]
-        regulated_entities = set(regulated_entities)
-        self._regulatory_interactions = multigenomic_api.regulatory_interactions.find_by_regulated_entity_ids(regulated_entities)
+            reg_entities = [promoter_id] + [transcription_unit.id]
+        reg_entities = set(reg_entities)
+        self._regulatory_interactions = \
+            multigenomic_api.regulatory_interactions.find_by_regulated_entity_ids(reg_entities)
 
     def get_promoters(self, promoter_id):
         promoters = []
@@ -113,8 +114,8 @@ class Operon:
 
     def get_regulators(self, transcription_unit_id, promoter_id):
         arrangement_regulators = []
-        regulated_entities = [promoter_id] + [transcription_unit_id]
-        regulators = multigenomic_api.regulatory_interactions.find_regulators_by_regulated_entity_ids(regulated_entities)
+        reg_entities = [promoter_id] + [transcription_unit_id]
+        regulators = multigenomic_api.regulatory_interactions.find_regulators_by_regulated_entity_ids(reg_entities)
         for regulator in regulators:
             new_regulator = {
                 "id": regulator.id,
@@ -136,4 +137,3 @@ class Operon:
             "arrangement": self.arrangement
         }
         return operon
-

@@ -50,7 +50,6 @@ class RegulatoryNetworkTF:
                         if gene_outdegree_item not in self._outdegree:
                             self._outdegree.append(gene_outdegree_item.copy())
 
-
         @property
         def indegree(self):
             return self._indegree

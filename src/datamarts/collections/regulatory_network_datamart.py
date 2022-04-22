@@ -1,6 +1,8 @@
 from src.datamarts.domain.regulatoryNetwork_datamart.tf_items import RegulatoryNetworkTF
 from src.datamarts.domain.regulatoryNetwork_datamart.gene_items import RegulatoryNetworkGene
 
+from src.datamarts.domain.general.remove_items import remove_empty_items
+
 
 def all_regulatory_network_nodes():
     network_nodes_tf = RegulatoryNetworkTF()
@@ -8,24 +10,13 @@ def all_regulatory_network_nodes():
     json_nodes = []
     for item in network_nodes_tf.objects:
         item = locate_dual_items(item)
-        item = remove_none_fields_empty_lists(item.to_dict())
-        json_nodes.append(remove_none_fields_empty_lists(item))
+        item = remove_empty_items(item.to_dict())
+        json_nodes.append(remove_empty_items(item))
     for item in network_nodes_gene.objects:
         item = locate_dual_items(item)
-        item = remove_none_fields_empty_lists(item.to_dict())
-        json_nodes.append(remove_none_fields_empty_lists(item))
+        item = remove_empty_items(item.to_dict())
+        json_nodes.append(remove_empty_items(item))
     return json_nodes
-
-
-def remove_none_fields_empty_lists(object_item):
-    if isinstance(object_item, dict):
-        return {property: remove_none_fields_empty_lists(property_value) for property, property_value in
-                object_item.items() if property_value}
-    elif isinstance(object_item, list):
-        if len(object_item) != 0:
-            return [remove_none_fields_empty_lists(v) for v in object_item]
-    else:
-        return object_item
 
 
 def locate_dual_items(item):

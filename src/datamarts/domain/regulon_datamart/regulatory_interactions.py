@@ -21,7 +21,9 @@ class RegulatoryInteractions(BiologicalBase):
             "distanceToPromoter": distances[1],
             "regulatedGenes": self.regulated_genes,
             "regulatoryBindingSites":  self.regulatory_binding_sites,
-            "citations": self.citations
+            "citations": self.citations,
+            # TODO: Check if this field is correctly obtained
+            "mechanism": self.regulatory_interaction.mechanism
         }
         return regulatory_interactions
 
