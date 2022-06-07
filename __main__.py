@@ -5,7 +5,14 @@ from datetime import datetime
 
 import multigenomic_api
 
-from src.datamarts.collections import gene_datamarts, operon_datamarts, regulon_datamart, sigmulon_datamarts, srna_datamarts, dttDatamart, regulatory_network_datamart
+from src.datamarts.collections import \
+    gene_datamarts, \
+    operon_datamarts, \
+    regulon_datamart, \
+    sigmulon_datamarts, \
+    srna_datamarts, \
+    dttDatamart, \
+    regulatory_network_datamart
 
 
 def load_arguments_parser():
@@ -28,15 +35,15 @@ def load_arguments_parser():
         required=False
     )
 
-    arguments = parser.parse_args()
+    args = parser.parse_args()
 
-    return arguments
+    return args
 
 
-def create_json(objects, filename, output):
+def create_json(objects_collections, filename, output):
     filename = os.path.join(output, filename)
     with open("{}.json".format(filename), 'w') as json_file:
-        json.dump(objects, json_file, indent=2, sort_keys=True)
+        json.dump(objects_collections, json_file, indent=2, sort_keys=True)
 
 
 def write_summary(datamarts_info):
@@ -69,10 +76,11 @@ if __name__ == '__main__':
     for collection_name, objects in datamart_files.items():
         print("Writing {} json file,".format(collection_name))
         objects_to_json = []
-        for object in objects:
-            objects_to_json.append(object.copy())
+        for item in objects:
+            objects_to_json.append(item.copy())
         print("\t total of {} objects: {}".format(collection_name, len(objects_to_json)))
-        datamartsData = datamartsData + "\n ### {}: \n {} Total Objects Generated".format(collection_name, len(objects_to_json))
+        datamartsData = \
+            datamartsData + "\n ### {}: \n {} Total Objects Generated".format(collection_name, len(objects_to_json))
         objects_to_json = {
             collection_name: objects_to_json
         }
