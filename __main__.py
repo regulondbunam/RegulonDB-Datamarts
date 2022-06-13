@@ -84,5 +84,5 @@ if __name__ == '__main__':
         objects_to_json = {
             collection_name: objects_to_json
         }
-        create_json(objects_to_json, collection_name, "build")
+        create_json(objects_to_json, collection_name, "lib/data")
     write_summary(datamartsData)
