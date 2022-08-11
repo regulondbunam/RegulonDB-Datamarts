@@ -15,6 +15,6 @@ class Motif(BiologicalBase):
             "note": self.formatted_note,
             "rightEndPosition": self.motif.right_end_position,
             "sequence": self.motif.sequence,
-            "type": self.motif.type
+            "type": self.motif.data_source
         }
         return motif
