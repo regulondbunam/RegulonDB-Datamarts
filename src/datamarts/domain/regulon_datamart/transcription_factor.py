@@ -26,7 +26,10 @@ class TranscriptionFactor(BiologicalBase):
             # TODO: This will be added later by local process
             # "sensingClass": self.regulator.sensing_class,
             # "connectivityClass": self.regulator.connectivity_class,
-            "products": self.products
+            "products": self.products,
+            "symmetry": self.transcription_factor.symmetry,
+            "siteLength": self.transcription_factor.site_length,
+            "family": self.transcription_factor.family
         }
         return transcription_factor
 
