@@ -10,7 +10,7 @@ class Product(BiologicalBase):
         self.product = product
         self.motifs = product.id
         self.terms = product.terms
-        #self.terms = product.genes_id
+        # self.terms = product.genes_id
 
     @property
     def motifs(self):
@@ -77,6 +77,7 @@ class Product(BiologicalBase):
         }
         return product
 
+
 class Term(BiologicalBase):
 
     def __init__(self, term):
@@ -87,7 +88,7 @@ class Term(BiologicalBase):
         term = {
             'id': self.term.terms_id,
             'name': self.term.terms_name,
-            #'productIds': self.product_ids,
+            # 'productIds': self.product_ids,
             'citations': self.citations
         }
         return term

@@ -23,6 +23,7 @@ Icon
 .Trashes
 .VolumeIcon.icns
 .com.apple.timemachine.donotpresent
+docs/coexpression-spearman-rank-v1_1.txt
 
 # Directories potentially created on remote AFP share
 .AppleDB
@@ -30,5 +31,7 @@ Icon
 Network Trash Folder
 Temporary Items
 .apdisk
+
+lib/data/*
 
 # End of https://www.gitignore.io/api/macos

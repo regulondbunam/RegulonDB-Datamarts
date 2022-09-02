@@ -21,7 +21,9 @@ class RegulatoryInteractions(BiologicalBase):
             "distanceToPromoter": distances[1],
             "regulatedGenes": self.regulated_genes,
             "regulatoryBindingSites":  self.regulatory_binding_sites,
-            "citations": self.citations
+            "citations": self.citations,
+            # TODO: Check if this field is correctly obtained
+            "mechanism": self.regulatory_interaction.mechanism
         }
         return regulatory_interactions
 
@@ -31,10 +33,21 @@ class RegulatoryInteractions(BiologicalBase):
 
     @regulator.setter
     def regulator(self, regulator):
+        continuant = []
+        if regulator.type == "regulatoryComplex":
+            reg_complex = multigenomic_api.regulatory_complexes.find_by_id(regulator.id)
+            for cont_id in reg_complex.regulatory_continuants_ids:
+                reg_cont = multigenomic_api.regulatory_continuants.find_by_id(cont_id)
+                continuant.append({
+                    "_id": reg_cont.id,
+                    "name": reg_cont.name,
+                    "type": reg_cont.type
+                })
         self._regulator = {
             "_id": regulator.id,
             "type": regulator.type,
-            "name": regulator.name
+            "name": regulator.name,
+            "continuants": continuant
         }
 
     @property

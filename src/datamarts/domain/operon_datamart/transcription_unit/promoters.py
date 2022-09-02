@@ -1,7 +1,7 @@
 import multigenomic_api
 
 from src.datamarts.domain.general.biological_base import BiologicalBase
-from src.datamarts.domain.operon_datamart.regulator_binding_sites import Regulator_Binding_Sites
+from src.datamarts.domain.operon_datamart.regulator_binding_sites import RegulatoryBindingSites
 from src.datamarts.domain.operon_datamart.transcription_unit.promoter.binds_sigma_factor import BindsSigmaFactor
 
 
@@ -67,7 +67,7 @@ class Promoters(BiologicalBase):
     @regulator_binding_sites.setter
     def regulator_binding_sites(self, promoter_id):
         self._regulator_binding_sites = []
-        tf_binding_sites_dict = Regulator_Binding_Sites(promoter_id)
+        tf_binding_sites_dict = RegulatoryBindingSites(promoter_id)
         self._regulator_binding_sites = tf_binding_sites_dict.to_dict()
 
     def to_dict(self):
@@ -85,4 +85,3 @@ class Promoters(BiologicalBase):
             "transcriptionStartSite": self.transcription_start_site
         }
         return promoter_dict
-

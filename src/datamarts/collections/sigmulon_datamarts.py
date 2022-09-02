@@ -5,6 +5,8 @@ from src.datamarts.domain.sigmulon_datamart.sigma_factor import SigmaFactor
 from src.datamarts.domain.sigmulon_datamart.transcribed_promoters import TranscribedPromoters
 from src.datamarts.domain.sigmulon_datamart.statistics import Statistics
 
+from src.datamarts.domain.general.remove_items import remove_empty_items
+
 
 class SigmulonDatamarts:
 
@@ -12,6 +14,7 @@ class SigmulonDatamarts:
     def objects(self):
         sigma_factor_objects = multigenomic_api.sigma_factors.get_all()
         for sigma_factor in sigma_factor_objects:
+            print(sigma_factor.id)
             sigma_factor_datamart = SigmulonDatamarts.SigmulonDatamart(sigma_factor)
             yield sigma_factor_datamart
         del sigma_factor_objects
@@ -68,19 +71,9 @@ def all_sigmulon_datamarts():
     sigmulon = SigmulonDatamarts()
     json_sigmulon = []
     for sigma in sigmulon.objects:
-        sigma_dict = remove_none_fields_empty_lists(sigma.to_dict().copy())
-        json_sigmulon.append(remove_none_fields_empty_lists(sigma_dict))
+        sigma_dict = remove_empty_items(sigma.to_dict().copy())
+        json_sigmulon.append(remove_empty_items(sigma_dict))
     return json_sigmulon
-
-
-def remove_none_fields_empty_lists(sigma_object):
-    if isinstance(sigma_object, dict):
-        return {property: remove_none_fields_empty_lists(property_value) for property, property_value in sigma_object.items() if property_value}
-    elif isinstance(sigma_object, list):
-        if len(sigma_object) != 0:
-            return [remove_none_fields_empty_lists(v) for v in sigma_object]
-    else:
-        return sigma_object
 
 
 def get_transcribed_promoters(sigma_factor_id):

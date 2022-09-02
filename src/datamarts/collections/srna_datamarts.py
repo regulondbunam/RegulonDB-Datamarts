@@ -5,6 +5,8 @@ from src.datamarts.domain.srna_datamart.summary import Summary
 from src.datamarts.domain.srna_datamart.regulatory_interactions import RegulatoryInteractions
 from src.datamarts.domain.general.biological_base import BiologicalBase
 
+from src.datamarts.domain.general.remove_items import remove_empty_items
+
 
 class SrnaDatamarts:
 
@@ -12,12 +14,13 @@ class SrnaDatamarts:
     def objects(self):
         srna_objects = multigenomic_api.products.get_all_srnas()
         for srna in srna_objects:
+            print(srna.id)
             if srna.type == "small RNA":
-                srna_datamart = SrnaDatamarts.srnaDatamart(srna)
+                srna_datamart = SrnaDatamarts.SrnaDatamart(srna)
                 yield srna_datamart
         del srna_objects
 
-    class srnaDatamart(BiologicalBase):
+    class SrnaDatamart(BiologicalBase):
         def __init__(self, srna):
             super().__init__(srna.external_cross_references, srna.citations, srna.note)
             self.id = srna.id
@@ -86,16 +89,6 @@ def all_srna_datamarts():
     srna_items = SrnaDatamarts()
     json_srna = []
     for srna in srna_items.objects:
-        srna_dict = remove_none_fields_empty_lists(srna.to_dict().copy())
-        json_srna.append(remove_none_fields_empty_lists(srna_dict))
+        srna_dict = remove_empty_items(srna.to_dict().copy())
+        json_srna.append(remove_empty_items(srna_dict))
     return json_srna
-
-
-def remove_none_fields_empty_lists(gene_object):
-    if isinstance(gene_object, dict):
-        return {property: remove_none_fields_empty_lists(property_value) for property, property_value in gene_object.items() if property_value}
-    elif isinstance(gene_object, list):
-        if len(gene_object) != 0:
-            return [remove_none_fields_empty_lists(v) for v in gene_object]
-    else:
-        return gene_object

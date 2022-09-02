@@ -26,7 +26,7 @@ class Gene(BiologicalBase):
             "sequence": self.gene.sequence,
             "strand": self.gene.strand,
             "synonyms": self.gene.synonyms,
-            #"terms": self.terms,
+            # "terms": self.terms,
             "type": self.gene.type
         }
         return gene

@@ -53,7 +53,7 @@ class Summary:
             for gene_id in tu.genes_ids:
                 products = multigenomic_api.products.find_by_gene_id(gene_id)
                 for product in products:
-                    trans_factors = multigenomic_api.transcription_factors.find_tf_id_by_active_conformation_id(
+                    trans_factors = multigenomic_api.transcription_factors.find_tf_id_by_conformation_id(
                         product.id)
                     for tf in trans_factors:
                         tf_object = {

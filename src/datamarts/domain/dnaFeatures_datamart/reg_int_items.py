@@ -235,7 +235,7 @@ class RegIntDnaFeatures(object):
                     if pattern.search(name):
                         self._name = name
             else:
-                tf = multigenomic_api.transcription_factors.find_tf_id_by_active_conformation_id(self.regulator.id)
+                tf = multigenomic_api.transcription_factors.find_tf_id_by_conformation_id(self.regulator.id)
                 if self.regulator.abbreviated_name:
                     self._name = self.regulator.abbreviated_name
                 if tf:
