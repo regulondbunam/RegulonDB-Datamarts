@@ -1,46 +1,64 @@
-# [Software name]
+# RegulonDB Datamarts
 
 # Description
 
-[High-level description, describing what exactly software does.]
+This software contains all needed to extract all data for RegulonDB 
+Datamarts Collections. At this moment the collections that can be 
+extracted are the next listed:
+- Gene
+- Regulon
+- Operon
+- Drawing Traces Tool (DTT)
+- Gene Coexpression
+- Sigmulon
+- SRNA
+- Regulatory Network
 
 # Motivation
-
-[Why the software does things the way it does and why it was designed in the first place. What problems are solved by it. Links to publications and comparisons to similar software.]
-
+With the reengineering of RegulonDB passing from relational model to an documental model that contains all data of collection named now as datamart, with this app can be possible to get data from RegulonDB Multigenomic model and build the datamarts for the GraphQL API Query Services.
 
 
 # System requirements
 
-[If the software does make high demand on particular resources, then this should be clearly advertised and explained.]
+- Python ^3.9.7
+- RegulonDB Multigenomic API Services
+- 8GB RAM
+- 50GB Space on Disk
 
-# Install 
+# Install
 
-[This may be described in a separate INSTALL file, but the README must then clearly state this.]
-
-
+Clone this repo with
+```
+git clone https://github.com/regulondbunam/RegulonDB-Datamarts
+```
 
 # Quick start
 
-[How the first task can be performed with the software, or, in the more extensive  documentation, a link to the quick start. Outlines how to quickly get started with the software using a basic yet practical example]
+First install RegulonDB Multigenomic API from its Repo in this [link](https://github.com/regulondbunam/multigenomic-api)
 
+Then you can use the following command to get all Datamarts Extraction files in JSON
+```
+python3 __main__.py
+```
 
+The extraction might take a while, the results will be in lib/data
 
 # Project website 
 
-[Website where the software is described and allows users to obtain it as well as its documentation.]
+[NOT DEFINED]
 
 # License
 
-[Defines the set of rules and conditions for people who want to use the software.]
+Copyright 2021 RegulonDB
 
+Permission to use, copy, modify, and/or distribute this software for any purpose with or without fee is hereby granted, provided that the above copyright notice and this permission notice appear in all copies.
+
+THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 # Support contact information
 
 [It should be clear where to go for support, for example a contact e-mail address]
 
 # Software quality checklist
-
-[This may describe the state of the code, providing the necessary guidance on which aspects could be improved]
 
 **Accessibility**
 
@@ -49,11 +67,11 @@
 
 **Documentation**
 
-- [ ] README file
+- [X] README file
 
 **Learnability**
 
-- [ ] Quick start
+- [X] Quick start
 
 **Buildability**
 
@@ -65,7 +83,7 @@
 
 **Copyright & Licensing**
 
-- [ ] LICENSE file
+- [X] LICENSE file
 
 **Portability**
 
