@@ -33,5 +33,6 @@ Temporary Items
 .apdisk
 
 lib/data/*
+lib/jsonschemas/*
 
 # End of https://www.gitignore.io/api/macos
