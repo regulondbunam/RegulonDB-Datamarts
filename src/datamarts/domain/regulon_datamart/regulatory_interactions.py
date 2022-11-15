@@ -1,5 +1,6 @@
 import multigenomic_api
 from src.datamarts.domain.general.biological_base import BiologicalBase
+from src.datamarts.domain.general.additiveEvidences import AdditiveEvidences
 
 
 class RegulatoryInteractions(BiologicalBase):
@@ -13,17 +14,23 @@ class RegulatoryInteractions(BiologicalBase):
 
     def to_dict(self):
         distances = get_distances(self.regulatory_interaction)
+        citations = self.citations
+        reg_bind_sites = self.regulatory_binding_sites
+        additive_evs = AdditiveEvidences(citations + reg_bind_sites.get("citations", []))
         regulatory_interactions = {
+            "_id": self.regulatory_interaction.id,
             "regulator": self.regulator,
             "function": self.regulatory_interaction.function,
             "regulatedEntity": self.regulated_entity,
             "distanceToFirstGene": distances[0],
             "distanceToPromoter": distances[1],
             "regulatedGenes": self.regulated_genes,
-            "regulatoryBindingSites":  self.regulatory_binding_sites,
-            "citations": self.citations,
+            "regulatoryBindingSites":  reg_bind_sites,
+            "citations": citations,
             # TODO: Check if this field is correctly obtained
-            "mechanism": self.regulatory_interaction.mechanism
+            "mechanism": self.regulatory_interaction.mechanism,
+            "additiveEvidences": additive_evs.to_dict(),
+            "confidenceLevel": additive_evs.get_confidence_level()
         }
         return regulatory_interactions
 
@@ -99,7 +106,7 @@ class RegulatoryInteractions(BiologicalBase):
 
     @regulatory_binding_sites.setter
     def regulatory_binding_sites(self, reg_interaction):
-        self._regulatory_binding_sites = []
+        self._regulatory_binding_sites = {}
         promoter = None
         if reg_interaction.regulatory_sites_id:
             if reg_interaction.regulated_entity.type == "promoter":
