@@ -1,4 +1,5 @@
 from src.datamarts.domain.general.biological_base import BiologicalBase
+from src.datamarts.domain.general.additiveEvidences import AdditiveEvidences
 
 
 class Terminators(BiologicalBase):
@@ -21,11 +22,15 @@ class Terminators(BiologicalBase):
             }
 
     def to_dict(self):
+        citations = self.citations
+        additive_evs = AdditiveEvidences(citations)
         terminator_dict = {
             "_id": self.terminator.id,
-            "citations": self.citations,
+            "citations": citations,
             "sequence": self.terminator.sequence,
             "transcriptionTerminationSite": self.transcription_termination_site,
-            "class": self.terminator.class_
+            "class": self.terminator.class_,
+            "additiveEvidences": additive_evs.to_dict(),
+            "confidenceLevel": additive_evs.get_confidence_level()
         }
         return terminator_dict

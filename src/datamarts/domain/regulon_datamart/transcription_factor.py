@@ -64,7 +64,7 @@ class TranscriptionFactor(BiologicalBase):
         for product_id in products_ids:
             prod = multigenomic_api.products.find_by_id(product_id)
             gene = multigenomic_api.genes.find_by_id(prod.genes_id)
-            gene_properties = self.get_gene_properties(multigenomic_api.genes.find_by_id(prod.genes_id))
+            gene_properties = self.get_gene_properties(gene)
             gene = {
                 "gene_id": prod.genes_id,
                 "gene_name": gene.name,

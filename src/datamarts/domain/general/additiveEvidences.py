@@ -57,6 +57,7 @@ class AdditiveEvidences:
                         return "S"
             return "W"
 
+
 def get_rules_with_code(code_rule, rules):
     valid_rules = []
     for rule in rules:

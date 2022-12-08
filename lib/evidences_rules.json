@@ -237,5 +237,107 @@
         "regulatory interaction"
       ],
       "evidenceCategory": "independent cross-validation"
+    },
+    {
+      "rules_values": [
+        8,
+        1
+      ],
+      "type": "C",
+      "pertainsTo": [
+        "Promoters"
+      ],
+      "evidenceCategory": "independent cross-validation"
+    },
+    {
+      "rules_values": [
+        8,
+        9
+      ],
+      "type": "C",
+      "pertainsTo": [
+        "Promoters"
+      ],
+      "evidenceCategory": "independent cross-validation"
+    },
+    {
+      "rules_values": [
+        1,
+        9
+      ],
+      "type": "C",
+      "pertainsTo": [
+        "Promoters"
+      ],
+      "evidenceCategory": "independent cross-validation"
+    },
+    {
+      "rules_values": [
+        10,
+        7
+      ],
+      "type": "S",
+      "pertainsTo": [
+        "Promoters"
+      ],
+      "evidenceCategory": "independent cross-validation"
+    },
+    {
+      "rules_values": [
+        8,
+        10,
+        7
+      ],
+      "type": "C",
+      "pertainsTo": [
+        "Promoters"
+      ],
+      "evidenceCategory": "independent cross-validation"
+    },
+    {
+      "rules_values": [
+        1,
+        10,
+        7
+      ],
+      "type": "C",
+      "pertainsTo": [
+        "Promoters"
+      ],
+      "evidenceCategory": "independent cross-validation"
+    },
+    {
+      "rules_values": [
+        9,
+        10,
+        7
+      ],
+      "type": "C",
+      "pertainsTo": [
+        "Promoters"
+      ],
+      "evidenceCategory": "independent cross-validation"
+    },
+    {
+      "rules_values": [
+        11,
+        12
+      ],
+      "type": "C",
+      "pertainsTo": [
+        "Transcription unit"
+      ],
+      "evidenceCategory": "independent cross-validation"
+    },
+    {
+      "rules_values": [
+        13,
+        14
+      ],
+      "type": "S",
+      "pertainsTo": [
+        "Transcription unit"
+      ],
+      "evidenceCategory": "independent cross-validation"
     }
   ]

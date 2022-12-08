@@ -35,20 +35,13 @@ class Regulates(BiologicalBase):
                 for tu in transcription_units:
                     for gene_id in tu.genes_ids:
                         gene = multigenomic_api.genes.find_by_id(gene_id)
-                        terms = gene.terms
-                        terms_list = []
-                        for term in terms:
-                            term = {
-                                'id': term.terms_id,
-                                'name': term.terms_name
-                            }
-                            terms_list.append(term.copy())
+                        terms = get_gene_terms(gene)
                         products = multigenomic_api.products.find_by_gene_id(gene_id)
                         gene_object = {
                             "id": gene.id,
                             "name": gene.name,
                             "terms": {
-                                "multifun": terms_list,
+                                "multifun": terms,
                                 "geneOntology": gene_ontology_extrac(products)
                             },
                             "function": tu_object["function"]
@@ -72,10 +65,26 @@ class Regulates(BiologicalBase):
                             trans_factors = multigenomic_api.transcription_factors.\
                                 find_tf_id_by_conformation_id(product.id)
                             for tf in trans_factors:
+                                genes = []
+                                for product_id in tf.products_ids:
+                                    prod = multigenomic_api.products.find_by_id(product_id)
+                                    gene = multigenomic_api.genes.find_by_id(prod.genes_id)
+                                    terms = get_gene_terms(gene)
+                                    products = multigenomic_api.products.find_by_gene_id(gene_id)
+                                    gene = {
+                                        "id": prod.genes_id,
+                                        "name": gene.name,
+                                        "terms": {
+                                            "multifun": terms,
+                                            "geneOntology": gene_ontology_extrac(products)
+                                        }
+                                    }
+                                    genes.append(gene.copy())
                                 tf_object = {
                                     "id": tf.id,
                                     "name": tf.name,
-                                    "function": tu_object["function"]
+                                    "function": tu_object["function"],
+                                    "genes": genes
                                 }
                                 self._transcription_factors = insert_element_on(tf_object, self._transcription_factors)
 
@@ -96,7 +105,11 @@ class Regulates(BiologicalBase):
                         "id": tu.id,
                         "name": tu.name,
                         "firstGene": first_gene,
-                        "function": tu_object["function"]
+                        "function": tu_object["function"],
+                        "promoter": {
+                            "id": promoter.id,
+                            "name": promoter.name
+                        }
                     }
                     self._transcription_units = insert_element_on(tu_object, self._transcription_units)
 
@@ -135,16 +148,20 @@ class Regulates(BiologicalBase):
                 for tu in transcription_units:
                     promoter = multigenomic_api.promoters.find_by_id(tu.promoters_id)
                     if promoter.binds_sigma_factor:
-                        first_gene = get_first_gene_of_tu(tu, promoter)
                         sigma_factor = multigenomic_api.\
                             sigma_factors.find_by_id(promoter.binds_sigma_factor.sigma_factors_id)
+                        gene = multigenomic_api.genes.find_by_id(sigma_factor.genes_id)
                         sigma_factor_object = {
                             "id": sigma_factor.id,
                             "name": sigma_factor.name,
                             "function": tu_object["function"],
-                            "firstGene": first_gene
+                            "gene": {
+                                "id": gene.id,
+                                "name": gene.name
+                            }
                         }
-                        self._sigma_factors = insert_element_on(sigma_factor_object, self._sigma_factors)
+                        if sigma_factor_object not in self._sigma_factors:
+                            self._sigma_factors = insert_element_on(sigma_factor_object, self._sigma_factors)
 
 
 def get_all_transcription_units(tf_active_conformations):
@@ -257,3 +274,16 @@ def insert_element_on(reg_object, regulated_list):
     if reg_object not in regulated_list:
         regulated_list.append(reg_object)
     return regulated_list
+
+
+def get_gene_terms(gene):
+    terms = gene.terms
+    terms_list = []
+    for term in terms:
+        term = {
+            'id': term.terms_id,
+            'name': term.terms_name
+        }
+        terms_list.append(term.copy())
+    return terms_list
+
