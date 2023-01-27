@@ -1,7 +1,7 @@
 # DatamartsExtractorSummary 
-Creation date: 2022-12-08
+Creation date: 2023-01-27
  
-Creation time: 15:14:44
+Creation time: 14:41:41
  
 RegulonDB Version: 10.8 
 
@@ -21,3 +21,5 @@ RegulonDB Version: 10.8
  14765 Total Objects Generated
  ### regulatoryNetworkDatamart: 
  4966 Total Objects Generated
+ ### listPage: 
+ 7883 Total Objects Generated
