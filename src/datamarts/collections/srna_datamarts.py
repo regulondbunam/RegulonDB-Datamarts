@@ -70,9 +70,8 @@ class SrnaDatamarts:
         @summary.setter
         def summary(self, srna):
             self._summary = {}
-            if len(self.regulatory_interactions) > 0:
-                summary = Summary(srna, self.regulatory_interactions).to_dict()
-                self._summary = summary
+            summary = Summary(srna, self.regulatory_interactions).to_dict()
+            self._summary = summary
 
         def to_dict(self):
             srna_datamart = {
