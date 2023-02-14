@@ -1,6 +1,7 @@
 import multigenomic_api
 from src.datamarts.domain.regulon_datamart.summary import insert_ri_bs_counts, get_counts_of_regulated_object
 
+
 class Summary:
     def __init__(self, srna, reg_ints):
         transcription_units = get_all_transcription_units(srna.id)

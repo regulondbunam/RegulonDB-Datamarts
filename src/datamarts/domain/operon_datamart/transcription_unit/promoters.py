@@ -3,6 +3,7 @@ import multigenomic_api
 from src.datamarts.domain.general.biological_base import BiologicalBase
 from src.datamarts.domain.operon_datamart.regulator_binding_sites import RegulatoryBindingSites
 from src.datamarts.domain.operon_datamart.transcription_unit.promoter.binds_sigma_factor import BindsSigmaFactor
+from src.datamarts.domain.general.additiveEvidences import AdditiveEvidences
 
 
 class Promoters(BiologicalBase):
@@ -71,9 +72,11 @@ class Promoters(BiologicalBase):
         self._regulator_binding_sites = tf_binding_sites_dict.to_dict()
 
     def to_dict(self):
+        citations = self.citations
+        additive_evs = AdditiveEvidences(citations)
         promoter_dict = {
             "_id": self.promoter.id,
-            "citations": self.citations,
+            "citations": citations,
             "bindsSigmaFactor": self.binds_sigma_factor,
             "name": self.promoter.name,
             "note": self.formatted_note,
@@ -82,6 +85,8 @@ class Promoters(BiologicalBase):
             "sequence": self.promoter.sequence,
             "synonyms": self.promoter.synonyms,
             "regulatorBindingSites": self.regulator_binding_sites,
-            "transcriptionStartSite": self.transcription_start_site
+            "transcriptionStartSite": self.transcription_start_site,
+            "additiveEvidences": additive_evs.to_dict(),
+            "confidenceLevel": additive_evs.get_confidence_level()
         }
         return promoter_dict

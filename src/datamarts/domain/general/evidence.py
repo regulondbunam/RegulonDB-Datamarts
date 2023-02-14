@@ -17,6 +17,7 @@ class Evidence:
             "type": self.evidence.type,
             "code": self.evidence.code,
             "id": self.evidence.id,
-            "name": self.evidence.name
+            "name": self.evidence.name,
+            "additiveEvidenceCodeRule": self.evidence.cv_code_rule
         }
         return evidence

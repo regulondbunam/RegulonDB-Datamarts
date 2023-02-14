@@ -6,6 +6,7 @@ from src.datamarts.domain.operon_datamart.transcription_unit.promoters import Pr
 from src.datamarts.domain.operon_datamart.transcription_unit.terminators import Terminators
 
 from src.datamarts.domain.operon_datamart.regulator_binding_sites import RegulatoryBindingSites
+from src.datamarts.domain.general.additiveEvidences import AdditiveEvidences
 
 
 class TranscriptionUnit(BiologicalBase):
@@ -121,6 +122,8 @@ class TranscriptionUnit(BiologicalBase):
         self._regulator_binding_sites = tf_binding_sites_dict.to_dict()
 
     def to_dict(self):
+        citations = self.citations
+        additive_evs = AdditiveEvidences(citations)
         transcription_unit = {
             "id": self.transcription_unit.id,
             "name": self.transcription_unit.name,
@@ -136,7 +139,9 @@ class TranscriptionUnit(BiologicalBase):
                 "transcriptionFactors": len(self.transcription_factors)
             },
             "terminators": self.terminators,
-            "regulatorBindingSites": self._regulator_binding_sites
+            "regulatorBindingSites": self._regulator_binding_sites,
+            "additiveEvidences": additive_evs.to_dict(),
+            "confidenceLevel": additive_evs.get_confidence_level()
         }
         return transcription_unit
 

@@ -44,7 +44,9 @@ class Operon(BiologicalBase):
         self._genes = []
         for tu in trans_units:
             if tu.genes_ids:
-                self._genes.extend(tu.genes_ids)
+                for gene_id in tu.genes_ids:
+                    if gene_id not in self._genes:
+                        self._genes.append(gene_id)
 
     @property
     def regulation_positions(self):

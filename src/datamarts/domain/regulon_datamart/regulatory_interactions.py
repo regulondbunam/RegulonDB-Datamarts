@@ -1,5 +1,6 @@
 import multigenomic_api
 from src.datamarts.domain.general.biological_base import BiologicalBase
+from src.datamarts.domain.general.additiveEvidences import AdditiveEvidences
 
 
 class RegulatoryInteractions(BiologicalBase):
@@ -12,18 +13,25 @@ class RegulatoryInteractions(BiologicalBase):
         self.regulatory_binding_sites = reg_interaction
 
     def to_dict(self):
-        distances = get_distances(self.regulatory_interaction)
+        reg_genes = self.regulated_genes
+        distance_to_first_gene = get_distance_to_first_gene(self.regulatory_interaction, reg_genes)
+        citations = self.citations
+        reg_bind_sites = self.regulatory_binding_sites
+        additive_evs = AdditiveEvidences(citations + reg_bind_sites.get("citations", []))
         regulatory_interactions = {
+            "id": self.regulatory_interaction.id,
             "regulator": self.regulator,
             "function": self.regulatory_interaction.function,
             "regulatedEntity": self.regulated_entity,
-            "distanceToFirstGene": distances[0],
-            "distanceToPromoter": distances[1],
+            "distanceToFirstGene": distance_to_first_gene,
+            "distanceToPromoter": self.regulatory_interaction.absolute_center_position,
             "regulatedGenes": self.regulated_genes,
-            "regulatoryBindingSites":  self.regulatory_binding_sites,
-            "citations": self.citations,
+            "regulatoryBindingSites":  reg_bind_sites,
+            "citations": citations,
             # TODO: Check if this field is correctly obtained
-            "mechanism": self.regulatory_interaction.mechanism
+            "mechanism": self.regulatory_interaction.mechanism,
+            "additiveEvidences": additive_evs.to_dict(),
+            "confidenceLevel": additive_evs.get_confidence_level()
         }
         return regulatory_interactions
 
@@ -99,7 +107,7 @@ class RegulatoryInteractions(BiologicalBase):
 
     @regulatory_binding_sites.setter
     def regulatory_binding_sites(self, reg_interaction):
-        self._regulatory_binding_sites = []
+        self._regulatory_binding_sites = {}
         promoter = None
         if reg_interaction.regulatory_sites_id:
             if reg_interaction.regulated_entity.type == "promoter":
@@ -117,45 +125,26 @@ class RegulatoryInteractions(BiologicalBase):
             self._regulatory_binding_sites = reg_binding_sites_obj
 
 
-def get_distances(reg_int):
-    transcription_units = []
-    genes = []
+def get_distance_to_first_gene(reg_int, regulated_genes):
     distance_to_first_gene = None
-    distance_to_promoter = None
+    promoter = None
     if reg_int.regulated_entity.type == "promoter":
-        transcription_units = multigenomic_api.transcription_units.find_by_promoter_id(reg_int.regulated_entity.id)
+        promoter = multigenomic_api.promoters.find_by_id(reg_int.regulated_entity.id)
     elif reg_int.regulated_entity.type == "transcriptionUnit":
         trans_unit = multigenomic_api.transcription_units.find_by_id(reg_int.regulated_entity.id)
-        transcription_units.append(trans_unit)
-    if transcription_units:
-        for tu in transcription_units:
-            for gene_id in tu.genes_ids:
-                if gene_id not in genes:
-                    genes.append(gene_id)
-        if transcription_units[0].promoters_id:
-            promoter = multigenomic_api.promoters.find_by_id(transcription_units[0].promoters_id)
-            first_gene = get_first_gene_of_tu(genes, promoter)
-            if reg_int.regulatory_sites_id:
-                reg_sites = multigenomic_api.regulatory_sites.find_by_id(reg_int.regulatory_sites_id)
-                if reg_sites and promoter:
-                    if reg_sites.absolute_position:
-                        if reg_int.regulated_entity.type == "promoter":
-                            if promoter.strand == "forward":
-                                distance_to_first_gene = reg_sites.absolute_position - first_gene["leftEndPosition"]
-                                if promoter.transcription_start_site:
-                                    distance_to_promoter = \
-                                        reg_sites.absolute_position - promoter.transcription_start_site.left_end_position
-                            else:
-                                distance_to_first_gene = first_gene["leftEndPosition"] - reg_sites.absolute_position
-                                if promoter.transcription_start_site:
-                                    distance_to_promoter = \
-                                        promoter.transcription_start_site.right_end_position - reg_sites.absolute_position
-                        else:
-                            if promoter.strand == "forward":
-                                distance_to_first_gene = reg_sites.absolute_position - first_gene["leftEndPosition"]
-                            else:
-                                distance_to_first_gene = first_gene["leftEndPosition"] - reg_sites.absolute_position
-    return [distance_to_first_gene, distance_to_promoter]
+        if trans_unit.promoters_id:
+            promoter = multigenomic_api.promoters.find_by_id(trans_unit.promoters_id)
+    first_gene = get_first_gene_of_tu(regulated_genes, promoter)
+    if reg_int.regulatory_sites_id:
+        reg_sites = multigenomic_api.regulatory_sites.find_by_id(reg_int.regulatory_sites_id)
+        if reg_sites and promoter:
+            if reg_sites.absolute_position:
+                if promoter.strand == "forward":
+                    distance_to_first_gene = reg_sites.absolute_position - first_gene["leftEndPosition"]
+                else:
+                    distance_to_first_gene = first_gene["leftEndPosition"] - reg_sites.absolute_position
+
+    return distance_to_first_gene
 
 
 class RegulatoryBindingSites(BiologicalBase):
@@ -191,37 +180,41 @@ def reverse_complement(sequence=None):
 
 
 def get_first_gene_of_tu(genes, promoter):
-    first_gene = multigenomic_api.genes.find_by_id(genes[0])
-    if promoter.strand == "reverse":
-        first_gene.left_end_position = first_gene.right_end_position
-    first_gene.left_end_position = first_gene.left_end_position or first_gene.fragments[0].left_end_position
+    first_gene = None
+    if len(genes) > 0:
+        gene = genes[0]
+        first_gene = multigenomic_api.genes.find_by_id(gene.get("id"))
+        if promoter:
+            if promoter.strand == "reverse":
+                first_gene.left_end_position = first_gene.right_end_position
+            first_gene.left_end_position = first_gene.left_end_position or first_gene.fragments[0].left_end_position
 
-    for gene in genes:
-        current_gene = multigenomic_api.genes.find_by_id(gene)
-        if promoter.strand == "forward":
-            if current_gene.left_end_position:
-                if current_gene.left_end_position < first_gene.left_end_position:
-                    first_gene = current_gene
-            elif current_gene.fragments:
-                for fragment in current_gene.fragments:
-                    if fragment.left_end_position < first_gene.left_end_position:
-                        first_gene = current_gene
-                        first_gene.left_end_position = fragment.left_end_position
+            for gene in genes:
+                current_gene = multigenomic_api.genes.find_by_id(gene.get("id"))
+                if promoter.strand == "forward":
+                    if current_gene.left_end_position:
+                        if current_gene.left_end_position < first_gene.left_end_position:
+                            first_gene = current_gene
+                    elif current_gene.fragments:
+                        for fragment in current_gene.fragments:
+                            if fragment.left_end_position < first_gene.left_end_position:
+                                first_gene = current_gene
+                                first_gene.left_end_position = fragment.left_end_position
 
-        elif promoter.strand == "reverse":
-            if current_gene.left_end_position:
-                if current_gene.right_end_position > first_gene.left_end_position:
-                    first_gene = current_gene
-                    first_gene.left_end_position = first_gene.right_end_position
-            elif current_gene.fragments:
-                for fragment in current_gene.fragments:
-                    if fragment.right_end_position > first_gene.left_end_position:
-                        first_gene = current_gene
-                        first_gene.left_end_position = fragment.right_end_position
+                elif promoter.strand == "reverse":
+                    if current_gene.left_end_position:
+                        if current_gene.right_end_position > first_gene.left_end_position:
+                            first_gene = current_gene
+                            first_gene.left_end_position = first_gene.right_end_position
+                    elif current_gene.fragments:
+                        for fragment in current_gene.fragments:
+                            if fragment.right_end_position > first_gene.left_end_position:
+                                first_gene = current_gene
+                                first_gene.left_end_position = fragment.right_end_position
 
-        first_gene.left_end_position = first_gene.left_end_position or first_gene.fragments[0].left_end_position
-    first_gene = {
-        "id": first_gene.id,
-        "leftEndPosition": first_gene.left_end_position
-    }
+                first_gene.left_end_position = first_gene.left_end_position or first_gene.fragments[0].left_end_position
+        first_gene = {
+            "id": first_gene.id,
+            "leftEndPosition": first_gene.left_end_position
+        }
     return first_gene

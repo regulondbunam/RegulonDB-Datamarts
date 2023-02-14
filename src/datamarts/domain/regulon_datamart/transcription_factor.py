@@ -1,5 +1,6 @@
 import multigenomic_api
 from src.datamarts.domain.general.biological_base import BiologicalBase
+from src.datamarts.domain.general.additiveEvidences import AdditiveEvidences
 
 
 class TranscriptionFactor(BiologicalBase):
@@ -12,6 +13,8 @@ class TranscriptionFactor(BiologicalBase):
         self.products = trans_factor.products_ids
 
     def to_dict(self):
+        citations = self.citations
+        additive_evs = AdditiveEvidences(citations)
         transcription_factor = {
             "_id": self.transcription_factor.id,
             "citations": self.citations,
@@ -29,7 +32,9 @@ class TranscriptionFactor(BiologicalBase):
             "products": self.products,
             "symmetry": self.transcription_factor.symmetry,
             "siteLength": self.transcription_factor.site_length,
-            "family": self.transcription_factor.family
+            "family": self.transcription_factor.family,
+            "additiveEvidences": additive_evs.to_dict(),
+            "confidenceLevel": additive_evs.get_confidence_level()
         }
         return transcription_factor
 
@@ -59,7 +64,7 @@ class TranscriptionFactor(BiologicalBase):
         for product_id in products_ids:
             prod = multigenomic_api.products.find_by_id(product_id)
             gene = multigenomic_api.genes.find_by_id(prod.genes_id)
-            gene_properties = self.get_gene_properties(multigenomic_api.genes.find_by_id(prod.genes_id))
+            gene_properties = self.get_gene_properties(gene)
             gene = {
                 "gene_id": prod.genes_id,
                 "gene_name": gene.name,
@@ -145,11 +150,15 @@ class Conformation(BiologicalBase):
         self.type = conformation_type
 
     def to_dict(self):
+        citations = self.citations
+        additive_evs = AdditiveEvidences(citations)
         conformation = {
             "id": self.product.id,
             "name": self.product.abbreviated_name or self.product.name,
             "type": self.type,
-            "citations": self.citations,
+            "citations": citations,
+            "additiveEvidences": additive_evs.to_dict(),
+            "confidenceLevel": additive_evs.get_confidence_level(),
             # TODO: This will be added later by local process
             # "effectorInteractionType": None,
             # TODO: This will be added later by local process
