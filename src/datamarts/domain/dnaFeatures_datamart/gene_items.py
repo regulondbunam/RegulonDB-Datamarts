@@ -89,7 +89,7 @@ class GeneDnaFeatures(object):
                 "objectType": "gene",
                 "objectRGBColor": self.color,
                 "organism": {
-                    "organism_id": self.entity.organisms_id
+                    "_id": self.entity.organisms_id
                 },
                 "rightEndPosition": self.entity.right_end_position,
                 "strand": self.entity.strand,

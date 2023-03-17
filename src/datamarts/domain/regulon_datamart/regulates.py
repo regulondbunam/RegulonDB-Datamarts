@@ -38,7 +38,7 @@ class Regulates(BiologicalBase):
                         terms = get_gene_terms(gene)
                         products = multigenomic_api.products.find_by_gene_id(gene_id)
                         gene_object = {
-                            "id": gene.id,
+                            "_id": gene.id,
                             "name": gene.name,
                             "terms": {
                                 "multifun": terms,
@@ -72,7 +72,7 @@ class Regulates(BiologicalBase):
                                     terms = get_gene_terms(gene)
                                     products = multigenomic_api.products.find_by_gene_id(gene_id)
                                     gene = {
-                                        "id": prod.genes_id,
+                                        "_id": prod.genes_id,
                                         "name": gene.name,
                                         "terms": {
                                             "multifun": terms,
@@ -81,7 +81,7 @@ class Regulates(BiologicalBase):
                                     }
                                     genes.append(gene.copy())
                                 tf_object = {
-                                    "id": tf.id,
+                                    "_id": tf.id,
                                     "name": tf.name,
                                     "function": tu_object["function"],
                                     "genes": genes
@@ -102,12 +102,12 @@ class Regulates(BiologicalBase):
                     promoter = multigenomic_api.promoters.find_by_id(tu.promoters_id)
                     first_gene = get_first_gene_of_tu(tu, promoter)
                     tu_object = {
-                        "id": tu.id,
+                        "_id": tu.id,
                         "name": tu.name,
                         "firstGene": first_gene,
                         "function": tu_object["function"],
                         "promoter": {
-                            "id": promoter.id,
+                            "_id": promoter.id,
                             "name": promoter.name
                         }
                     }
@@ -128,7 +128,7 @@ class Regulates(BiologicalBase):
                     first_gene = get_first_gene_of_tu(tu, promoter)
                     operon = multigenomic_api.operons.find_by_id(tu.operons_id)
                     operon_object = {
-                        "id": operon.id,
+                        "_id": operon.id,
                         "name": operon.name,
                         "firstGene": first_gene,
                         "function": tu_object["function"]
@@ -152,11 +152,11 @@ class Regulates(BiologicalBase):
                             sigma_factors.find_by_id(promoter.binds_sigma_factor.sigma_factors_id)
                         gene = multigenomic_api.genes.find_by_id(sigma_factor.genes_id)
                         sigma_factor_object = {
-                            "id": sigma_factor.id,
+                            "_id": sigma_factor.id,
                             "name": sigma_factor.name,
                             "function": tu_object["function"],
                             "gene": {
-                                "id": gene.id,
+                                "_id": gene.id,
                                 "name": gene.name
                             }
                         }
@@ -222,7 +222,7 @@ class Term(BiologicalBase):
 
     def to_dict(self):
         term = {
-            'term_id': self.term.terms_id,
+            '_id': self.term.terms_id,
             'name': self.term.terms_name
         }
         return term
@@ -259,7 +259,7 @@ def get_first_gene_of_tu(transcription_unit, promoter):
 
         first_gene.left_end_position = first_gene.left_end_position or first_gene.fragments[0].left_end_position
     first_gene = {
-        "id": first_gene.id,
+        "_id": first_gene.id,
         "name": first_gene.name
     }
     return first_gene
@@ -267,7 +267,7 @@ def get_first_gene_of_tu(transcription_unit, promoter):
 
 def insert_element_on(reg_object, regulated_list):
     for regulated in regulated_list:
-        if reg_object["id"] == regulated["id"]:
+        if reg_object["_id"] == regulated["_id"]:
             if reg_object['function'] != regulated['function']:
                 reg_object["function"] = "dual"
                 regulated["function"] = "dual"
@@ -281,7 +281,7 @@ def get_gene_terms(gene):
     terms_list = []
     for term in terms:
         term = {
-            'id': term.terms_id,
+            '_id': term.terms_id,
             'name': term.terms_name
         }
         terms_list.append(term.copy())

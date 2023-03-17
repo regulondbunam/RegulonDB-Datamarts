@@ -111,7 +111,7 @@ class RegIntDnaFeatures(object):
                         else:
                             location = f"{gene.left_end_position}<-{gene.right_end_position}"
                         gene_object = {
-                            "gene_id": gene_id,
+                            "_id": gene_id,
                             "effect": "",
                             "name": gene.name,
                             "objectRGBColor": color,
@@ -288,7 +288,7 @@ class RegIntDnaFeatures(object):
                 "objectType": self.object_type,
                 "objectRGBColor": self._color,
                 "organism": {
-                    "organism_id": self.entity.organisms_id
+                    "_id": self.entity.organisms_id
                 },
                 "relatedGenes": self.related_genes,
                 "rightEndPosition": self.positions["rightEndPosition"],

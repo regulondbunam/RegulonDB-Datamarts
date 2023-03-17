@@ -43,12 +43,12 @@ class OperonDatamarts:
             organism = multigenomic_api.organisms.find_by_id(organism_id)
             if organism:
                 self._organism = {
-                    "id": organism.id,
+                    "_id": organism.id,
                     "name": organism.name
                 }
             else:
                 self._organism = {
-                    "id": organism_id
+                    "_id": organism_id
                 }
 
         @property
@@ -69,6 +69,7 @@ class OperonDatamarts:
                 "transcriptionUnits": self.transcription_units,
                 "organism": self.organism,
                 "allCitations": BiologicalBase.get_all_citations()
+                # TODO: Añadir relatedIds
             }
             return operon_datamart
 

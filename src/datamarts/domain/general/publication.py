@@ -29,7 +29,7 @@ class Publication:
 
     def to_dict(self):
         publication = {
-            "id": self.publication.id,
+            "_id": self.publication.id,
             "authors": self.publication.authors,
             "citation": self.citation,
             "pmid": self.publication.pmid,

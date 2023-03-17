@@ -66,8 +66,8 @@ class TranscriptionFactor(BiologicalBase):
             gene = multigenomic_api.genes.find_by_id(prod.genes_id)
             gene_properties = self.get_gene_properties(gene)
             gene = {
-                "gene_id": prod.genes_id,
-                "gene_name": gene.name,
+                "_id": prod.genes_id,
+                "name": gene.name,
                 "genomePosition": gene_properties[0],
                 "length": gene_properties[1]
             }
@@ -98,7 +98,7 @@ class TranscriptionFactor(BiologicalBase):
                 if tu_dict not in tus_encoding_reg:
                     tus_encoding_reg.append(tu_dict)
             operon_dict = {
-                "operon_id": operon.id,
+                "_id": operon.id,
                 "name": operon.name,
                 "tusEncodingRegulator": tus_encoding_reg
             }
@@ -153,7 +153,7 @@ class Conformation(BiologicalBase):
         citations = self.citations
         additive_evs = AdditiveEvidences(citations)
         conformation = {
-            "id": self.product.id,
+            "_id": self.product.id,
             "name": self.product.abbreviated_name or self.product.name,
             "type": self.type,
             "citations": citations,

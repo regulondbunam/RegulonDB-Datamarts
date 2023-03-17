@@ -71,7 +71,7 @@ class TerminatorDNAFeatures:
                 "objectType": "terminator",
                 "objectRGBColor": "0,0,0",
                 "organism": {
-                    "organism_id": self.entity.organisms_id
+                    "_id": self.entity.organisms_id
                 },
                 "strand": self.strand,
                 "rightEndPosition": self.entity.transcriptionTerminationSite.right_end_position,

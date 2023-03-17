@@ -43,6 +43,7 @@ class SrnaDatamarts:
                 "gcContent": gene.gc_content
             }
             self._small_rna = {
+                "_id": srna.id,
                 "gene": genes,
                 "name": srna.name,
                 "synonyms": srna.synonyms,

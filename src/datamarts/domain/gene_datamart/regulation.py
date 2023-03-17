@@ -75,7 +75,7 @@ class Operon:
         for transcription_unit in transcription_units:
             arrangement = {
                 'transcriptionUnit': {
-                    "id": transcription_unit.id,
+                    "_id": transcription_unit.id,
                     "name": transcription_unit.name
                 },
                 'promoters': self.get_promoters(transcription_unit.promoters_id),
@@ -102,7 +102,7 @@ class Operon:
         if promoter_id:
             promoter = multigenomic_api.promoters.find_by_id(promoter_id)
             new_promoter = {
-                'id': promoter.id,
+                '_id': promoter.id,
                 'name': promoter.name
             }
             promoters.append(new_promoter.copy())
@@ -118,7 +118,7 @@ class Operon:
         regulators = multigenomic_api.regulatory_interactions.find_regulators_by_regulated_entity_ids(reg_entities)
         for regulator in regulators:
             new_regulator = {
-                "id": regulator.id,
+                "_id": regulator.id,
                 "name": regulator.name,
                 "type": regulator.type,
                 "function": regulator.function
@@ -132,7 +132,7 @@ class Operon:
 
     def to_dict(self):
         operon = {
-            "id": self.operon.id,
+            "_id": self.operon.id,
             "name": self.operon.name,
             "arrangement": self.arrangement
         }

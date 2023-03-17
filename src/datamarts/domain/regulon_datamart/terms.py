@@ -30,7 +30,7 @@ class Terms:
                 members_genes = get_members_from_term(term.terms_id)
                 genes = intersection_genes(regulated_genes, members_genes)
                 term = {
-                    'id': term.terms_id,
+                    '_id': term.terms_id,
                     'name': term.terms_name,
                     'genes': gene_object(genes)
                 }
@@ -83,7 +83,7 @@ class Term(BiologicalBase):
         product_term_members = get_members_from_term(self.term.terms_id)
         genes = intersection_genes(self.regulated_genes, product_term_members)
         term = {
-            'term_id': self.term.terms_id,
+            '_id': self.term.terms_id,
             'name': self.term.terms_name,
             'genes': gene_object(genes)
         }
@@ -142,7 +142,7 @@ def gene_object(genes):
     for gene_id in genes:
         gene = multigenomic_api.genes.find_by_id(gene_id)
         gene_list.append({
-            "gene_id": gene.id,
-            "gene_name": gene.name
+            "_id": gene.id,
+            "name": gene.name
         })
     return gene_list

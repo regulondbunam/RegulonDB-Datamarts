@@ -73,12 +73,12 @@ class GeneDatamarts:
             organism = multigenomic_api.organisms.find_by_id(organism_id)
             if organism:
                 self._organism = {
-                    "id": organism.id,
+                    "_id": organism.id,
                     "name": organism.name
                 }
             else:
                 self._organism = {
-                    "id": organism_id
+                    "_id": organism_id
                 }
 
         def to_dict(self):

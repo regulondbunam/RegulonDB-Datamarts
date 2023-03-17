@@ -77,6 +77,23 @@ class RegulonDatamarts:
                         self._regulatory_interactions.append(reg_int)
 
         @property
+        def organism(self):
+            return self._organism
+
+        @organism.setter
+        def organism(self, organism_id):
+            organism = multigenomic_api.organisms.find_by_id(organism_id)
+            if organism:
+                self._organism = {
+                    "_id": organism.id,
+                    "name": organism.name
+                }
+            else:
+                self._organism = {
+                    "_id": organism_id
+                }
+
+        @property
         def summary(self):
             return self._summary
 
