@@ -19,7 +19,6 @@ class Product(BiologicalBase):
     @motifs.setter
     def motifs(self, product_id):
         self._motifs = []
-
         motifs = multigenomic_api.motifs.find_by_product_id(product_id)
         for motif in motifs:
             motif = Motif(motif)
@@ -63,14 +62,14 @@ class Product(BiologicalBase):
             "citations": self.citations,
             "externalCrossReferences": self.external_cross_references,
             "geneOntologyTerms": self.terms,
-            "id": self.product.id,
+            "_id": self.product.id,
             "isoelectricPoint": self.product.isoelectric_point,
             # is_regulator: self.product.is_regulator,
             "molecularWeight": self.product.molecular_weight,
             "motifs": self.motifs,
             "name": self.product.name,
             "note": self.formatted_note,
-            "regulon_id": self.get_regulon_id(),
+            "regulonId": self.get_regulon_id(),
             "sequence": self.product.sequence,
             "synonyms": self.product.synonyms,
             "type": self.product.type,
@@ -86,7 +85,7 @@ class Term(BiologicalBase):
 
     def to_dict(self):
         term = {
-            'id': self.term.terms_id,
+            '_id': self.term.terms_id,
             'name': self.term.terms_name,
             # 'productIds': self.product_ids,
             'citations': self.citations

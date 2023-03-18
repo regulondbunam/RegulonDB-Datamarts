@@ -10,7 +10,7 @@ class Motif(BiologicalBase):
     def to_json(self):
         motif = {
             "description": self.motif.description,
-            "id": self.motif.id,
+            "_id": self.motif.id,
             "leftEndPosition": self.motif.left_end_position,
             "note": self.formatted_note,
             "rightEndPosition": self.motif.right_end_position,

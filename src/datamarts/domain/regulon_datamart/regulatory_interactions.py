@@ -19,7 +19,7 @@ class RegulatoryInteractions(BiologicalBase):
         reg_bind_sites = self.regulatory_binding_sites
         additive_evs = AdditiveEvidences(citations + reg_bind_sites.get("citations", []))
         regulatory_interactions = {
-            "id": self.regulatory_interaction.id,
+            "_id": self.regulatory_interaction.id,
             "regulator": self.regulator,
             "function": self.regulatory_interaction.function,
             "regulatedEntity": self.regulated_entity,
@@ -95,7 +95,7 @@ class RegulatoryInteractions(BiologicalBase):
                 for gene_id in tu.genes_ids:
                     gene = multigenomic_api.genes.find_by_id(gene_id)
                     gene_object = {
-                        "id": gene.id,
+                        "_id": gene.id,
                         "name": gene.name,
                     }
                     if gene_object not in self._regulated_genes:
@@ -154,7 +154,7 @@ class RegulatoryBindingSites(BiologicalBase):
 
     def to_dict(self):
         regulatory_binding_sites = {
-            "id": self.reg_sites.id,
+            "_id": self.reg_sites.id,
             "absolutePosition": self.reg_sites.absolute_position,
             "leftEndPosition": self.reg_sites.left_end_position,
             "rightEndPosition": self.reg_sites.right_end_position,
@@ -183,14 +183,14 @@ def get_first_gene_of_tu(genes, promoter):
     first_gene = None
     if len(genes) > 0:
         gene = genes[0]
-        first_gene = multigenomic_api.genes.find_by_id(gene.get("id"))
+        first_gene = multigenomic_api.genes.find_by_id(gene.get("_id"))
         if promoter:
             if promoter.strand == "reverse":
                 first_gene.left_end_position = first_gene.right_end_position
             first_gene.left_end_position = first_gene.left_end_position or first_gene.fragments[0].left_end_position
 
             for gene in genes:
-                current_gene = multigenomic_api.genes.find_by_id(gene.get("id"))
+                current_gene = multigenomic_api.genes.find_by_id(gene.get("_id"))
                 if promoter.strand == "forward":
                     if current_gene.left_end_position:
                         if current_gene.left_end_position < first_gene.left_end_position:

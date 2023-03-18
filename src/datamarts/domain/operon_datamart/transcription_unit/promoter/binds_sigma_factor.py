@@ -8,8 +8,8 @@ class BindsSigmaFactor(BiologicalBase):
 
     def to_dict(self):
         binds_sigma_factor_dict = {
-            "sigmaFactor_id": self.binds_sigma_factor.id,
+            "_id": self.binds_sigma_factor.id,
             "citations": self.citations,
-            "sigmaFactor_name": self.binds_sigma_factor.name
+            "name": self.binds_sigma_factor.name
         }
         return binds_sigma_factor_dict

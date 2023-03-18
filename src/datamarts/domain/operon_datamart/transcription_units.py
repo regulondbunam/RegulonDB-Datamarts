@@ -42,8 +42,8 @@ class TranscriptionUnit(BiologicalBase):
                     dist = abs(first_gene["rightEndPosition"] - promoter.transcription_start_site.right_end_position)
                 self._first_gene = {
                     "distanceToPromoter": dist,
-                    "gene_id": first_gene["id"],
-                    "gene_name": first_gene["name"]
+                    "_id": first_gene["id"],
+                    "name": first_gene["name"]
                 }
 
     @property
@@ -57,7 +57,7 @@ class TranscriptionUnit(BiologicalBase):
             gene = multigenomic_api.genes.find_by_id(gene_id)
             tf_binding_sites = RegulatoryBindingSites(gene_id)
             gene = {
-                "id": gene.id,
+                "_id": gene.id,
                 "name": gene.name,
                 "regulatorBindingSites": tf_binding_sites.to_dict()
             }
@@ -125,7 +125,7 @@ class TranscriptionUnit(BiologicalBase):
         citations = self.citations
         additive_evs = AdditiveEvidences(citations)
         transcription_unit = {
-            "id": self.transcription_unit.id,
+            "_id": self.transcription_unit.id,
             "name": self.transcription_unit.name,
             "citations": self.citations,
             "firstGene": self.first_gene,

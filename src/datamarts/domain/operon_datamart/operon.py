@@ -61,7 +61,7 @@ class Operon(BiologicalBase):
 
     def to_dict(self):
         operon = {
-            "id": self.operon.id,
+            "_id": self.operon.id,
             "citations": self.operon.citations,
             "name": self.operon.name,
             "regulationPositions": self.regulation_positions,

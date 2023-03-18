@@ -17,7 +17,7 @@ class Gene(BiologicalBase):
             "externalCrossReferences": self.external_cross_references,
             "fragments": self.fragments,
             "gcContent": self.gene.gc_content,
-            "id": self.gene.id,
+            "_id": self.gene.id,
             "leftEndPosition": self.gene.left_end_position,
             'multifunTerms': self.terms,
             "name": self.gene.name,
@@ -40,7 +40,7 @@ class Gene(BiologicalBase):
         self._terms = []
         for term in terms:
             term = {
-                'id': term.terms_id,
+                '_id': term.terms_id,
                 'label': term.term_label,
                 'name': term.terms_name
             }
@@ -55,7 +55,7 @@ class Gene(BiologicalBase):
         self._fragments = []
         for fragment in fragments:
             fragment = {
-                "id": fragment.id,
+                "_id": fragment.id,
                 "name": fragment.name,
                 "leftEndPosition": fragment.left_end_position,
                 "rightEndPosition": fragment.right_end_position,

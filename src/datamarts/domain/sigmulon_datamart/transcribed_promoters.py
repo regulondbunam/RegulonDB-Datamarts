@@ -19,7 +19,7 @@ class TranscribedPromoters(BiologicalBase):
             "_id": self.promoter.id,
             "name": self.promoter.name,
             "transcribedGenes": self.transcribed_genes,
-            "operon_id": self.operon_id,
+            "operonId": self.operon_id,
             "sequence": self.promoter.sequence,
             "TSSPosition": tss_pos,
             "boxes": self.boxes,
