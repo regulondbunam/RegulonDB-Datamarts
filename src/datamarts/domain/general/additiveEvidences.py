@@ -43,7 +43,9 @@ class AdditiveEvidences:
             for add_ev in self.additive_evidences:
                 if add_ev.get('type', None) == "S":
                     return "S"
-            return "W"
+            for add_ev in self.additive_evidences:
+                if add_ev.get('type', None) == "W":
+                    return "W"
         else:
             for citation in self.citations:
                 if citation.get("evidence", None):
@@ -55,7 +57,12 @@ class AdditiveEvidences:
                     ev = citation.get("evidence", None)
                     if ev.get('type', None) == "S":
                         return "S"
-            return "W"
+            for citation in self.citations:
+                if citation.get("evidence", None):
+                    ev = citation.get("evidence", None)
+                    if ev.get('type', None) == "W":
+                        return "W"
+            return None
 
 
 def get_rules_with_code(code_rule, rules):

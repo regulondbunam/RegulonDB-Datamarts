@@ -38,7 +38,8 @@ class SrnaDatamarts:
             genes = {
                 "_id": gene.id,
                 "name": gene.name,
-                "genomePosition": f"{gene.left_end_position} --> {gene.right_end_position}",
+                "leftEndPosition": gene.left_end_position,
+                "rightEndPosition": gene.right_end_position,
                 "strand": gene.strand,
                 "gcContent": gene.gc_content
             }
