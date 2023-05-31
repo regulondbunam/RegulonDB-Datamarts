@@ -71,10 +71,12 @@ class RegulonDatamarts:
             for active_conformation in tf_active_conformations:
                 regulatory_interactions = multigenomic_api.regulatory_interactions.find_by_regulator_id(
                     active_conformation.id)
-                for ri in regulatory_interactions:
-                    reg_int = RegulatoryInteractions(ri).to_dict()
-                    if reg_int not in self._regulatory_interactions:
-                        self._regulatory_interactions.append(reg_int)
+                self._regulatory_interactions = get_ri_objects(regulatory_interactions, self._regulatory_interactions)
+                if active_conformation.type == "regulatoryComplex":
+                    reg_complex = multigenomic_api.regulatory_complexes.find_by_id(active_conformation.id)
+                    for reg_cont_id in reg_complex.regulatory_continuants_ids:
+                        regulatory_interactions = multigenomic_api.regulatory_interactions.find_by_regulator_id(reg_cont_id)
+                        self._regulatory_interactions = get_ri_objects(regulatory_interactions, self._regulatory_interactions)
 
         @property
         def organism(self):
@@ -124,3 +126,11 @@ def all_regulon_datamarts():
         regulon_dict = remove_empty_items(regulon.to_dict().copy())
         json_regulons.append(remove_empty_items(regulon_dict))
     return json_regulons
+
+
+def get_ri_objects(reg_ints, ri_list):
+    for ri in reg_ints:
+        reg_int = RegulatoryInteractions(ri).to_dict()
+        if reg_int not in ri_list:
+            ri_list.append(reg_int)
+    return ri_list

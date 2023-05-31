@@ -44,14 +44,19 @@ class TranscriptionFactor(BiologicalBase):
 
     @conformations.setter
     def conformations(self, conformations):
-        product = None
+        conformation_object = None
         self._conformations = []
         for conformation in conformations:
             if conformation.type == "product":
-                product = multigenomic_api.products.find_by_id(conformation.id)
+                prod = multigenomic_api.products.find_by_id(conformation.id)
+                conformation_object = Conformation(prod, conformation.type)
             elif conformation.type == "regulatoryComplex":
-                product = multigenomic_api.regulatory_complexes.find_by_id(conformation.id)
-            conformation_object = Conformation(product, conformation.type)
+                complx = multigenomic_api.regulatory_complexes.find_by_id(conformation.id)
+                conformation_object = Conformation(complx, conformation.type)
+                for continuant_id in complx.regulatory_continuants_ids:
+                    continuant = multigenomic_api.regulatory_continuants.find_by_id(continuant_id)
+                    continuant_obj = Conformation(continuant, "regulatoryContinuant")
+                    self._conformations.append(continuant_obj.to_dict().copy())
             self._conformations.append(conformation_object.to_dict().copy())
 
     @property
@@ -144,17 +149,22 @@ class TranscriptionFactor(BiologicalBase):
 
 
 class Conformation(BiologicalBase):
-    def __init__(self, product, conformation_type):
-        super().__init__([], product.citations, [])
-        self.product = product
+    def __init__(self, conf, conformation_type):
+        super().__init__([], conf.citations, [])
+        self.conf = conf
         self.type = conformation_type
+        self.name = None
 
     def to_dict(self):
         citations = self.citations
         additive_evs = AdditiveEvidences(citations)
+        if self.type != "regulatoryContinuant":
+            self.name = self.conf.abbreviated_name or self.conf.name
+        else:
+            self.name = self.conf.name
         conformation = {
-            "_id": self.product.id,
-            "name": self.product.abbreviated_name or self.product.name,
+            "_id": self.conf.id,
+            "name": self.name,
             "type": self.type,
             "citations": citations,
             "additiveEvidences": additive_evs.to_dict(),
