@@ -7,7 +7,6 @@ class RegulatoryInteractions(BiologicalBase):
     def __init__(self, reg_interaction):
         super().__init__([], reg_interaction.citations, "")
         self.regulatory_interaction = reg_interaction
-        self.regulator = reg_interaction.regulator
         self.regulated_entity = reg_interaction.regulated_entity
         self.regulated_genes = reg_interaction.regulated_entity
         self.regulatory_binding_sites = reg_interaction
@@ -20,7 +19,6 @@ class RegulatoryInteractions(BiologicalBase):
         additive_evs = AdditiveEvidences(citations + reg_bind_sites.get("citations", []))
         regulatory_interactions = {
             "_id": self.regulatory_interaction.id,
-            "regulator": self.regulator,
             "function": self.regulatory_interaction.function,
             "regulatedEntity": self.regulated_entity,
             "distanceToFirstGene": distance_to_first_gene,
@@ -36,18 +34,6 @@ class RegulatoryInteractions(BiologicalBase):
         return regulatory_interactions
 
     @property
-    def regulator(self):
-        return self._regulator
-
-    @regulator.setter
-    def regulator(self, regulator):
-        self._regulator = {
-            "_id": regulator.id,
-            "type": regulator.type,
-            "name": regulator.name,
-        }
-
-    @property
     def regulated_entity(self):
         return self._regulated_entity
 
@@ -59,6 +45,8 @@ class RegulatoryInteractions(BiologicalBase):
             reg_entity = multigenomic_api.promoters.find_by_id(regulated_entity.id)
         elif regulated_entity.type == "transcriptionUnit":
             reg_entity = multigenomic_api.transcription_units.find_by_id(regulated_entity.id)
+        elif regulated_entity.type == "gene":
+            reg_entity = multigenomic_api.genes.find_by_id(regulated_entity.id)
         if reg_entity:
             self._regulated_entity = {
                 "_id": regulated_entity.id,
