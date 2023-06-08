@@ -5,12 +5,16 @@ from src.datamarts.domain.general.biological_base import BiologicalBase
 class Regulates(BiologicalBase):
     def __init__(self, regulator):
         super().__init__(regulator.external_cross_references, regulator.citations, regulator.note)
-        transcription_units = get_all_transcription_units(regulator.active_conformations)
-        self.genes = transcription_units
-        self.transcription_factors = transcription_units
-        self.transcription_units = transcription_units
-        self.operons = transcription_units
-        self.sigma_factors = transcription_units
+        trans_units = []
+        if regulator.regulator_type == "transcriptionFactor":
+            trans_units = get_all_transcription_units(regulator.active_conformations)
+        elif regulator.regulator_type == "srna":
+            trans_units = get_all_transcription_units([regulator])
+        self.genes = trans_units
+        self.transcription_factors = trans_units
+        self.transcription_units = trans_units
+        self.operons = trans_units
+        self.sigma_factors = trans_units
 
     def to_dict(self):
         regulates = {
@@ -99,19 +103,20 @@ class Regulates(BiologicalBase):
             transcription_units = tu_object["transcription_units"]
             if transcription_units:
                 for tu in transcription_units:
-                    promoter = multigenomic_api.promoters.find_by_id(tu.promoters_id)
-                    first_gene = get_first_gene_of_tu(tu, promoter)
-                    tu_object = {
-                        "_id": tu.id,
-                        "name": tu.name,
-                        "firstGene": first_gene,
-                        "function": tu_object["function"],
-                        "promoter": {
-                            "_id": promoter.id,
-                            "name": promoter.name
+                    if tu.promoters_id:
+                        promoter = multigenomic_api.promoters.find_by_id(tu.promoters_id)
+                        first_gene = get_first_gene_of_tu(tu, promoter)
+                        tu_object = {
+                            "_id": tu.id,
+                            "name": tu.name,
+                            "firstGene": first_gene,
+                            "function": tu_object["function"],
+                            "promoter": {
+                                "_id": promoter.id,
+                                "name": promoter.name
+                            }
                         }
-                    }
-                    self._transcription_units = insert_element_on(tu_object, self._transcription_units)
+                        self._transcription_units = insert_element_on(tu_object, self._transcription_units)
 
     @property
     def operons(self):
@@ -124,16 +129,17 @@ class Regulates(BiologicalBase):
             transcription_units = tu_object["transcription_units"]
             if transcription_units:
                 for tu in transcription_units:
-                    promoter = multigenomic_api.promoters.find_by_id(tu.promoters_id)
-                    first_gene = get_first_gene_of_tu(tu, promoter)
-                    operon = multigenomic_api.operons.find_by_id(tu.operons_id)
-                    operon_object = {
-                        "_id": operon.id,
-                        "name": operon.name,
-                        "firstGene": first_gene,
-                        "function": tu_object["function"]
-                    }
-                    self._operons = insert_element_on(operon_object, self._operons)
+                    if tu.promoters_id:
+                        promoter = multigenomic_api.promoters.find_by_id(tu.promoters_id)
+                        first_gene = get_first_gene_of_tu(tu, promoter)
+                        operon = multigenomic_api.operons.find_by_id(tu.operons_id)
+                        operon_object = {
+                            "_id": operon.id,
+                            "name": operon.name,
+                            "firstGene": first_gene,
+                            "function": tu_object["function"]
+                        }
+                        self._operons = insert_element_on(operon_object, self._operons)
 
     @property
     def sigma_factors(self):
@@ -146,36 +152,40 @@ class Regulates(BiologicalBase):
             transcription_units = tu_object["transcription_units"]
             if transcription_units:
                 for tu in transcription_units:
-                    promoter = multigenomic_api.promoters.find_by_id(tu.promoters_id)
-                    if promoter.binds_sigma_factor:
-                        sigma_factor = multigenomic_api.\
-                            sigma_factors.find_by_id(promoter.binds_sigma_factor.sigma_factors_id)
-                        gene = multigenomic_api.genes.find_by_id(sigma_factor.genes_id)
-                        sigma_factor_object = {
-                            "_id": sigma_factor.id,
-                            "name": sigma_factor.name,
-                            "function": tu_object["function"],
-                            "gene": {
-                                "_id": gene.id,
-                                "name": gene.name
+                    if tu.promoters_id:
+                        promoter = multigenomic_api.promoters.find_by_id(tu.promoters_id)
+                        if promoter.binds_sigma_factor:
+                            sigma_factor = multigenomic_api.\
+                                sigma_factors.find_by_id(promoter.binds_sigma_factor.sigma_factors_id)
+                            gene = multigenomic_api.genes.find_by_id(sigma_factor.genes_id)
+                            sigma_factor_object = {
+                                "_id": sigma_factor.id,
+                                "name": sigma_factor.name,
+                                "function": tu_object["function"],
+                                "gene": {
+                                    "_id": gene.id,
+                                    "name": gene.name
+                                }
                             }
-                        }
-                        if sigma_factor_object not in self._sigma_factors:
-                            self._sigma_factors = insert_element_on(sigma_factor_object, self._sigma_factors)
+                            if sigma_factor_object not in self._sigma_factors:
+                                self._sigma_factors = insert_element_on(sigma_factor_object, self._sigma_factors)
 
 
 def get_all_transcription_units(tf_active_conformations):
-    transcription_units = []
     all_transcription_units = []
     for active_conformation in tf_active_conformations:
         regulatory_interactions = multigenomic_api.regulatory_interactions.find_by_regulator_id(active_conformation.id)
         for ri in regulatory_interactions:
+            transcription_units = []
             if ri.regulated_entity.type == "promoter":
                 transcription_units = multigenomic_api.transcription_units.find_by_promoter_id(
                     ri.regulated_entity.id)
+            if ri.regulated_entity.type == "gene":
+                transcription_units = multigenomic_api.transcription_units.find_by_gene_id(
+                    ri.regulated_entity.id)
             elif ri.regulated_entity.type == "transcriptionUnit":
-                transcription_units = [].append(
-                    multigenomic_api.transcription_units.find_by_id(ri.regulated_entity.id))
+                tu = multigenomic_api.transcription_units.find_by_id(ri.regulated_entity.id)
+                transcription_units = [tu]
             tu_object = {
                 "transcription_units": transcription_units,
                 "function": ri.function

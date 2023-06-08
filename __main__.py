@@ -65,14 +65,14 @@ if __name__ == '__main__':
 
     datamart_files = dict()
 
-    datamart_files["geneDatamart"] = gene_datamarts.all_genes_datamarts()
-    datamart_files["operonDatamart"] = operon_datamarts.all_operon_datamarts()
+    #datamart_files["geneDatamart"] = gene_datamarts.all_genes_datamarts()
+    #datamart_files["operonDatamart"] = operon_datamarts.all_operon_datamarts()
     datamart_files["regulonDatamart"] = regulon_datamart.all_regulon_datamarts()
-    datamart_files["sigmulonDatamart"] = sigmulon_datamarts.all_sigmulon_datamarts()
-    datamart_files["srnaDatamart"] = srna_datamarts.all_srna_datamarts()
-    datamart_files["dnaFeatures"] = dttDatamart.all_dtt_datamarts()
-    datamart_files["regulatoryNetworkDatamart"] = regulatory_network_datamart.all_regulatory_network_nodes()
-    datamart_files["listPage"] = listPage_dm.get_all_list_page_docs()
+    #datamart_files["sigmulonDatamart"] = sigmulon_datamarts.all_sigmulon_datamarts()
+    #datamart_files["srnaDatamart"] = srna_datamarts.all_srna_datamarts()
+    #datamart_files["dnaFeatures"] = dttDatamart.all_dtt_datamarts()
+    #datamart_files["regulatoryNetworkDatamart"] = regulatory_network_datamart.all_regulatory_network_nodes()
+    #datamart_files["listPage"] = listPage_dm.get_all_list_page_docs()
 
     datamartsData = ""
     for collection_name, objects in datamart_files.items():
@@ -87,4 +87,4 @@ if __name__ == '__main__':
             collection_name: objects_to_json
         }
         create_json(objects_to_json, collection_name, "lib/data")
-    write_summary(datamartsData)
+    #write_summary(datamartsData)

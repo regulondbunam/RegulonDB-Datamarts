@@ -16,12 +16,12 @@ class RegulonDatamarts:
     def objects(self):
         regulator_objects = get_all_regulators(multigenomic_api.regulatory_interactions.get_all())
         tf_objects = multigenomic_api.transcription_factors.get_all()
-        """for tf_obj in tf_objects:
+        for tf_obj in tf_objects:
             print(tf_obj.id)
             tf_obj["regulator_type"] = "transcriptionFactor"
             regulon_datamart = RegulonDatamarts.RegulonDatamart(tf_obj)
-            yield regulon_datamart"""
-        for reg_obj in regulator_objects[0:1]:
+            yield regulon_datamart
+        for reg_obj in regulator_objects:
             print(reg_obj.id)
             regulator = reg_obj
             if reg_obj.type == "srna":
@@ -39,12 +39,12 @@ class RegulonDatamarts:
             self.id = regulator.id
             self.regulator = regulator
             self.terms = regulator
-            # self.regulates = regulator
+            self.regulates = regulator
             self.regulatory_interactions = regulator
             # self.alignmentMatrix = regulator.id
             # self.evolutionaryConservation = regulator.id
-            # self.organism = regulator.organisms_id
-            # self.summary = [self.regulates, self._regulatory_interactions]
+            self.organism = regulator.organisms_id
+            self.summary = [self.regulates, self._regulatory_interactions]
 
         @property
         def regulator(self):
@@ -63,7 +63,7 @@ class RegulonDatamarts:
         def terms(self, regulator):
             self._terms = []
             terms = []
-            if regulator.regulator_type == "transcriptionFactor":
+            if regulator.regulator_type != "compound":
                 terms = Terms(regulator).to_dict()
             self._terms = terms
 
@@ -121,14 +121,14 @@ class RegulonDatamarts:
             regulon_datamart = {
                 "_id": self.id,
                 "regulator": self.regulator,
-                # "terms": self.terms,
-                # "regulates": self.regulates,
+                "terms": self.terms,
+                "regulates": self.regulates,
                 "regulatoryInteractions": self.regulatory_interactions,
                 # "alignmentMatrix": [],
                 # "evolutionaryConservation":[],
-                # "organism": self.organism,
-                # "summary": self.summary,
-                # "allCitations": BiologicalBase.get_all_citations()
+                "organism": self.organism,
+                "summary": self.summary,
+                "allCitations": BiologicalBase.get_all_citations()
             }
             return regulon_datamart
 

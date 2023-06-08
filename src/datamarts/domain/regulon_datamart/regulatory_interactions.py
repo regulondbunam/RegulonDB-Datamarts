@@ -6,6 +6,7 @@ from src.datamarts.domain.general.additiveEvidences import AdditiveEvidences
 class RegulatoryInteractions(BiologicalBase):
     def __init__(self, reg_interaction):
         super().__init__([], reg_interaction.citations, "")
+        self.regulator = reg_interaction.regulator
         self.regulatory_interaction = reg_interaction
         self.regulated_entity = reg_interaction.regulated_entity
         self.regulated_genes = reg_interaction.regulated_entity
@@ -32,6 +33,18 @@ class RegulatoryInteractions(BiologicalBase):
             "confidenceLevel": additive_evs.get_confidence_level()
         }
         return regulatory_interactions
+
+    @property
+    def regulator(self):
+        return self._regulator
+
+    @regulator.setter
+    def regulator(self, regulator):
+        self._regulator = {
+            "_id": regulator.id,
+            "type": regulator.type,
+            "name": regulator.name
+        }
 
     @property
     def regulated_entity(self):

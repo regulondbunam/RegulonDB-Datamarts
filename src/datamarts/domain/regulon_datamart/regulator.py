@@ -4,13 +4,13 @@ from src.datamarts.domain.general.additiveEvidences import AdditiveEvidences
 
 
 class Regulator(BiologicalBase):
-    def __init__(self, trans_factor):
-        super().__init__(trans_factor.external_cross_references, trans_factor.citations, trans_factor.note)
-        self.regulator = trans_factor
-        self.conformations = trans_factor
-        self.genes = trans_factor
-        self.operons = trans_factor
-        self.products = trans_factor
+    def __init__(self, regulator):
+        super().__init__(regulator.external_cross_references, regulator.citations, regulator.note)
+        self.regulator = regulator
+        self.conformations = regulator
+        self.genes = regulator
+        self.operons = regulator
+        self.products = regulator
 
     def to_dict(self):
         citations = self.citations
@@ -44,6 +44,9 @@ class Regulator(BiologicalBase):
                 "_id": self.regulator.id,
                 "citations": self.citations,
                 "name": self.regulator.name,
+                "encodedFrom": {
+                    "genes": self.genes
+                },
                 "synonyms": self.regulator.synonyms,
                 "note": self.formatted_note,
                 "additiveEvidences": additive_evs.to_dict(),
@@ -69,6 +72,10 @@ class Regulator(BiologicalBase):
                 elif conformation.type == "regulatoryComplex":
                     complx = multigenomic_api.regulatory_complexes.find_by_id(conformation.id)
                     conformation_object = Conformation(complx, conformation.type)
+                    for continuant_id in complx.regulatory_continuants_ids:
+                        continuant = multigenomic_api.regulatory_continuants.find_by_id(continuant_id)
+                        continuant_obj = Conformation(continuant, "regulatoryContinuant")
+                        self._conformations.append(continuant_obj.to_dict().copy())
                 self._conformations.append(conformation_object.to_dict().copy())
 
     @property
@@ -81,15 +88,12 @@ class Regulator(BiologicalBase):
         if regulator.regulator_type == "transcriptionFactor":
             for product_id in regulator.products_ids:
                 prod = multigenomic_api.products.find_by_id(product_id)
-                gene = multigenomic_api.genes.find_by_id(prod.genes_id)
-                gene_properties = self.get_gene_properties(gene)
-                gene = {
-                    "_id": prod.genes_id,
-                    "name": gene.name,
-                    "genomePosition": gene_properties[0],
-                    "length": gene_properties[1]
-                }
+                gene = self.get_gene_properties(prod.genes_id)
                 self.genes.append(gene.copy())
+        elif regulator.regulator_type == "srna":
+            prod = multigenomic_api.products.find_by_id(regulator.id)
+            gene = self.get_gene_properties(prod.genes_id)
+            self.genes.append(gene.copy())
 
     @property
     def operons(self):
@@ -143,24 +147,19 @@ class Regulator(BiologicalBase):
                     self._products.append(prod_dict.copy())
 
     @staticmethod
-    def get_gene_properties(gene):
-        genome_pos = ""
-        length = 0
-        if gene.fragments:
-            for fragment in gene.fragments:
-                if fragment.strand == "forward":
-                    genome_pos = genome_pos + f"{fragment.left_end_position} -> {fragment.right_end_position};"
-                elif fragment.strand == "reverse":
-                    genome_pos = genome_pos + f"{fragment.left_end_position} <- {fragment.right_end_position};"
-                if gene.right_end_position and gene.left_end_position:
-                    length = abs(gene.right_end_position - gene.left_end_position) + 1
-        else:
-            if gene.strand == "forward":
-                genome_pos = f"{gene.left_end_position} -> {gene.right_end_position}"
-            elif gene.strand == "reverse":
-                genome_pos = f"{gene.left_end_position} <- {gene.right_end_position}"
-            length = abs(gene.right_end_position - gene.left_end_position) + 1
-        return [genome_pos, length]
+    def get_gene_properties(gene_id):
+        gene_obj = multigenomic_api.genes.find_by_id(gene_id)
+        length = None
+        if gene_obj.left_end_position and gene_obj.right_end_position:
+            length = abs(gene_obj.right_end_position - gene_obj.left_end_position) + 1
+        gene = {
+            "_id": gene_id,
+            "name": gene_obj.name,
+            "leftEndPosition": gene_obj.left_end_position,
+            "rightEndPosition": gene_obj.right_end_position,
+            "length": length
+        }
+        return gene
 
 
 class Conformation(BiologicalBase):
