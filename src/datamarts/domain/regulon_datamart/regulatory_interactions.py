@@ -22,6 +22,7 @@ class RegulatoryInteractions(BiologicalBase):
             "_id": self.regulatory_interaction.id,
             "function": self.regulatory_interaction.function,
             "regulatedEntity": self.regulated_entity,
+            "activeConformation": self.regulator,
             "distanceToFirstGene": distance_to_first_gene,
             "distanceToPromoter": self.regulatory_interaction.dist_site_promoter,
             "regulatedGenes": self.regulated_genes,

@@ -74,8 +74,9 @@ class Regulator(BiologicalBase):
                     conformation_object = Conformation(complx, conformation.type)
                     for continuant_id in complx.regulatory_continuants_ids:
                         continuant = multigenomic_api.regulatory_continuants.find_by_id(continuant_id)
-                        continuant_obj = Conformation(continuant, "regulatoryContinuant")
-                        self._conformations.append(continuant_obj.to_dict().copy())
+                        continuant_obj = Conformation(continuant, "regulatoryContinuant").to_dict()
+                        if continuant_obj not in self._conformations:
+                            self._conformations.append(continuant_obj.copy())
                 self._conformations.append(conformation_object.to_dict().copy())
 
     @property

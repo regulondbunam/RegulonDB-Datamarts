@@ -32,6 +32,7 @@ class RegulonDatamarts:
             regulon_datamart = RegulonDatamarts.RegulonDatamart(regulator)
             yield regulon_datamart
         del regulator_objects
+        del tf_objects
 
     class RegulonDatamart:
 
@@ -88,9 +89,8 @@ class RegulonDatamarts:
                     regulatory_interactions = multigenomic_api.regulatory_interactions.find_by_regulator_id(
                         active_conformation.id)
                     self._regulatory_interactions = get_ri_objects(regulatory_interactions, self._regulatory_interactions)
-            else:
-                regulatory_interactions = multigenomic_api.regulatory_interactions.find_by_regulator_id(regulator.id)
-                self._regulatory_interactions = get_ri_objects(regulatory_interactions, self._regulatory_interactions)
+            regulatory_interactions = multigenomic_api.regulatory_interactions.find_by_regulator_id(regulator.id)
+            self._regulatory_interactions = get_ri_objects(regulatory_interactions, self._regulatory_interactions)
 
         @property
         def organism(self):
