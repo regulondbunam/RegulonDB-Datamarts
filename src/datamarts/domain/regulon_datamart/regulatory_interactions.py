@@ -119,21 +119,32 @@ class RegulatoryInteractions(BiologicalBase):
 def get_distance_to_first_gene(reg_int, regulated_genes):
     distance_to_first_gene = None
     promoter = None
-    if reg_int.regulated_entity.type == "promoter":
-        promoter = multigenomic_api.promoters.find_by_id(reg_int.regulated_entity.id)
-    elif reg_int.regulated_entity.type == "transcriptionUnit":
-        trans_unit = multigenomic_api.transcription_units.find_by_id(reg_int.regulated_entity.id)
-        if trans_unit.promoters_id:
-            promoter = multigenomic_api.promoters.find_by_id(trans_unit.promoters_id)
-    first_gene = get_first_gene_of_tu(regulated_genes, promoter)
+    first_gene = None
     if reg_int.regulatory_sites_id:
         reg_sites = multigenomic_api.regulatory_sites.find_by_id(reg_int.regulatory_sites_id)
-        if reg_sites and promoter:
-            if reg_sites.absolute_position:
-                if promoter.strand == "forward":
-                    distance_to_first_gene = reg_sites.absolute_position - first_gene["leftEndPosition"]
-                else:
-                    distance_to_first_gene = first_gene["leftEndPosition"] - reg_sites.absolute_position
+        if reg_int.regulated_entity.type == "gene":
+            first_gene = multigenomic_api.genes.find_by_id(reg_int.regulated_entity.id)
+            if first_gene.strand:
+                if reg_sites.absolute_position:
+                    if first_gene.strand == "forward":
+                        distance_to_first_gene = reg_sites.absolute_position - first_gene.left_end_position
+                    else:
+                        distance_to_first_gene = first_gene.right_end_position - reg_sites.absolute_position
+        else:
+            if reg_int.regulated_entity.type == "promoter":
+                promoter = multigenomic_api.promoters.find_by_id(reg_int.regulated_entity.id)
+                first_gene = get_first_gene_of_tu(regulated_genes, promoter)
+            elif reg_int.regulated_entity.type == "transcriptionUnit":
+                trans_unit = multigenomic_api.transcription_units.find_by_id(reg_int.regulated_entity.id)
+                if trans_unit.promoters_id:
+                    promoter = multigenomic_api.promoters.find_by_id(trans_unit.promoters_id)
+                first_gene = get_first_gene_of_tu(regulated_genes, promoter)
+            if promoter:
+                if reg_sites.absolute_position:
+                    if promoter.strand == "forward":
+                        distance_to_first_gene = reg_sites.absolute_position - first_gene["leftEndPosition"]
+                    else:
+                        distance_to_first_gene = first_gene["leftEndPosition"] - reg_sites.absolute_position
 
     return distance_to_first_gene
 
