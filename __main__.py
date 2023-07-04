@@ -52,7 +52,7 @@ def write_summary(datamarts_info):
         text = "# DatamartsExtractorSummary \n" \
                "Creation date: " + datetime.today().strftime('%Y-%m-%d') + "\n \n" \
                 "Creation time: " + datetime.today().strftime('%H:%M:%S') + "\n \n" \
-                "RegulonDB Version: 10.8 \n" \
+                "RegulonDB Version: 12.0 \n" \
                 "\n" \
                 "## RegulonDB Datamarts Summary \n" \
                 "" + datamarts_info

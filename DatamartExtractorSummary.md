@@ -1,13 +1,13 @@
 # DatamartsExtractorSummary 
-Creation date: 2023-06-16
+Creation date: 2023-07-04
  
-Creation time: 12:30:24
+Creation time: 08:51:07
  
-RegulonDB Version: 10.8 
+RegulonDB Version: 12.0 
 
 ## RegulonDB Datamarts Summary 
 
-### geneDatamart: 
+ ### geneDatamart: 
  4746 Total Objects Generated
  ### operonDatamart: 
  2595 Total Objects Generated
