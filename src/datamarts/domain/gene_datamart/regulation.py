@@ -65,7 +65,7 @@ class Operon:
         self.operon = operon
         self.transcription_units = multigenomic_api.transcription_units.find_by_operon_id(operon.id)
         self.arrangement = [self.transcription_units, gene_id]
-        self.regulatory_interactions = self.transcription_units
+        self.regulatory_interactions = [self.transcription_units, gene_id]
 
     @property
     def arrangement(self):
@@ -92,14 +92,19 @@ class Operon:
         return self._regulatory_interactions
 
     @regulatory_interactions.setter
-    def regulatory_interactions(self, transcription_units):
+    def regulatory_interactions(self, regulated_entities):
+        transcription_units = regulated_entities[0]
+        gene_id = regulated_entities[1]
         reg_entities = []
         for transcription_unit in transcription_units:
             promoter_id = transcription_unit.promoters_id
-            reg_entities = [promoter_id] + [transcription_unit.id]
+            reg_entities.append(promoter_id)
+            reg_entities.append(transcription_unit.id)
+        reg_entities.append(gene_id)
         reg_entities = set(reg_entities)
-        self._regulatory_interactions = \
-            multigenomic_api.regulatory_interactions.find_by_regulated_entity_ids(reg_entities)
+        ris = multigenomic_api.regulatory_interactions.find_by_regulated_entity_ids(reg_entities)
+        self._regulatory_interactions = ris
+
 
     def get_promoters(self, promoter_id):
         promoters = []
