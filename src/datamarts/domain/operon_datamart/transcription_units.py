@@ -13,8 +13,7 @@ class TranscriptionUnit(BiologicalBase):
 
     def __init__(self, trans_unit):
         super().__init__(trans_unit.external_cross_references, trans_unit.citations, trans_unit.note)
-        regulatory_int = \
-            multigenomic_api.regulatory_interactions.find_regulatory_interactions_by_reg_entity_id(trans_unit.id)
+        regulatory_int = get_all_ri_from_tu(trans_unit)
         self.transcription_unit = trans_unit
         self.first_gene = trans_unit
         self.genes = trans_unit.genes_ids
@@ -109,6 +108,8 @@ class TranscriptionUnit(BiologicalBase):
             if ri.regulator:
                 trans_factor = multigenomic_api.transcription_factors.find_tf_id_by_conformation_id(ri.regulator.id)
                 self._transcription_factors.extend(trans_factor)
+                trans_factor = multigenomic_api.transcription_factors.find_by_name(ri.regulator.name)
+                self._transcription_factors.extend(trans_factor)
         self._transcription_factors = set(list(self._transcription_factors))
 
     @property
@@ -146,46 +147,6 @@ class TranscriptionUnit(BiologicalBase):
         return transcription_unit
 
 
-# TODO: remove this function after successfully test extraction
-def get_first_gene_deprecated(transcription_unit, promoter):
-    first_gene = multigenomic_api.genes.find_by_id(transcription_unit.genes_ids[0])
-    if promoter.strand == "reverse":
-        first_gene.left_end_position = first_gene.right_end_position or first_gene.fragments[0].right_end_position
-    else:
-        first_gene.left_end_position = first_gene.left_end_position or first_gene.fragments[0].left_end_position
-
-    for gene in transcription_unit.genes_ids:
-        current_gene = multigenomic_api.genes.find_by_id(gene)
-        if promoter.strand == "forward":
-            if current_gene.left_end_position:
-                if current_gene.left_end_position < first_gene.left_end_position:
-                    first_gene = current_gene
-            elif current_gene.fragments:
-                for fragment in current_gene.fragments:
-                    if fragment.left_end_position < first_gene.left_end_position:
-                        first_gene = current_gene
-                        first_gene.left_end_position = fragment.left_end_position
-
-        elif promoter.strand == "reverse":
-            if current_gene.left_end_position:
-                if current_gene.right_end_position > first_gene.left_end_position:
-                    first_gene = current_gene
-                    first_gene.left_end_position = first_gene.right_end_position
-            elif current_gene.fragments:
-                for fragment in current_gene.fragments:
-                    if fragment.right_end_position > first_gene.left_end_position:
-                        first_gene = current_gene
-                        first_gene.left_end_position = fragment.right_end_position
-
-        first_gene.left_end_position = first_gene.left_end_position or first_gene.fragments[0].left_end_position
-    first_gene = {
-        "id": first_gene.id,
-        "name": first_gene.name,
-        "pos": first_gene.left_end_position
-    }
-    return first_gene
-
-
 def get_first_gene_of_tu(transcription_unit, promoter):
     dict_genes = []
     first_gene = {}
@@ -207,3 +168,13 @@ def get_first_gene_of_tu(transcription_unit, promoter):
     if promoter.strand == "reverse":
         first_gene = (max(dict_genes, key=lambda x: x["rightEndPosition"]))
     return first_gene
+
+
+def get_all_ri_from_tu(trans_unit):
+    ris = []
+    ris.extend(
+        multigenomic_api.regulatory_interactions.find_regulatory_interactions_by_reg_entity_id(trans_unit.id))
+    if trans_unit.promoters_id:
+        ris.extend(
+            multigenomic_api.regulatory_interactions.find_regulatory_interactions_by_reg_entity_id(trans_unit.promoters_id))
+    return ris
