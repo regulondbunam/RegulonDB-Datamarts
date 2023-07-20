@@ -1,4 +1,5 @@
 from src.datamarts.domain.general.biological_base import BiologicalBase
+from src.datamarts.domain.general.additiveEvidences import AdditiveEvidences
 
 
 class RegulatoryInteractions(BiologicalBase):
@@ -8,6 +9,7 @@ class RegulatoryInteractions(BiologicalBase):
         self.regulatory_sites = regulatory_sites
 
     def to_dict(self):
+        additive_evs = AdditiveEvidences(self.citations + self.regulatory_sites.get("citations", []))
         reg_int_dict = {
             "_id": self.regulatory_interactions.id,
             "centerPosition": self.regulatory_interactions.absolute_center_position,
@@ -15,6 +17,7 @@ class RegulatoryInteractions(BiologicalBase):
             "function": self.regulatory_interactions.function,
             "note": self.formatted_note,
             "mechanism": self.regulatory_interactions.mechanism,
-            "regulatorySite": self.regulatory_sites
+            "regulatorySite": self.regulatory_sites,
+            "additiveEvidences": additive_evs.to_dict()
         }
         return reg_int_dict
