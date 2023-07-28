@@ -16,13 +16,16 @@ class Regulator(BiologicalBase):
         citations = self.citations
         additive_evs = AdditiveEvidences(citations)
         regulator = None
+        note = self.formatted_note
+        if not note:
+            note = self.get_longest_note()
         if self.regulator.regulator_type == "transcriptionFactor":
             regulator = {
                 "_id": self.regulator.id,
                 "citations": self.citations,
                 "name": self.regulator.name,
                 "synonyms": self.regulator.synonyms,
-                "note": self.formatted_note,
+                "note": note,
                 "conformations": self.conformations,
                 "encodedFrom": {
                     "genes": self.genes,
@@ -72,11 +75,6 @@ class Regulator(BiologicalBase):
                 elif conformation.type == "regulatoryComplex":
                     complx = multigenomic_api.regulatory_complexes.find_by_id(conformation.id)
                     conformation_object = Conformation(complx, conformation.type)
-                    for continuant_id in complx.regulatory_continuants_ids:
-                        continuant = multigenomic_api.regulatory_continuants.find_by_id(continuant_id)
-                        continuant_obj = Conformation(continuant, "regulatoryContinuant").to_dict()
-                        if continuant_obj not in self._conformations:
-                            self._conformations.append(continuant_obj.copy())
                 self._conformations.append(conformation_object.to_dict().copy())
 
     @property
@@ -162,16 +160,42 @@ class Regulator(BiologicalBase):
         }
         return gene
 
+    def get_longest_note(self):
+        longest_note = ""
+        for conf in self.conformations:
+            if conf["note"]:
+                if len(conf["note"]) > len(longest_note):
+                    longest_note = conf["note"]
+        return longest_note
+
 
 class Conformation(BiologicalBase):
     def __init__(self, conf, conformation_type):
-        super().__init__([], conf.citations, [])
+        super().__init__([], conf.citations, conf.note)
+        print(conf.citations)
         self.conf = conf
         self.type = conformation_type
         self.name = None
+        self.effector = conf
+
+    @property
+    def effector(self):
+        return self._effector
+
+    @effector.setter
+    def effector(self, regulator):
+        self._effector = {}
+        if self.type == "regulatoryComplex":
+            for continuant_id in self.conf.regulatory_continuants_ids:
+                continuant = multigenomic_api.regulatory_continuants.find_by_id(continuant_id)
+                self._effector = {
+                    "_id": continuant.id,
+                    "name": continuant.name
+                }
 
     def to_dict(self):
         citations = self.citations
+        print(self.citations)
         additive_evs = AdditiveEvidences(citations)
         if self.type != "regulatoryContinuant":
             self.name = self.conf.abbreviated_name or self.conf.name
@@ -181,7 +205,9 @@ class Conformation(BiologicalBase):
             "_id": self.conf.id,
             "name": self.name,
             "type": self.type,
-            "citations": citations,
+            "effector": self.effector,
+            "note": self.formatted_note,
+            "citations": self.citations,
             "additiveEvidences": additive_evs.to_dict(),
             "confidenceLevel": additive_evs.get_confidence_level(),
             # TODO: This will be added later by local process
@@ -190,3 +216,4 @@ class Conformation(BiologicalBase):
             # "functionalType": None
         }
         return conformation
+

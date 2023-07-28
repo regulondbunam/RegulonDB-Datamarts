@@ -87,7 +87,7 @@ class RegIntDnaFeatures(object):
         @tooltip.setter
         def tooltip(self, entity):
             self._tooltip = f"{self.regulator.name,}; \n"\
-                            f"Distance to transcription start site: {entity.absolute_center_position} \n"\
+                            f"Distance to transcription start site: {entity.dist_site_promoter} \n"\
                             f"Evidence:"  # TODO: add evidences
 
         @property

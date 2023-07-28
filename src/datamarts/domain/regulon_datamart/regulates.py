@@ -6,6 +6,7 @@ class Regulates(BiologicalBase):
     def __init__(self, regulator):
         super().__init__(regulator.external_cross_references, regulator.citations, regulator.note)
         trans_units = []
+        # TODO: Revisar si esto impacta al añadir el TF y ppGpp
         if regulator.regulator_type == "transcriptionFactor":
             trans_units = get_all_transcription_units(regulator.active_conformations)
         elif regulator.regulator_type == "srna":

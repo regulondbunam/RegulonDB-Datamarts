@@ -12,7 +12,7 @@ class RegulatoryInteractions(BiologicalBase):
         additive_evs = AdditiveEvidences(self.citations + self.regulatory_sites.get("citations", []))
         reg_int_dict = {
             "_id": self.regulatory_interactions.id,
-            "centerPosition": self.regulatory_interactions.absolute_center_position,
+            "relativeCenterPosition": self.regulatory_interactions.dist_site_promoter,
             "citations": self.citations,
             "function": self.regulatory_interactions.function,
             "note": self.formatted_note,
