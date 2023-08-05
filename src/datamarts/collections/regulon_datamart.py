@@ -88,7 +88,6 @@ class RegulonDatamarts:
             if regulator.regulator_type == "transcriptionFactor":
                 try:
                     reg_complex = multigenomic_api.regulatory_complexes.find_by_name(regulator.name)
-                    print(reg_complex)
                 except:
                     print("This is not a Regulatory Complex")
                 if reg_complex is not None:
