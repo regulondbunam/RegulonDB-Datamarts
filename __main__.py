@@ -13,7 +13,8 @@ from src.datamarts.collections import \
     srna_datamarts, \
     dttDatamart, \
     regulatory_network_datamart, \
-    listPage_dm
+    listPage_dm, \
+    gensorUnit_datamarts
 
 
 def load_arguments_parser():
@@ -73,6 +74,7 @@ if __name__ == '__main__':
     datamart_files["dnaFeatures"] = dttDatamart.all_dtt_datamarts()
     datamart_files["regulatoryNetworkDatamart"] = regulatory_network_datamart.all_regulatory_network_nodes()
     datamart_files["listPage"] = listPage_dm.get_all_list_page_docs()
+    datamart_files["gensorUnitDatamart"] = gensorUnit_datamarts.all_gensor_unit_datamarts()
 
     datamartsData = ""
     for collection_name, objects in datamart_files.items():
