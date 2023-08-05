@@ -65,17 +65,34 @@ class Regulator(BiologicalBase):
     @conformations.setter
     def conformations(self, regulator):
         self._conformations = []
+        reg_complex = None
         if regulator.regulator_type == "transcriptionFactor":
-            conformations = regulator.active_conformations + regulator.inactive_conformations
-            conformation_object = None
-            for conformation in conformations:
-                if conformation.type == "product":
-                    prod = multigenomic_api.products.find_by_id(conformation.id)
-                    conformation_object = Conformation(prod, conformation.type)
-                elif conformation.type == "regulatoryComplex":
-                    complx = multigenomic_api.regulatory_complexes.find_by_id(conformation.id)
-                    conformation_object = Conformation(complx, conformation.type)
-                self._conformations.append(conformation_object.to_dict().copy())
+            try:
+                reg_complex = multigenomic_api.regulatory_complexes.find_by_name(regulator.name)
+                print(reg_complex)
+            except:
+                print("This is not a Regulatory Complex")
+            if reg_complex is not None:
+                reg_ints = multigenomic_api.regulatory_interactions.find_by_regulator_id(
+                    reg_complex.id)
+                if len(reg_ints) > 0:
+                    self._conformations.append(Conformation(reg_complex, "regulatoryComplex").to_dict().copy())
+            else:
+                for product_id in regulator.products_ids:
+                    reg_ints = multigenomic_api.regulatory_interactions.find_by_regulator_id(product_id)
+                    if len(reg_ints) > 0:
+                        prod = multigenomic_api.products.find_by_id(product_id)
+                        self._conformations.append(Conformation(prod, "product").to_dict().copy())
+                conformations = regulator.active_conformations
+                conformation_object = None
+                for conformation in conformations:
+                    if conformation.type == "product":
+                        prod = multigenomic_api.products.find_by_id(conformation.id)
+                        conformation_object = Conformation(prod, conformation.type)
+                    elif conformation.type == "regulatoryComplex":
+                        complx = multigenomic_api.regulatory_complexes.find_by_id(conformation.id)
+                        conformation_object = Conformation(complx, conformation.type)
+                    self._conformations.append(conformation_object.to_dict().copy())
 
     @property
     def genes(self):
@@ -172,7 +189,6 @@ class Regulator(BiologicalBase):
 class Conformation(BiologicalBase):
     def __init__(self, conf, conformation_type):
         super().__init__([], conf.citations, conf.note)
-        print(conf.citations)
         self.conf = conf
         self.type = conformation_type
         self.name = None
@@ -195,7 +211,6 @@ class Conformation(BiologicalBase):
 
     def to_dict(self):
         citations = self.citations
-        print(self.citations)
         additive_evs = AdditiveEvidences(citations)
         if self.type != "regulatoryContinuant":
             self.name = self.conf.abbreviated_name or self.conf.name

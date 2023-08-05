@@ -84,11 +84,30 @@ class RegulonDatamarts:
         @regulatory_interactions.setter
         def regulatory_interactions(self, regulator):
             self._regulatory_interactions = []
+            reg_complex = None
             if regulator.regulator_type == "transcriptionFactor":
-                for active_conformation in regulator.active_conformations:
+                try:
+                    reg_complex = multigenomic_api.regulatory_complexes.find_by_name(regulator.name)
+                    print(reg_complex)
+                except:
+                    print("This is not a Regulatory Complex")
+                if reg_complex is not None:
                     regulatory_interactions = multigenomic_api.regulatory_interactions.find_by_regulator_id(
-                        active_conformation.id)
-                    self._regulatory_interactions = get_ri_objects(regulatory_interactions, self._regulatory_interactions)
+                        reg_complex.id)
+                    self._regulatory_interactions = get_ri_objects(regulatory_interactions,
+                                                                   self._regulatory_interactions)
+                else:
+                    for active_conformation in regulator.active_conformations:
+                        regulatory_interactions = multigenomic_api.regulatory_interactions.find_by_regulator_id(
+                            active_conformation.id)
+                        self._regulatory_interactions = get_ri_objects(regulatory_interactions,
+                                                                       self._regulatory_interactions)
+                    for product_id in regulator.products_ids:
+                        regulatory_interactions = multigenomic_api.regulatory_interactions.find_by_regulator_id(
+                            product_id)
+                        self._regulatory_interactions = get_ri_objects(regulatory_interactions,
+                                                                       self._regulatory_interactions)
+            # TODO: Revisar esto
             regulatory_interactions = multigenomic_api.regulatory_interactions.find_by_regulator_id(regulator.id)
             self._regulatory_interactions = get_ri_objects(regulatory_interactions, self._regulatory_interactions)
 
