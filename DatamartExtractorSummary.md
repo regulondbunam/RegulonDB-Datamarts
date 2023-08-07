@@ -1,7 +1,7 @@
 # DatamartsExtractorSummary 
-Creation date: 2023-07-31
+Creation date: 2023-08-07
  
-Creation time: 13:38:08
+Creation time: 10:19:33
  
 RegulonDB Version: 12.0 
 
