@@ -56,9 +56,11 @@ class Terms:
         }
         if regulator.regulator_type == "transcriptionFactor":
             products_ids = regulator.products_ids
+            regulated_genes = regulator.regulated_genes
         else:
             products_ids = [regulator.id]
-        regulated_genes = regulator.regulated_genes
+            product = multigenomic_api.products.find_by_id(regulator.id)
+            regulated_genes = [product.genes_id]
         for product_id in products_ids:
             product = multigenomic_api.products.find_by_id(product_id)
             terms = product.terms
@@ -90,8 +92,8 @@ class Term(BiologicalBase):
         self.term = term
 
     def to_dict(self):
-        product_term_members = get_members_from_term(self.term.terms_id)
-        genes = intersection_genes(self.regulated_genes, product_term_members)
+        gene_term_members = get_members_from_term(self.term.terms_id)
+        genes = intersection_genes(self.regulated_genes, gene_term_members)
         term = {
             '_id': self.term.terms_id,
             'name': self.term.terms_name,

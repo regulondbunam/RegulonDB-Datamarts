@@ -41,10 +41,20 @@ class RegulatoryInteractions(BiologicalBase):
 
     @regulator.setter
     def regulator(self, regulator):
+        reg = regulator
+        name = regulator.name
+        if regulator.type == "regulatoryComplex":
+            reg = multigenomic_api.regulatory_complexes.find_by_id(regulator.id)
+            if reg.abbreviated_name:
+                name = reg.abbreviated_name
+        elif regulator.type == "product":
+            reg = multigenomic_api.products.find_by_id(regulator.id)
+            if reg.abbreviated_name:
+                name = reg.abbreviated_name
         self._regulator = {
             "_id": regulator.id,
             "type": regulator.type,
-            "name": regulator.name
+            "name": name
         }
 
     @property
