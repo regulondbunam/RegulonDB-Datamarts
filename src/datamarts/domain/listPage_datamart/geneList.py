@@ -46,7 +46,7 @@ class ListGeneDM:
 def list_all_gene_datamarts():
     list_genes = ListGeneDM()
     json_genes = []
-    for regulon in list_genes.objects:
-        regulon_dict = remove_empty_items(regulon.to_dict().copy())
-        json_genes.append(remove_empty_items(regulon_dict))
+    for gene in list_genes.objects:
+        gene_dict = remove_empty_items(gene.to_dict().copy())
+        json_genes.append(remove_empty_items(gene_dict))
     return json_genes

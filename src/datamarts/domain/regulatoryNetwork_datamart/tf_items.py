@@ -30,25 +30,34 @@ class RegulatoryNetworkTF:
         def outdegree(self, node_object):
             self._outdegree = []
             genes_ids = []
+            reg_complex = None
+            reg_ints = []
+            try:
+                reg_complex = multigenomic_api.regulatory_complexes.find_by_name(node_object.name)
+            except:
+                print("This is not a Regulatory Complex")
+            if reg_complex is not None:
+                reg_ints.extend(multigenomic_api.regulatory_interactions.find_by_regulator_id(
+                    reg_complex.id))
             for conformation in node_object.active_conformations:
-                reg_ints = multigenomic_api.regulatory_interactions.find_by_regulator_id(conformation.id)
-                for ri in reg_ints:
-                    if ri.regulated_entity.type == "promoter":
-                        tus = multigenomic_api.transcription_units.find_by_promoter_id(ri.regulated_entity.id)
-                        for tu in tus:
-                            for gene_id in tu.genes_ids:
-                                genes_ids.append(gene_id)
-                    elif ri.regulated_entity.type == "transcriptionUnit":
-                        tu = multigenomic_api.transcription_units.find_by_id(ri.regulated_entity.id)
+                reg_ints.extend(multigenomic_api.regulatory_interactions.find_by_regulator_id(conformation.id))
+            for ri in reg_ints:
+                if ri.regulated_entity.type == "promoter":
+                    tus = multigenomic_api.transcription_units.find_by_promoter_id(ri.regulated_entity.id)
+                    for tu in tus:
                         for gene_id in tu.genes_ids:
                             genes_ids.append(gene_id)
-                    elif ri.regulated_entity.type == "gene":
-                        genes_ids.append(ri.regulated_entity.id)
-                    for gene_id in genes_ids:
-                        self._outdegree = outdegree_tf(gene_id, ri.function, node_object.name, self._outdegree)
-                        gene_outdegree_item = outdegree_gene(gene_id, ri.function, node_object.name)
-                        if gene_outdegree_item not in self._outdegree:
-                            self._outdegree.append(gene_outdegree_item.copy())
+                elif ri.regulated_entity.type == "transcriptionUnit":
+                    tu = multigenomic_api.transcription_units.find_by_id(ri.regulated_entity.id)
+                    for gene_id in tu.genes_ids:
+                        genes_ids.append(gene_id)
+                elif ri.regulated_entity.type == "gene":
+                    genes_ids.append(ri.regulated_entity.id)
+                for gene_id in genes_ids:
+                    self._outdegree = outdegree_tf(gene_id, ri.function, node_object.name, self._outdegree)
+                    gene_outdegree_item = outdegree_gene(gene_id, ri.function, node_object.name)
+                    if gene_outdegree_item not in self._outdegree:
+                        self._outdegree.append(gene_outdegree_item.copy())
 
         @property
         def indegree(self):
@@ -92,7 +101,7 @@ class RegulatoryNetworkTF:
 
 def outdegree_gene(gene_id, reg_int_function, object_name):
     gene = multigenomic_api.genes.find_by_id(gene_id)
-    tooltip = define_tooltip(reg_int_function, f"Transcription Factor{object_name}", f"Gene {gene.name}")
+    tooltip = define_tooltip(reg_int_function, f"Transcription Factor {object_name}", f"Gene {gene.name}")
     gene_outdegree_item = BuildDict(gene, "Gene", reg_int_function, tooltip, "TF-Gene").to_dict()
     return gene_outdegree_item
 

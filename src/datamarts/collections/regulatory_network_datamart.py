@@ -1,5 +1,6 @@
 from src.datamarts.domain.regulatoryNetwork_datamart.tf_items import RegulatoryNetworkTF
 from src.datamarts.domain.regulatoryNetwork_datamart.gene_items import RegulatoryNetworkGene
+from src.datamarts.domain.regulatoryNetwork_datamart.srna_items import RegulatoryNetworkSRNA
 
 from src.datamarts.domain.general.remove_items import remove_empty_items
 
@@ -7,12 +8,17 @@ from src.datamarts.domain.general.remove_items import remove_empty_items
 def all_regulatory_network_nodes():
     network_nodes_tf = RegulatoryNetworkTF()
     network_nodes_gene = RegulatoryNetworkGene()
+    network_nodes_srna = RegulatoryNetworkSRNA()
     json_nodes = []
     for item in network_nodes_tf.objects:
         item = locate_dual_items(item)
         item = remove_empty_items(item.to_dict())
         json_nodes.append(remove_empty_items(item))
     for item in network_nodes_gene.objects:
+        item = locate_dual_items(item)
+        item = remove_empty_items(item.to_dict())
+        json_nodes.append(remove_empty_items(item))
+    for item in network_nodes_srna.objects:
         item = locate_dual_items(item)
         item = remove_empty_items(item.to_dict())
         json_nodes.append(remove_empty_items(item))
