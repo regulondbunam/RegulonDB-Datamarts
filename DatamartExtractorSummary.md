@@ -20,7 +20,7 @@ RegulonDB Version: 12.0
  ### dnaFeatures: 
  14764 Total Objects Generated
  ### regulatoryNetworkDatamart: 
- 4966 Total Objects Generated
+ 4967 Total Objects Generated
  ### listPage: 
  7632 Total Objects Generated
  ### gensorUnitDatamart: 
