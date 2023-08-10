@@ -77,7 +77,7 @@ class RegulatoryNetworkSRNA:
             reg_network_node = {
                 "_id": self.id,
                 "name": self.node.name,
-                "type": "Transcription Factor",
+                "type": "Small RNA",
                 "indegree": self.indegree,
                 "outdegree": self.outdegree,
                 # "citations": self.citations
