@@ -14,7 +14,8 @@ from src.datamarts.collections import \
     dttDatamart, \
     regulatory_network_datamart, \
     listPage_dm, \
-    gensorUnit_datamarts
+    gensorUnit_datamarts, \
+    downloadable_files_dm
 
 
 def load_arguments_parser():
@@ -75,6 +76,7 @@ if __name__ == '__main__':
     datamart_files["regulatoryNetworkDatamart"] = regulatory_network_datamart.all_regulatory_network_nodes()
     datamart_files["listPage"] = listPage_dm.get_all_list_page_docs()
     datamart_files["gensorUnitDatamart"] = gensorUnit_datamarts.all_gensor_unit_datamarts()
+    datamart_files["downloadableFilesDatamart"] = downloadable_files_dm.get_all_downloadable_docs()
 
     datamartsData = ""
     for collection_name, objects in datamart_files.items():
