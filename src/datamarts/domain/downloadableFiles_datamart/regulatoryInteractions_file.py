@@ -1,4 +1,5 @@
 import multigenomic_api
+from datetime import datetime
 
 
 class RegulatoryInteractions:
@@ -265,6 +266,7 @@ def all_ris_rows():
     ris_content.append("1)riId	2)riType	3)tfId	4)tfName	5)cnfName	6)tfrsID	7)tfrsLeft	8)tfrsRight	9)strand	10)tfrsSeq	11)riFunction	12)promoterID	13)promoterName	14)tss	15)tfrsDistToPm	16)firstGene	17)tfrsDistTo1Gene	18)targetTuOrGene	19)confidenceLevel	20)tfrsEvidence	21)riEvidence	22)addEvidence	23)riEvTech	24)riEvCategory")
     for ri in ris.objects:
         ris_content.append(ri.to_row())
+    creation_date = datetime.now()
     ri_doc = {
         "fileName": "RISet",
         "title": "Complete RIs Set",
@@ -277,7 +279,7 @@ def all_ris_rows():
             "email": "regulondb@ccg.unam.mx"
         },
         "version": "",
-        "creationDate": "",
+        "creationDate": f"{creation_date.strftime('%m-%d-%Y')}",
         "columnsDetails": "# Columns:\t# (1) riId. Regulatory interaction (RI) identifier assigned by RegulonDB\t# (2) riType. Regulatory interaction type [tf-promoter, tf-tu, tf-gene]\t# (3) tfId. Transcription Factor (TF) identifier assigned by RegulonDB\t# (4) tfName. TF name\t# (5) cnfName. TF active conformation name\t# (6) tfrsId. TF regulatory site (TFRS) identifier assigned by RegulonDB\t# (7) tfrsLeft. TFRS left end position in the genome\t# (8) tfrsRight. TFRS right end position in the genome\t# (9) strand. DNA strand where the TFRS is located\t# (10) tfrsSeq. TFRS sequence (upper case)\t# (11) riFunction. Gene expression effect caused by the TF bound to the TFRS\t# (12) promoterId. Promoter Identifier assigned by RegulonDB\t# (13) promoterName. Promoter name\t# (14) tss. Transcription start site (+1) position in the genome\t# (15) tfrsDistToPm. Relative distance from the center position of TFRS to the Transcription Start Site\t# (16) firstGene. first transcribed gene name\t# (17) tfrsDistTo1Gene. Relative distance from center position of TFRS to the start of first gene\t# (18) targetTuOrGene. Transcription unit or gene (id:name) regulated by the TF\t# (19) confidenceLevel. RI confidence level (Values: Confirmed, Strong, Weak)\t# (20) tfrsEvidence. Evidence that supports the existence of the TFRS [EvidenceCode|EvidenceType(C:confirmed S:strong W:weak)]]\t# (21) riEvidence. Evidence that supports the RI function [EvidenceCode|EvidenceType(C:confirmed S:strong W:weak)]\t# (22) addEvidence. Additive Evidence [CV(EvidenceCode1/EvidenceCodeN)|Confidence Level]\t# (23) riEvTech. Evidence related to the type of technology used to determine the RI\t# (24) riEvCategory. Evidence  were categorized in classical, ht or non-experimental",
         "content": " \n".join(ris_content)
     }
