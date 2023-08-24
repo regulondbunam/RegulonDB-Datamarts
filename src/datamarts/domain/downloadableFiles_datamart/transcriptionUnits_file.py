@@ -72,6 +72,8 @@ class TranscriptionUnit:
                     if citation.evidences_id:
                         citation_dict = multigenomic_api.evidences.find_by_id(citation.evidences_id)
                         self._tu_evidences += f"[{citation_dict.code}:{citation_dict.type}]"
+                if len(self._tu_evidences) == 0:
+                    self._evidences = None
 
         @property
         def additive_evidences(self):
@@ -105,6 +107,7 @@ def all_tus_rows():
         tus_content.append(tu.to_row())
     creation_date = datetime.now()
     tus_doc = {
+        "_id": "RDBECOLIDLF00003",
         "fileName": "TUSet",
         "title": "Complete Transcription Unit Set",
         "fileFormat": "rif-version 1",

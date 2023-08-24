@@ -178,6 +178,8 @@ class RegulatoryInteractions:
                     if citation.evidences_id:
                         citation_dict = multigenomic_api.evidences.find_by_id(citation.evidences_id)
                         self._ri_evidences += f"[{citation_dict.code}:{citation_dict.type}]"
+                if len(self._ri_evidences) == 0:
+                    self._evidences = None
 
         @property
         def additive_evidences(self):
@@ -268,6 +270,7 @@ def all_ris_rows():
         ris_content.append(ri.to_row())
     creation_date = datetime.now()
     ri_doc = {
+        "_id": "RDBECOLIDLF00001",
         "fileName": "RISet",
         "title": "Complete RIs Set",
         "fileFormat": "rif-version 1",

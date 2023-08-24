@@ -2,6 +2,7 @@ from src.datamarts.domain.downloadableFiles_datamart import regulatoryInteractio
 from src.datamarts.domain.downloadableFiles_datamart import promoters_file
 from src.datamarts.domain.downloadableFiles_datamart import transcriptionUnits_file
 from src.datamarts.domain.downloadableFiles_datamart import operons_file
+from src.datamarts.domain.downloadableFiles_datamart import transcriptionFactors_file
 
 
 def get_all_downloadable_docs():
@@ -18,5 +19,8 @@ def get_all_downloadable_docs():
     # Operons
     operons = operons_file.all_operons_rows()
     downloadable_files_dm.append(operons)
+    # TranscriptionFactors
+    tfs = transcriptionFactors_file.all_tfs_rows()
+    downloadable_files_dm.append(tfs)
 
     return downloadable_files_dm

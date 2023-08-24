@@ -21,7 +21,9 @@ class Operon:
             self.genes = operon_genes
             self.first_gene = operon_genes
             self.last_gene = operon_genes
-            self.operon_evidences = operon.citations
+            self.tus_evidences = operon.id
+            self.evidences = self.tus_evidences
+            self.confidence_level = self.tus_evidences
 
         @property
         def genes(self):
@@ -80,29 +82,67 @@ class Operon:
                             self._last_gene = gene
 
         @property
-        def operon_evidences(self):
-            return self._operon_evidences
+        def tus_evidences(self):
+            return self._tus_evidences
 
-        @operon_evidences.setter
-        def operon_evidences(self, citations):
-            self._operon_evidences = None
+        @tus_evidences.setter
+        def tus_evidences(self, operon_id):
+            self._tus_evidences = []
+            tus = multigenomic_api.transcription_units.find_by_operon_id(operon_id)
+            for tu in tus:
+                if tu.citations:
+                    for citation in tu.citations:
+                        if citation not in self._tus_evidences:
+                            self._tus_evidences.append(citation)
+
+        @property
+        def evidences(self):
+            return self._evidences
+
+        @evidences.setter
+        def evidences(self, citations):
+            self._evidences = None
             if len(citations) > 0:
-                self._operon_evidences = ""
+                self._evidences = ""
                 for citation in citations:
                     if citation.evidences_id:
                         citation_dict = multigenomic_api.evidences.find_by_id(citation.evidences_id)
-                        self._operon_evidences += f"[{citation_dict.code}:{citation_dict.type}]"
+                        self._evidences += f"[{citation_dict.code}:{citation_dict.type}]"
+                if len(self._evidences) == 0:
+                    self._evidences = None
+
+        @property
+        def confidence_level(self):
+            return self._confidence_level
+
+        @confidence_level.setter
+        def confidence_level(self, citations):
+            self._confidence_level = None
+            for citation in citations:
+                if citation.evidences_id:
+                    citation_dict = multigenomic_api.evidences.find_by_id(citation.evidences_id)
+                    if citation_dict.type == "C":
+                        self._confidence_level = "C"
+            for citation in citations:
+                if citation.evidences_id:
+                    citation_dict = multigenomic_api.evidences.find_by_id(citation.evidences_id)
+                    if citation_dict.type == "S":
+                        self._confidence_level = "S"
+            for citation in citations:
+                if citation.evidences_id:
+                    citation_dict = multigenomic_api.evidences.find_by_id(citation.evidences_id)
+                    if citation_dict.type == "W":
+                        self._confidence_level = "W"
 
         def to_row(self):
-            additive_evs = AdditiveEvidences(self.operon.citations)
             return f"{self.operon.name}" \
                    f"\t{self.first_gene.left_end_position}" \
                    f"\t{self.last_gene.right_end_position}" \
                    f"\t{self.operon.strand}" \
                    f"\t{len(self.genes.split(','))}" \
                    f"\t{self.genes}" \
-                   f"\t{self._operon_evidences}" \
-                   f"\t{additive_evs.get_confidence_level()}" \
+                   f"\t{self.evidences}" \
+                   f"\t{self.confidence_level}" \
 
 
 
@@ -142,6 +182,7 @@ def all_operons_rows():
         operons_content.append(operon.to_row())
     creation_date = datetime.now()
     operons_doc = {
+        "_id": "RDBECOLIDLF00004",
         "fileName": "OperonSet",
         "title": "Complete Operons Set",
         "fileFormat": "rif-version 1",

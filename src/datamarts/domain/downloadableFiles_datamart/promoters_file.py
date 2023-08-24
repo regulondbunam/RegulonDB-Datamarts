@@ -58,6 +58,8 @@ class Promoters:
                     if citation.evidences_id:
                         citation_dict = multigenomic_api.evidences.find_by_id(citation.evidences_id)
                         self._prom_evidences += f"[{citation_dict.code}:{citation_dict.type}]"
+                if len(self._prom_evidences) == 0:
+                    self._evidences = None
 
         @property
         def additive_evidences(self):
@@ -92,6 +94,7 @@ def all_promoters_rows():
         promoters_content.append(promoter.to_row())
     creation_date = datetime.now()
     promoters_doc = {
+        "_id": "RDBECOLIDLF00002",
         "fileName": "PromoterSet",
         "title": "Complete Promoters Set",
         "fileFormat": "rif-version 1",
