@@ -7,7 +7,7 @@ class TranscriptionFactor:
     @property
     def objects(self):
         tf_objects = multigenomic_api.transcription_factors.get_all()
-        for tf_object in tf_objects[0:10]:
+        for tf_object in tf_objects:
             print(tf_object.id)
             ri_row = TranscriptionFactor.TFDatamart(tf_object)
             yield ri_row
@@ -25,6 +25,8 @@ class TranscriptionFactor:
             self.inactive_conf_syn = tf.inactive_conformations
             self.active_conf_effectors = active_conformations
             self.inactive_conf_effectors = tf.inactive_conformations
+            self.active_conf_effectors_syn = active_conformations
+            self.inactive_conf_effectors_syn = tf.inactive_conformations
             self.symmetry = tf.symmetry
             self.tf_evidences = tf.citations
             self.additive_evidences = tf.additive_evidences_ids
@@ -173,6 +175,46 @@ class TranscriptionFactor:
                     self._inactive_conf_effectors = None
 
         @property
+        def active_conf_effectors_syn(self):
+            return self._active_conf_effectors_syn
+
+        @active_conf_effectors_syn.setter
+        def active_conf_effectors_syn(self, active_confs):
+            self._active_conf_effectors_syn = None
+            if active_confs:
+                if len(active_confs) > 0:
+                    self._active_conf_effectors_syn = ""
+                    for conf in active_confs:
+                        if conf["type"] == "regulatoryComplex" and conf["effectorsSynonyms"] != "":
+                            self._active_conf_effectors_syn += f"{conf['effectorsSynonyms']}"
+                if len(self._active_conf_effectors_syn) > 0:
+                    self._active_conf_effectors_syn = self._active_conf_effectors_syn[:-1]
+            if len(self._active_conf_effectors_syn) == 0:
+                self._active_conf_effectors_syn = None
+
+        @property
+        def inactive_conf_effectors_syn(self):
+            return self._inactive_conf_effectors_syn
+
+        @inactive_conf_effectors_syn.setter
+        def inactive_conf_effectors_syn(self, inactive_confs):
+            self._inactive_conf_effectors_syn = None
+            if inactive_confs:
+                if len(inactive_confs) > 0:
+                    self._inactive_conf_effectors_syn = ""
+                    for conf in inactive_confs:
+                        if conf.type == "regulatoryComplex":
+                            conf = multigenomic_api.regulatory_complexes.find_by_id(conf.id)
+                            for continuant_id in conf.regulatory_continuants_ids:
+                                continuant = multigenomic_api.regulatory_continuants.find_by_id(continuant_id)
+                                for synonym in continuant.synonyms:
+                                    self._inactive_conf_effectors_syn += f"{synonym},"
+                if len(self._inactive_conf_effectors_syn) > 0:
+                    self._inactive_conf_effectors_syn = self._inactive_conf_effectors_syn[:-1]
+                if len(self._inactive_conf_effectors_syn) == 0:
+                    self._inactive_conf_effectors_syn = None
+
+        @property
         def symmetry(self):
             return self._symmetry
 
@@ -215,7 +257,7 @@ class TranscriptionFactor:
                     self._additive_evidences += f"[{additive_evidence_dict.code}:{additive_evidence_dict.confidence_level}]"
 
         def to_row(self):
-            # TODO: add effectos synnonyms and pmids
+            # TODO: add pmids
             return f"{self.tf.id}" \
                    f"\t{self.tf.name}" \
                    f"\t{self.tf_synonyms}" \
@@ -226,8 +268,8 @@ class TranscriptionFactor:
                    f"\t{self.inactive_conf_syn}" \
                    f"\t{self.active_conf_effectors}" \
                    f"\t{self.inactive_conf_effectors}" \
-                   f"\t{None}" \
-                   f"\t{None}" \
+                   f"\t{self.active_conf_effectors_syn}" \
+                   f"\t{self.inactive_conf_effectors_syn}" \
                    f"\t{self.symmetry}" \
                    f"\t{self.tf_evidences}" \
                    f"\t{self.additive_evidences}" \
@@ -247,13 +289,17 @@ def get_all_act_conf(tf):
             reg_complex.id)
         if len(reg_ints) > 0:
             effectors = ""
+            effectors_syn = ""
             for reg_cont_id in reg_complex.regulatory_continuants_ids:
                 continuant = multigenomic_api.regulatory_continuants.find_by_id(reg_cont_id)
-                effectors += continuant.name
+                effectors += f"{continuant.name},"
+                for synonym in continuant.synonyms:
+                    effectors_syn += f"{synonym},"
             conformations.append({"name": tf.name,
                                   "synonyms": tf.synonyms,
                                   "type": "regulatoryComplex",
-                                  "effectors": effectors})
+                                  "effectors": effectors,
+                                  "effectorsSynonyms": effectors_syn})
     else:
         for product_id in tf.products_ids:
             reg_ints = multigenomic_api.regulatory_interactions.find_by_regulator_id(product_id)
@@ -272,13 +318,17 @@ def get_all_act_conf(tf):
             elif conformation.type == "regulatoryComplex":
                 complx = multigenomic_api.regulatory_complexes.find_by_id(conformation.id)
                 effectors = ""
+                effectors_syn = ""
                 for reg_cont_id in complx.regulatory_continuants_ids:
                     continuant = multigenomic_api.regulatory_continuants.find_by_id(reg_cont_id)
                     effectors += continuant.name
+                    for synonym in continuant.synonyms:
+                        effectors_syn += f"{synonym},"
                 conformation_object = {"name": complx.name,
                                        "synonyms": complx.synonyms,
                                        "type": "regulatoryComplex",
-                                       "effectors": effectors}
+                                       "effectors": effectors,
+                                       "effectorsSynonyms": effectors_syn}
             conformations.append(conformation_object)
     return conformations
 
