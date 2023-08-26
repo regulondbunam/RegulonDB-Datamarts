@@ -73,7 +73,7 @@ class TranscriptionUnit:
                         citation_dict = multigenomic_api.evidences.find_by_id(citation.evidences_id)
                         self._tu_evidences += f"[{citation_dict.code}:{citation_dict.type}]"
                 if len(self._tu_evidences) == 0:
-                    self._evidences = None
+                    self._tu_evidences = None
 
         @property
         def additive_evidences(self):

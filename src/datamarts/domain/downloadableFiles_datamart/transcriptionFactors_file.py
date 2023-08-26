@@ -30,6 +30,7 @@ class TranscriptionFactor:
             self.symmetry = tf.symmetry
             self.tf_evidences = tf.citations
             self.additive_evidences = tf.additive_evidences_ids
+            self.tf_conf_pmids = active_conformations
 
         @property
         def tf_synonyms(self):
@@ -256,6 +257,37 @@ class TranscriptionFactor:
                     additive_evidence_dict = multigenomic_api.additive_evidences.find_by_id(additive_evs_id)
                     self._additive_evidences += f"[{additive_evidence_dict.code}:{additive_evidence_dict.confidence_level}]"
 
+        @property
+        def tf_conf_pmids(self):
+            return self._tf_conf_pmids
+
+        @tf_conf_pmids.setter
+        def tf_conf_pmids(self, active_conformations):
+            self._tf_conf_pmids = []
+            for act_conf in active_conformations:
+                if act_conf["citations"]:
+                    for citation in act_conf["citations"]:
+                        if citation.publications_id:
+                            publication = multigenomic_api.publications.find_by_id(citation.publications_id)
+                            if publication.pmid not in self._tf_conf_pmids:
+                                self._tf_conf_pmids.append(f"{publication.pmid},")
+            if self.tf.inactive_conformations:
+                if len(self.tf.inactive_conformations) > 0:
+                    for conf in self.tf.inactive_conformations:
+                        if conf.type == "product":
+                            conf = multigenomic_api.products.find_by_id(conf.id)
+                        elif conf.type == "regulatoryComplex":
+                            conf = multigenomic_api.regulatory_complexes.find_by_id(conf.id)
+                        for citation in conf["citations"]:
+                            if citation.publications_id:
+                                publication = multigenomic_api.publications.find_by_id(citation.publications_id)
+                                if publication.pmid not in self._tf_conf_pmids:
+                                    self._tf_conf_pmids.append(f"{publication.pmid},")
+            if len(self._tf_conf_pmids) > 0:
+                self._tf_conf_pmids = "".join(self._tf_conf_pmids)[:-1]
+            else:
+                self._tf_conf_pmids = None
+
         def to_row(self):
             # TODO: add pmids
             return f"{self.tf.id}" \
@@ -274,7 +306,7 @@ class TranscriptionFactor:
                    f"\t{self.tf_evidences}" \
                    f"\t{self.additive_evidences}" \
                    f"\t{self.tf.confidence_level}" \
-                   f"\t{None}"
+                   f"\t{self.tf_conf_pmids}"
 
 
 def get_all_act_conf(tf):
@@ -299,7 +331,8 @@ def get_all_act_conf(tf):
                                   "synonyms": tf.synonyms,
                                   "type": "regulatoryComplex",
                                   "effectors": effectors,
-                                  "effectorsSynonyms": effectors_syn})
+                                  "effectorsSynonyms": effectors_syn,
+                                  "citations": tf.citations})
     else:
         for product_id in tf.products_ids:
             reg_ints = multigenomic_api.regulatory_interactions.find_by_regulator_id(product_id)
@@ -307,14 +340,16 @@ def get_all_act_conf(tf):
                 prod = multigenomic_api.products.find_by_id(product_id)
                 conformations.append({"name": prod.name,
                                       "synonyms": prod.synonyms,
-                                      "type": "product"})
+                                      "type": "product",
+                                      "citations": prod.citations})
         conformation_object = None
         for conformation in tf.active_conformations:
             if conformation.type == "product":
                 prod = multigenomic_api.products.find_by_id(conformation.id)
                 conformation_object = {"name": prod.name,
                                        "synonyms": prod.synonyms,
-                                       "type": "product"}
+                                       "type": "product",
+                                       "citations": prod.citations}
             elif conformation.type == "regulatoryComplex":
                 complx = multigenomic_api.regulatory_complexes.find_by_id(conformation.id)
                 effectors = ""
@@ -328,7 +363,8 @@ def get_all_act_conf(tf):
                                        "synonyms": complx.synonyms,
                                        "type": "regulatoryComplex",
                                        "effectors": effectors,
-                                       "effectorsSynonyms": effectors_syn}
+                                       "effectorsSynonyms": effectors_syn,
+                                       "citations": complx.citations}
             conformations.append(conformation_object)
     return conformations
 
