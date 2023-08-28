@@ -4,6 +4,7 @@ from src.datamarts.domain.downloadableFiles_datamart import transcriptionUnits_f
 from src.datamarts.domain.downloadableFiles_datamart import operons_file
 from src.datamarts.domain.downloadableFiles_datamart import transcriptionFactors_file
 from src.datamarts.domain.downloadableFiles_datamart import gene_product_file
+from src.datamarts.domain.downloadableFiles_datamart import terminators_file
 
 
 def get_all_downloadable_docs():
@@ -26,5 +27,8 @@ def get_all_downloadable_docs():
     # Genes
     genes = gene_product_file.all_gene_rows()
     downloadable_files_dm.append(genes)
+    # Terminators
+    terminators = terminators_file.all_terminators_rows()
+    downloadable_files_dm.append(terminators)
 
     return downloadable_files_dm

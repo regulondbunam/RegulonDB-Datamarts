@@ -1,0 +1,140 @@
+import multigenomic_api
+from datetime import datetime
+
+
+class Terminator:
+
+    @property
+    def objects(self):
+        terminator_objects = multigenomic_api.terminators.get_all()
+        for terminator_obj in terminator_objects:
+            print(terminator_obj.id)
+            ri_row = Terminator.TerminatorDatamart(terminator_obj)
+            yield ri_row
+        del terminator_objects
+
+    class TerminatorDatamart:
+        def __init__(self, terminator):
+            self.terminator = terminator
+            self.operon = terminator.id
+            self.strand = terminator.id
+            self.rel_tus = terminator.id
+            self.pmids = terminator.citations
+            self.terminator_evidences = terminator.citations
+
+        @property
+        def operon(self):
+            return self._operon
+
+        @operon.setter
+        def operon(self, terminator_id):
+            self._operon = []
+            tus = multigenomic_api.transcription_units.find_by_terminator_id(terminator_id)
+            for tu in tus:
+                operon = multigenomic_api.operons.find_by_id(tu.operons_id)
+                if f"{operon.name}," not in self._operon:
+                    self._operon.append(f"{operon.name},")
+            if len(self._operon) > 0:
+                self._operon = "".join(self._operon)[:-1]
+            else:
+                self._operon = None
+
+        @property
+        def strand(self):
+            return self._strand
+
+        @strand.setter
+        def strand(self, terminator_id):
+            self._strand = None
+            tus = multigenomic_api.transcription_units.find_by_terminator_id(terminator_id)
+            operon = multigenomic_api.operons.find_by_id(tus[0].operons_id)
+            self._strand = operon.strand
+
+        @property
+        def rel_tus(self):
+            return self._rel_tus
+
+        @rel_tus.setter
+        def rel_tus(self, terminator_id):
+            self._rel_tus = []
+            tus = multigenomic_api.transcription_units.find_by_terminator_id(terminator_id)
+            for tu in tus:
+                self._rel_tus.append(f"{tu.name},")
+            if len(self._rel_tus) > 0:
+                self._rel_tus = "".join(self._rel_tus)[:-1]
+            else:
+                self._rel_tus = None
+
+        @property
+        def terminator_evidences(self):
+            return self._terminator_evidences
+
+        @terminator_evidences.setter
+        def terminator_evidences(self, citations):
+            self._terminator_evidences = None
+            if len(citations) > 0:
+                self._terminator_evidences = ""
+                for citation in citations:
+                    if citation.evidences_id:
+                        citation_dict = multigenomic_api.evidences.find_by_id(citation.evidences_id)
+                        self._terminator_evidences += f"[{citation_dict.code}:{citation_dict.type}]"
+                if len(self._terminator_evidences) == 0:
+                    self._terminator_evidences = None
+
+        @property
+        def pmids(self):
+            return self._pmids
+
+        @pmids.setter
+        def pmids(self, citations):
+            self._pmids = []
+            if len(citations) > 0:
+                for citation in citations:
+                    if citation.publications_id:
+                        publication = multigenomic_api.publications.find_by_id(citation.publications_id)
+                        if f"{publication.pmid}, " not in self._pmids:
+                            self._pmids.append(f"{publication.pmid}, ")
+            if len(self._pmids) > 0:
+                self._pmids = "".join(self._pmids)[:-2]
+            else:
+                self._pmids = None
+
+        def to_row(self):
+            return f"{self.terminator.id}" \
+                   f"\t{self.terminator.transcriptionTerminationSite.left_end_position}" \
+                   f"\t{self.terminator.transcriptionTerminationSite.right_end_position}" \
+                   f"\t{self.strand}" \
+                   f"\t{self.terminator.sequence}" \
+                   f"\t{self.rel_tus}" \
+                   f"\t{self.terminator.class_}" \
+                   f"\t{self.operon}" \
+                   f"\t{self.pmids}" \
+                   f"\t{self.terminator_evidences}" \
+                   f"\t{self.terminator.confidence_level}" \
+
+
+
+def all_terminators_rows():
+    terminators = Terminator()
+    terminators_content = ["1)terminatorId\t2)leftEndPos\t3)rightEndPos\t4)strand\t5)sequence\t6)relatedTus\t7)type\t8)operonName\t9)pmids\t10)evidences\t11)confidenceLevel"]
+    for terminator in terminators.objects:
+        terminators_content.append(terminator.to_row())
+    creation_date = datetime.now()
+    terminators_doc = {
+        "_id": "RDBECOLIDLF00007",
+        "fileName": "TerminatorSet",
+        "title": "Complete Terminators Set",
+        "fileFormat": "rif-version 1",
+        "license": "RegulonDB is free for academic/noncommercial use\t\tUser is not entitled to change or erase data sets of the RegulonDB\tdatabase or to eliminate copyright notices from RegulonDB. Furthermore,\tUser is not entitled to expand RegulonDB or to integrate RegulonDB partly\tor as a whole into other databank systems, without prior written consent\tfrom CCG-UNAM.\t\tPlease check the license at http://regulondb.ccg.unam.mx/menu/download/full_version/terms_and_conditions.jsp",
+        "citation": "Tierrafría, V. H. et al. (2022). RegulonDB 11.0: Comprehensive high-throughput datasets on transcriptional regulation in Escherichia coli K-12,\tMicrob Genom. 2022 May;8(5). doi: 10.1099/mgen.0.000833. PMID: 35584008. https://doi.org/10.1099/mgen.0.000833",
+        "contact": {
+            "person": "RegulonDB Team",
+            "webPage": "http://regulondb.ccg.unam.mx/menu/about_regulondb/contact_us/index.jsp",
+            "email": "regulondb@ccg.unam.mx"
+        },
+        "version": "",
+        "creationDate": f"{creation_date.strftime('%m-%d-%Y')}",
+        "columnsDetails": "Columns:\n(1) Terminator identifier assigned by RegulonDB\n(2) Terminator left end position in the genome\n(3) Terminator right end position in the genome\n(4) DNA strand where the terminator is located\n(5) Terminator sequence\n(6) Transcription unit(s) related to the terminator   *see note1\n(7) Terminator type\n(8) Operon name\n(9) References (PubMed ID)\n(10) Evidence that supports the existence of the terminator \n(11) Evidence confidence level (Confirmed, Strong, Weak)\nnote1: If there are more than one TU with the same name, it is because the promoter associated to the TU is different",
+        "content": " \n".join(terminators_content)
+    }
+    return terminators_doc

@@ -269,8 +269,8 @@ class TranscriptionFactor:
                     for citation in act_conf["citations"]:
                         if citation.publications_id:
                             publication = multigenomic_api.publications.find_by_id(citation.publications_id)
-                            if publication.pmid not in self._tf_conf_pmids:
-                                self._tf_conf_pmids.append(f"{publication.pmid},")
+                            if f"{publication.pmid}, " not in self._tf_conf_pmids:
+                                self._tf_conf_pmids.append(f"{publication.pmid}, ")
             if self.tf.inactive_conformations:
                 if len(self.tf.inactive_conformations) > 0:
                     for conf in self.tf.inactive_conformations:
@@ -281,10 +281,10 @@ class TranscriptionFactor:
                         for citation in conf["citations"]:
                             if citation.publications_id:
                                 publication = multigenomic_api.publications.find_by_id(citation.publications_id)
-                                if publication.pmid not in self._tf_conf_pmids:
-                                    self._tf_conf_pmids.append(f"{publication.pmid},")
+                                if f"{publication.pmid}, "not in self._tf_conf_pmids:
+                                    self._tf_conf_pmids.append(f"{publication.pmid}, ")
             if len(self._tf_conf_pmids) > 0:
-                self._tf_conf_pmids = "".join(self._tf_conf_pmids)[:-1]
+                self._tf_conf_pmids = "".join(self._tf_conf_pmids)[:-2]
             else:
                 self._tf_conf_pmids = None
 
