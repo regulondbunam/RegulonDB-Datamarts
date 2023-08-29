@@ -31,11 +31,9 @@ class Operon:
 
         @genes.setter
         def genes(self, genes):
-            self._genes = None
-            if len(genes) > 0:
-                self._genes = ""
-                for gene in genes:
-                    self._genes += f"{gene.name},"
+            self._genes = ""
+            for gene in genes:
+                self._genes += f"{gene.name};"
             if len(self._genes) > 0:
                 self._genes = self._genes[:-1]
 
@@ -45,7 +43,9 @@ class Operon:
 
         @first_gene.setter
         def first_gene(self, genes):
-            self._first_gene = None
+            self._first_gene = {
+                "leftEndPosition": "",
+            }
             if len(genes) == 1:
                 self._first_gene = genes[0]
             elif len(genes) > 1:
@@ -66,7 +66,9 @@ class Operon:
 
         @last_gene.setter
         def last_gene(self, genes):
-            self._last_gene = None
+            self._last_gene = {
+                "rightEndPosition": "",
+            }
             if len(genes) == 1:
                 self._last_gene = genes[0]
             elif len(genes) > 1:
@@ -101,15 +103,14 @@ class Operon:
 
         @evidences.setter
         def evidences(self, citations):
-            self._evidences = None
-            if len(citations) > 0:
-                self._evidences = ""
-                for citation in citations:
-                    if citation.evidences_id:
-                        citation_dict = multigenomic_api.evidences.find_by_id(citation.evidences_id)
-                        self._evidences += f"[{citation_dict.code}:{citation_dict.type}]"
-                if len(self._evidences) == 0:
-                    self._evidences = None
+            self._evidences = []
+            for citation in citations:
+                if citation.evidences_id:
+                    citation_dict = multigenomic_api.evidences.find_by_id(citation.evidences_id)
+                    citation_item = f"[{citation_dict.code}:{citation_dict.type}]"
+                    if citation_item not in self._evidences:
+                        self._evidences.append(citation_item)
+            self._evidences = "".join(self._evidences)
 
         @property
         def confidence_level(self):
@@ -117,7 +118,7 @@ class Operon:
 
         @confidence_level.setter
         def confidence_level(self, citations):
-            self._confidence_level = None
+            self._confidence_level = ""
             for citation in citations:
                 if citation.evidences_id:
                     citation_dict = multigenomic_api.evidences.find_by_id(citation.evidences_id)
@@ -135,11 +136,12 @@ class Operon:
                         self._confidence_level = "W"
 
         def to_row(self):
-            return f"{self.operon.name}" \
-                   f"\t{self.first_gene.left_end_position}" \
-                   f"\t{self.last_gene.right_end_position}" \
+            return f"{self.operon.id}" \
+                   f"\t{self.operon.name}" \
+                   f"\t{self.first_gene['left_end_position']}" \
+                   f"\t{self.last_gene['right_end_position']}" \
                    f"\t{self.operon.strand}" \
-                   f"\t{len(self.genes.split(','))}" \
+                   f"\t{len(self.genes.split(';'))}" \
                    f"\t{self.genes}" \
                    f"\t{self.evidences}" \
                    f"\t{self.confidence_level}" \
@@ -177,7 +179,7 @@ def find_fragments(genes):
 
 def all_operons_rows():
     operons = Operon()
-    operons_content = ["1)operonName	2)firstGeneLeftPos	3)lastGeneRightPos	4)strand	5)numberOfGenes	6)operonGenes	7)operonEvidence	8)confidenceLevel"]
+    operons_content = ["1)operonId\t2)operonName\t3)firstGeneLeftPos\t4)lastGeneRightPos\t5)strand\t6)numberOfGenes\t7)operonGenes\t8)operonEvidence\t9)confidenceLevel"]
     for operon in operons.objects:
         operons_content.append(operon.to_row())
     creation_date = datetime.now()

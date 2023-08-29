@@ -32,12 +32,9 @@ class Terminator:
             tus = multigenomic_api.transcription_units.find_by_terminator_id(terminator_id)
             for tu in tus:
                 operon = multigenomic_api.operons.find_by_id(tu.operons_id)
-                if f"{operon.name}," not in self._operon:
-                    self._operon.append(f"{operon.name},")
-            if len(self._operon) > 0:
-                self._operon = "".join(self._operon)[:-1]
-            else:
-                self._operon = None
+                if f"{operon.name};" not in self._operon:
+                    self._operon.append(f"{operon.name};")
+            self._operon = "".join(self._operon)[:-1]
 
         @property
         def strand(self):
@@ -45,7 +42,7 @@ class Terminator:
 
         @strand.setter
         def strand(self, terminator_id):
-            self._strand = None
+            self._strand = ""
             tus = multigenomic_api.transcription_units.find_by_terminator_id(terminator_id)
             operon = multigenomic_api.operons.find_by_id(tus[0].operons_id)
             self._strand = operon.strand
@@ -59,11 +56,12 @@ class Terminator:
             self._rel_tus = []
             tus = multigenomic_api.transcription_units.find_by_terminator_id(terminator_id)
             for tu in tus:
-                self._rel_tus.append(f"{tu.name},")
-            if len(self._rel_tus) > 0:
-                self._rel_tus = "".join(self._rel_tus)[:-1]
-            else:
-                self._rel_tus = None
+                if tu.promoters_id:
+                    promoter = multigenomic_api.promoters.find_by_id(tu.promoters_id)
+                    self._rel_tus.append(f"{tu.name}:{promoter.name};")
+                else:
+                    self._rel_tus.append(f"{tu.name};")
+            self._rel_tus = "".join(self._rel_tus)[:-1]
 
         @property
         def terminator_evidences(self):
@@ -71,15 +69,14 @@ class Terminator:
 
         @terminator_evidences.setter
         def terminator_evidences(self, citations):
-            self._terminator_evidences = None
-            if len(citations) > 0:
-                self._terminator_evidences = ""
-                for citation in citations:
-                    if citation.evidences_id:
-                        citation_dict = multigenomic_api.evidences.find_by_id(citation.evidences_id)
-                        self._terminator_evidences += f"[{citation_dict.code}:{citation_dict.type}]"
-                if len(self._terminator_evidences) == 0:
-                    self._terminator_evidences = None
+            self._terminator_evidences = []
+            for citation in citations:
+                if citation.evidences_id:
+                    citation_dict = multigenomic_api.evidences.find_by_id(citation.evidences_id)
+                    citation_item = f"[{citation_dict.code}:{citation_dict.type}]"
+                    if citation_item not in self._terminator_evidences:
+                        self._terminator_evidences.append(citation_item)
+            self._terminator_evidences = "".join(self._terminator_evidences)
 
         @property
         def pmids(self):
@@ -94,10 +91,7 @@ class Terminator:
                         publication = multigenomic_api.publications.find_by_id(citation.publications_id)
                         if f"{publication.pmid}, " not in self._pmids:
                             self._pmids.append(f"{publication.pmid}, ")
-            if len(self._pmids) > 0:
-                self._pmids = "".join(self._pmids)[:-2]
-            else:
-                self._pmids = None
+            self._pmids = "".join(self._pmids)[:-2]
 
         def to_row(self):
             return f"{self.terminator.id}" \

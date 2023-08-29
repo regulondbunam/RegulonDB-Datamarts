@@ -35,7 +35,7 @@ class RegulatoryInteractions:
 
         @type.setter
         def type(self, ri):
-            self._type = None
+            self._type = ""
             tf = multigenomic_api.transcription_factors.find_tf_id_by_conformation_id(ri.regulator.id)
             if len(tf) == 0:
                 if ri.regulator.type == "regulatoryComplex":
@@ -63,8 +63,8 @@ class RegulatoryInteractions:
         @transcription_factor.setter
         def transcription_factor(self, regulator):
             self._transcription_factor = {
-                "id": None,
-                "name": None
+                "id": "",
+                "name": ""
             }
             tf = multigenomic_api.transcription_factors.find_tf_id_by_conformation_id(regulator.id)
             if len(tf) == 0:
@@ -73,6 +73,11 @@ class RegulatoryInteractions:
                     tf = multigenomic_api.transcription_factors.find_tf_id_by_conformation_name(reg_complex.abbreviated_name)
             if len(tf) > 0:
                 self._transcription_factor = tf[0]
+            else:
+                self._transcription_factor = {
+                    "id": regulator.id,
+                    "name": regulator.name
+                }
 
         @property
         def regulatory_site(self):
@@ -81,11 +86,11 @@ class RegulatoryInteractions:
         @regulatory_site.setter
         def regulatory_site(self, reg_site_id):
             self._regulatory_site = {
-                "id": None,
-                "left_end_position": None,
-                "right_end_position": None,
-                "strand": None,
-                "sequence": None,
+                "id": "",
+                "left_end_position": "",
+                "right_end_position": "",
+                "strand": "",
+                "sequence": "",
                 "citations": []
             }
             if reg_site_id:
@@ -97,7 +102,7 @@ class RegulatoryInteractions:
 
         @strand.setter
         def strand(self, regulated_entity):
-            self._strand = None
+            self._strand = ""
             if regulated_entity.type == "promoter":
                 promoter = multigenomic_api.promoters.find_by_id(regulated_entity.id)
                 self._strand = promoter.strand
@@ -116,8 +121,8 @@ class RegulatoryInteractions:
         @promoter.setter
         def promoter(self, reg_entity):
             self._promoter = {
-                "id": None,
-                "name": None
+                "id": "",
+                "name": ""
             }
             if reg_entity.type == "promoter":
                 self._promoter = multigenomic_api.promoters.find_by_id(reg_entity.id)
@@ -128,7 +133,7 @@ class RegulatoryInteractions:
 
         @tss.setter
         def tss(self, promoter):
-            self._tss = None
+            self._tss = ""
             try:
                 if promoter.transcription_start_site:
                     self._tss = promoter.transcription_start_site.left_end_position
@@ -141,7 +146,7 @@ class RegulatoryInteractions:
 
         @target_tu_gene.setter
         def target_tu_gene(self, reg_entity):
-            self._target_tu_gene = None
+            self._target_tu_gene = ""
             if reg_entity.type == "gene":
                 self._target_tu_gene = f"{reg_entity.id}:{reg_entity.name}"
             elif reg_entity.type == "transcriptionUnit":
@@ -157,13 +162,16 @@ class RegulatoryInteractions:
 
         @reg_site_evidences.setter
         def reg_site_evidences(self, reg_site):
-            self._reg_site_evidences = None
+            self._reg_site_evidences = []
             if len(reg_site["citations"]) > 0:
-                self._reg_site_evidences = ""
                 for citation in reg_site.citations:
                     if citation.evidences_id:
-                        citation_dict = multigenomic_api.evidences.find_by_id(citation.evidences_id)
-                        self._reg_site_evidences += f"[{citation_dict.code}:{citation_dict.type}]"
+                        if citation.evidences_id:
+                            citation_dict = multigenomic_api.evidences.find_by_id(citation.evidences_id)
+                            citation_item = f"[{citation_dict.code}:{citation_dict.type}]"
+                            if citation_item not in self._reg_site_evidences:
+                                self._reg_site_evidences.append(citation_item)
+            self._reg_site_evidences = "".join(self._reg_site_evidences)
 
         @property
         def ri_evidences(self):
@@ -171,15 +179,14 @@ class RegulatoryInteractions:
 
         @ri_evidences.setter
         def ri_evidences(self, citations):
-            self._ri_evidences = None
-            if len(citations) > 0:
-                self._ri_evidences = ""
-                for citation in citations:
-                    if citation.evidences_id:
-                        citation_dict = multigenomic_api.evidences.find_by_id(citation.evidences_id)
-                        self._ri_evidences += f"[{citation_dict.code}:{citation_dict.type}]"
-                if len(self._ri_evidences) == 0:
-                    self._evidences = None
+            self._ri_evidences = []
+            for citation in citations:
+                if citation.evidences_id:
+                    citation_dict = multigenomic_api.evidences.find_by_id(citation.evidences_id)
+                    citation_item = f"[{citation_dict.code}:{citation_dict.type}]"
+                    if citation_item not in self._ri_evidences:
+                        self._ri_evidences.append(citation_item)
+            self._ri_evidences = "".join(self._ri_evidences)
 
         @property
         def additive_evidences(self):
@@ -187,12 +194,10 @@ class RegulatoryInteractions:
 
         @additive_evidences.setter
         def additive_evidences(self, additive_evs_ids):
-            self._additive_evidences = None
-            if len(additive_evs_ids) > 0:
-                self._additive_evidences = ""
-                for additive_evs_id in additive_evs_ids:
-                    additive_evidence_dict = multigenomic_api.additive_evidences.find_by_id(additive_evs_id)
-                    self._additive_evidences += f"[{additive_evidence_dict.code}:{additive_evidence_dict.confidence_level}]"
+            self._additive_evidences = ""
+            for additive_evs_id in additive_evs_ids:
+                additive_evidence_dict = multigenomic_api.additive_evidences.find_by_id(additive_evs_id)
+                self._additive_evidences += f"[{additive_evidence_dict.code}:{additive_evidence_dict.confidence_level}]"
 
         @property
         def ri_ev_tech(self):
@@ -200,17 +205,12 @@ class RegulatoryInteractions:
 
         @ri_ev_tech.setter
         def ri_ev_tech(self, citations):
-            self._ri_ev_tech = None
-            if len(citations) > 0:
-                self._ri_ev_tech = ""
-                for citation in citations:
-                    if citation.evidences_id:
-                        citation_dict = multigenomic_api.evidences.find_by_id(citation.evidences_id)
-                        self._ri_ev_tech += f"{citation_dict.approach}|"
-                if len(self._ri_ev_tech) == 0:
-                    self._ri_ev_tech = None
-                else:
-                    self._ri_ev_tech = self._ri_ev_tech[:-1]
+            self._ri_ev_tech = ""
+            for citation in citations:
+                if citation.evidences_id:
+                    citation_dict = multigenomic_api.evidences.find_by_id(citation.evidences_id)
+                    self._ri_ev_tech += f"{citation_dict.approach}|"
+            self._ri_ev_tech = self._ri_ev_tech[:-1]
 
         @property
         def ri_ev_category(self):
@@ -218,17 +218,12 @@ class RegulatoryInteractions:
 
         @ri_ev_category.setter
         def ri_ev_category(self, citations):
-            self._ri_ev_category = None
-            if len(citations) > 0:
-                self._ri_ev_category = ""
-                for citation in citations:
-                    if citation.evidences_id:
-                        citation_dict = multigenomic_api.evidences.find_by_id(citation.evidences_id)
-                        self._ri_ev_category += f"{citation_dict.category}|"
-                if len(self._ri_ev_category) == 0:
-                    self._ri_ev_category = None
-                else:
-                    self._ri_ev_category = self._ri_ev_category[:-1]
+            self._ri_ev_category = ""
+            for citation in citations:
+                if citation.evidences_id:
+                    citation_dict = multigenomic_api.evidences.find_by_id(citation.evidences_id)
+                    self._ri_ev_category += f"{citation_dict.category}|"
+            self._ri_ev_category = self._ri_ev_category[:-1]
 
         def to_row(self):
             regulated_genes = get_regulated_genes(self.ri.regulated_entity)
@@ -265,7 +260,7 @@ class RegulatoryInteractions:
 def all_ris_rows():
     ris = RegulatoryInteractions()
     ris_content = []
-    ris_content.append("1)riId	2)riType	3)tfId	4)tfName	5)cnfName	6)tfrsID	7)tfrsLeft	8)tfrsRight	9)strand	10)tfrsSeq	11)riFunction	12)promoterID	13)promoterName	14)tss	15)tfrsDistToPm	16)firstGene	17)tfrsDistTo1Gene	18)targetTuOrGene	19)confidenceLevel	20)tfrsEvidence	21)riEvidence	22)addEvidence	23)riEvTech	24)riEvCategory")
+    ris_content.append("1)riId	2)riType	3)regulatorId	4)regulatorName	5)cnfName	6)tfrsID	7)tfrsLeft	8)tfrsRight	9)strand	10)tfrsSeq	11)riFunction	12)promoterID	13)promoterName	14)tss	15)tfrsDistToPm	16)firstGene	17)tfrsDistTo1Gene	18)targetTuOrGene	19)confidenceLevel	20)tfrsEvidence	21)riEvidence	22)addEvidence	23)riEvTech	24)riEvCategory")
     for ri in ris.objects:
         ris_content.append(ri.to_row())
     creation_date = datetime.now()
@@ -283,7 +278,7 @@ def all_ris_rows():
         },
         "version": "",
         "creationDate": f"{creation_date.strftime('%m-%d-%Y')}",
-        "columnsDetails": "# Columns:\t# (1) riId. Regulatory interaction (RI) identifier assigned by RegulonDB\t# (2) riType. Regulatory interaction type [tf-promoter, tf-tu, tf-gene]\t# (3) tfId. Transcription Factor (TF) identifier assigned by RegulonDB\t# (4) tfName. TF name\t# (5) cnfName. TF active conformation name\t# (6) tfrsId. TF regulatory site (TFRS) identifier assigned by RegulonDB\t# (7) tfrsLeft. TFRS left end position in the genome\t# (8) tfrsRight. TFRS right end position in the genome\t# (9) strand. DNA strand where the TFRS is located\t# (10) tfrsSeq. TFRS sequence (upper case)\t# (11) riFunction. Gene expression effect caused by the TF bound to the TFRS\t# (12) promoterId. Promoter Identifier assigned by RegulonDB\t# (13) promoterName. Promoter name\t# (14) tss. Transcription start site (+1) position in the genome\t# (15) tfrsDistToPm. Relative distance from the center position of TFRS to the Transcription Start Site\t# (16) firstGene. first transcribed gene name\t# (17) tfrsDistTo1Gene. Relative distance from center position of TFRS to the start of first gene\t# (18) targetTuOrGene. Transcription unit or gene (id:name) regulated by the TF\t# (19) confidenceLevel. RI confidence level (Values: Confirmed, Strong, Weak)\t# (20) tfrsEvidence. Evidence that supports the existence of the TFRS [EvidenceCode|EvidenceType(C:confirmed S:strong W:weak)]]\t# (21) riEvidence. Evidence that supports the RI function [EvidenceCode|EvidenceType(C:confirmed S:strong W:weak)]\t# (22) addEvidence. Additive Evidence [CV(EvidenceCode1/EvidenceCodeN)|Confidence Level]\t# (23) riEvTech. Evidence related to the type of technology used to determine the RI\t# (24) riEvCategory. Evidence  were categorized in classical, ht or non-experimental",
+        "columnsDetails": "# Columns:\t# (1) riId. Regulatory interaction (RI) identifier assigned by RegulonDB\t# (2) riType. Regulatory interaction type [tf-promoter, tf-tu, tf-gene,srna-promoter, srna-tu, srna-gene, compound-promoter, compound-tu, compound-gene]\t# (3) tfId. Transcription Factor (TF) identifier assigned by RegulonDB\t# (4) regulatorName. Regulator name\t# (5) cnfName. regulator active conformation name\t# (6) tfrsId. regulator regulatory site (TFRS) identifier assigned by RegulonDB\t# (7) tfrsLeft. TFRS left end position in the genome\t# (8) tfrsRight. TFRS right end position in the genome\t# (9) strand. DNA strand where the TFRS is located\t# (10) tfrsSeq. TFRS sequence (upper case)\t# (11) riFunction. Gene expression effect caused by the TF bound to the TFRS\t# (12) promoterId. Promoter Identifier assigned by RegulonDB\t# (13) promoterName. Promoter name\t# (14) tss. Transcription start site (+1) position in the genome\t# (15) tfrsDistToPm. Relative distance from the center position of TFRS to the Transcription Start Site\t# (16) firstGene. first transcribed gene name\t# (17) tfrsDistTo1Gene. Relative distance from center position of TFRS to the start of first gene\t# (18) targetTuOrGene. Transcription unit or gene (id:name) regulated by the TF\t# (19) confidenceLevel. RI confidence level (Values: Confirmed, Strong, Weak)\t# (20) tfrsEvidence. Evidence that supports the existence of the TFRS [EvidenceCode|EvidenceType(C:confirmed S:strong W:weak)]]\t# (21) riEvidence. Evidence that supports the RI function [EvidenceCode|EvidenceType(C:confirmed S:strong W:weak)]\t# (22) addEvidence. Additive Evidence [CV(EvidenceCode1/EvidenceCodeN)|Confidence Level]\t# (23) riEvTech. Evidence related to the type of technology used to determine the RI\t# (24) riEvCategory. Evidence  were categorized in classical, ht or non-experimental",
         "content": " \n".join(ris_content)
     }
     return ri_doc
@@ -328,8 +323,8 @@ def get_first_gene(reg_int, regulated_genes):
                 "distanceTo": distance_to_first_gene
             }
     return {
-        "name": None,
-        "distanceTo": None
+        "name": "",
+        "distanceTo": ""
     }
 
 

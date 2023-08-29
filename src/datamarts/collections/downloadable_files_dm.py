@@ -5,6 +5,8 @@ from src.datamarts.domain.downloadableFiles_datamart import operons_file
 from src.datamarts.domain.downloadableFiles_datamart import transcriptionFactors_file
 from src.datamarts.domain.downloadableFiles_datamart import gene_product_file
 from src.datamarts.domain.downloadableFiles_datamart import terminators_file
+from src.datamarts.domain.downloadableFiles_datamart import gene_sequence_file
+from src.datamarts.domain.downloadableFiles_datamart import regulators_file
 
 
 def get_all_downloadable_docs():
@@ -30,5 +32,11 @@ def get_all_downloadable_docs():
     # Terminators
     terminators = terminators_file.all_terminators_rows()
     downloadable_files_dm.append(terminators)
+    # GeneSequence
+    geneSequences = gene_sequence_file.all_gene_rows()
+    downloadable_files_dm.append(geneSequences)
+    # Regulators
+    regulators = regulators_file.all_regulators_rows()
+    downloadable_files_dm.append(regulators)
 
     return downloadable_files_dm

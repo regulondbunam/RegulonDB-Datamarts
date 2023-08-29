@@ -28,7 +28,7 @@ class TranscriptionUnit:
 
         @operon.setter
         def operon(self, operon_id):
-            self._operon = None
+            self._operon = ""
             if operon_id:
                 operon = multigenomic_api.operons.find_by_id(operon_id)
                 self._operon = operon.name
@@ -39,14 +39,11 @@ class TranscriptionUnit:
 
         @genes.setter
         def genes(self, genes_ids):
-            self._genes = None
+            self._genes = ""
             if len(genes_ids) > 0:
-                self._genes = ""
                 for gene_id in genes_ids:
                     gene = multigenomic_api.genes.find_by_id(gene_id)
-                    self._genes += f"{gene.name},"
-            if len(self._genes) > 0:
-                self._genes = self._genes[:-1]
+                    self._genes += f"{gene.name};"
 
         @property
         def promoter(self):
@@ -54,7 +51,7 @@ class TranscriptionUnit:
 
         @promoter.setter
         def promoter(self, promoter_id):
-            self._promoter = None
+            self._promoter = ""
             if promoter_id:
                 promoter = multigenomic_api.promoters.find_by_id(promoter_id)
                 self._promoter = promoter.name
@@ -65,15 +62,14 @@ class TranscriptionUnit:
 
         @tu_evidences.setter
         def tu_evidences(self, citations):
-            self._tu_evidences = None
-            if len(citations) > 0:
-                self._tu_evidences = ""
-                for citation in citations:
-                    if citation.evidences_id:
-                        citation_dict = multigenomic_api.evidences.find_by_id(citation.evidences_id)
-                        self._tu_evidences += f"[{citation_dict.code}:{citation_dict.type}]"
-                if len(self._tu_evidences) == 0:
-                    self._tu_evidences = None
+            self._tu_evidences = []
+            for citation in citations:
+                if citation.evidences_id:
+                    citation_dict = multigenomic_api.evidences.find_by_id(citation.evidences_id)
+                    citation_item = f"[{citation_dict.code}:{citation_dict.type}]"
+                    if citation_item not in self._tu_evidences:
+                        self._tu_evidences.append(citation_item)
+            self._tu_evidences = "".join(self._tu_evidences)
 
         @property
         def additive_evidences(self):
@@ -81,7 +77,7 @@ class TranscriptionUnit:
 
         @additive_evidences.setter
         def additive_evidences(self, additive_evs_ids):
-            self._additive_evidences = None
+            self._additive_evidences = ""
             if len(additive_evs_ids) > 0:
                 self._additive_evidences = ""
                 for additive_evs_id in additive_evs_ids:
