@@ -6,11 +6,8 @@ class Regulates(BiologicalBase):
     def __init__(self, regulator):
         super().__init__(regulator.external_cross_references, regulator.citations, regulator.note)
         trans_units = []
-        # TODO: Revisar si esto impacta al añadir el TF y ppGpp
-        if regulator.regulator_type == "transcriptionFactor":
-            trans_units = get_all_transcription_units(regulator.active_conformations)
-        elif regulator.regulator_type == "srna":
-            trans_units = get_all_transcription_units([regulator])
+        # TODO: cuando el active conformation es su propia conformation
+        trans_units = get_all_transcription_units(regulator)
         self.genes = trans_units
         self.transcription_factors = trans_units
         self.transcription_units = trans_units
@@ -172,10 +169,24 @@ class Regulates(BiologicalBase):
                                 self._sigma_factors = insert_element_on(sigma_factor_object, self._sigma_factors)
 
 
-def get_all_transcription_units(tf_active_conformations):
+def get_all_transcription_units(regulator):
     all_transcription_units = []
-    for active_conformation in tf_active_conformations:
-        regulatory_interactions = multigenomic_api.regulatory_interactions.find_by_regulator_id(active_conformation.id)
+    conformations_ids = []
+    if regulator.regulator_type == "transcriptionFactor":
+        reg_complex = None
+        try:
+            reg_complex = multigenomic_api.regulatory_complexes.find_by_name(regulator.name)
+        except:
+            print("This is not a Regulatory Complex")
+        if reg_complex is not None:
+            conformations_ids.append(reg_complex.id)
+        for active_conf in regulator.active_conformations:
+            conformations_ids.append(active_conf.id)
+        conformations_ids.extend(regulator.products_ids)
+    else:
+        conformations_ids.append(regulator.id)
+    for conformation_id in conformations_ids:
+        regulatory_interactions = multigenomic_api.regulatory_interactions.find_by_regulator_id(conformation_id)
         for ri in regulatory_interactions:
             transcription_units = []
             if ri.regulated_entity.type == "promoter":
