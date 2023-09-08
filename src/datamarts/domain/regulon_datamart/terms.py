@@ -8,7 +8,7 @@ class Terms:
         regulated_genes = []
         if regulator.regulator_type == "transcriptionFactor":
             regulated_genes = get_genes(regulator.active_conformations)
-        elif regulator.regulator_type == "srna":
+        elif regulator.regulator_type == "sRNA":
             srna_reg = [regulator]
             regulated_genes = get_genes(srna_reg)
         regulator["regulated_genes"] = regulated_genes

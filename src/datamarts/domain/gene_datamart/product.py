@@ -58,6 +58,7 @@ class Product(BiologicalBase):
     def to_dict(self):
         product = {
             "anticodon": self.product.anticodon,
+            "abbreviatedName": self.product.abbreviated_name,
             "cellularLocations": self.product.locations,
             "citations": self.citations,
             "externalCrossReferences": self.external_cross_references,

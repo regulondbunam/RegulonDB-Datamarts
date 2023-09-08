@@ -29,7 +29,6 @@ class RegulatoryNetworkTF:
         @outdegree.setter
         def outdegree(self, node_object):
             self._outdegree = []
-            genes_ids = []
             reg_complex = None
             reg_ints = []
             try:
@@ -41,7 +40,10 @@ class RegulatoryNetworkTF:
                     reg_complex.id))
             for conformation in node_object.active_conformations:
                 reg_ints.extend(multigenomic_api.regulatory_interactions.find_by_regulator_id(conformation.id))
+            for product_id in node_object.products_ids:
+                reg_ints.extend(multigenomic_api.regulatory_interactions.find_by_regulator_id(product_id))
             for ri in reg_ints:
+                genes_ids = []
                 if ri.regulated_entity.type == "promoter":
                     tus = multigenomic_api.transcription_units.find_by_promoter_id(ri.regulated_entity.id)
                     for tu in tus:
@@ -53,9 +55,10 @@ class RegulatoryNetworkTF:
                         genes_ids.append(gene_id)
                 elif ri.regulated_entity.type == "gene":
                     genes_ids.append(ri.regulated_entity.id)
+                genes_ids = list(set(genes_ids))
                 for gene_id in genes_ids:
-                    self._outdegree = outdegree_tf(gene_id, ri.function, node_object.name, self._outdegree)
-                    gene_outdegree_item = outdegree_gene(gene_id, ri.function, node_object.name)
+                    self._outdegree = outdegree_tf(gene_id, ri.function, node_object.abbreviated_name, self._outdegree)
+                    gene_outdegree_item = outdegree_gene(gene_id, ri.function, node_object.abbreviated_name)
                     if gene_outdegree_item not in self._outdegree:
                         self._outdegree.append(gene_outdegree_item.copy())
 
@@ -90,7 +93,7 @@ class RegulatoryNetworkTF:
         def to_dict(self):
             reg_network_node = {
                 "_id": self.id,
-                "name": self.node.name,
+                "name": self.node.abbreviated_name,
                 "type": "Transcription Factor",
                 "indegree": self.indegree,
                 "outdegree": self.outdegree,
@@ -112,7 +115,7 @@ def outdegree_tf(gene_id, reg_int_function, object_name, outdegree_list):
         trans_factors = multigenomic_api.transcription_factors.find_tf_id_by_conformation_id(product.id)
         for tf in trans_factors:
             tooltip = define_tooltip(reg_int_function, f"Transcription Factor {object_name}",
-                                     f"Transcription Factor {tf.name}")
+                                     f"Transcription Factor {tf.abbreviated_name}")
             tf_outdegree_item = BuildDict(tf, "Transcription Factor", reg_int_function, tooltip, "TF-TF").to_dict()
             if tf_outdegree_item not in outdegree_list:
                 outdegree_list.append(tf_outdegree_item)
@@ -124,8 +127,8 @@ def indegree_tf(reg_ints, indegree_list, node_object):
         if ri.regulator:
             trans_factors = multigenomic_api.transcription_factors.find_tf_id_by_conformation_id(ri.regulator.id)
             for tf in trans_factors:
-                tooltip = define_tooltip(ri.function, f"Transcription Factor {tf.name}",
-                                         f"Transcription Factor {node_object.name}")
+                tooltip = define_tooltip(ri.function, f"Transcription Factor {tf.abbreviated_name}",
+                                         f"Transcription Factor {node_object.abbreviated_name}")
                 gene_indegree_item = BuildDict(tf, "Transcription Factor", ri.function, tooltip, "TF-TF").to_dict()
                 if gene_indegree_item not in indegree_list:
                     indegree_list.append(gene_indegree_item.copy())
@@ -148,8 +151,8 @@ def indegree_gene(reg_ints, indegree_list, node_object):
                 trans_factors = multigenomic_api.transcription_factors.find_tf_id_by_conformation_id(product.id)
                 if len(trans_factors) > 0:
                     for tf in trans_factors:
-                        tooltip = define_tooltip(ri.function, f"Transcription Factor {tf.name}",
-                                                 f"Transcription Factor {node_object.name}")
+                        tooltip = define_tooltip(ri.function, f"Transcription Factor {tf.abbreviated_name}",
+                                                 f"Transcription Factor {node_object.abbreviated_name}")
                         gene_indegree_item = BuildDict(tf, "Transcription Factor", ri.function, tooltip,
                                                        "TF-TF").to_dict()
                         if gene_indegree_item not in indegree_list:
@@ -157,7 +160,7 @@ def indegree_gene(reg_ints, indegree_list, node_object):
                 else:
                     gene = multigenomic_api.genes.find_by_id(product.genes_id)
                     tooltip = define_tooltip(ri.function, f"Gene {gene.name}",
-                                             f"Transcription Factor {node_object.name}")
+                                             f"Transcription Factor {node_object.abbreviated_name}")
                     gene_indegree_item = BuildDict(gene, "Gene", ri.function, tooltip, "Gene-TF").to_dict()
                     if gene_indegree_item not in indegree_list:
                         indegree_list.append(gene_indegree_item.copy())

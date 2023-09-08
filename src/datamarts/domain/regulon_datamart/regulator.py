@@ -1,4 +1,6 @@
 import multigenomic_api
+from mongoengine.errors import DoesNotExist
+
 from src.datamarts.domain.general.biological_base import BiologicalBase
 from src.datamarts.domain.general.additiveEvidences import AdditiveEvidences
 
@@ -23,11 +25,13 @@ class Regulator(BiologicalBase):
             regulator = {
                 "_id": self.regulator.id,
                 "citations": self.citations,
+                "abbreviatedName": self.regulator.abbreviated_name,
                 "name": self.regulator.name,
                 "synonyms": self.regulator.synonyms,
                 "note": note,
                 "conformations": self.conformations,
-                "encodedFrom": {
+                ## TODO: modificar esta propiedad en jsonSchema y servicios
+                "encodedBy": {
                     "genes": self.genes,
                     "operon": self.operons
                 },
@@ -43,13 +47,17 @@ class Regulator(BiologicalBase):
                 "type": self.regulator.regulator_type
             }
         else:
+            abbreviated_name = None
+            if self.regulator.regulator_type == "sRNA":
+                abbreviated_name = self.regulator.abbreviated_name
             regulator = {
                 "_id": self.regulator.id,
                 "citations": self.citations,
                 "name": self.regulator.name,
-                "encodedFrom": {
+                "encodedBy": {
                     "genes": self.genes
                 },
+                "abbreviatedName": abbreviated_name,
                 "synonyms": self.regulator.synonyms,
                 "note": self.formatted_note,
                 "additiveEvidences": additive_evs.to_dict(),
@@ -69,8 +77,8 @@ class Regulator(BiologicalBase):
         if regulator.regulator_type == "transcriptionFactor":
             try:
                 reg_complex = multigenomic_api.regulatory_complexes.find_by_name(regulator.name)
-            except:
-                print("This is not a Regulatory Complex")
+            except DoesNotExist:
+                pass
             if reg_complex is not None:
                 reg_ints = multigenomic_api.regulatory_interactions.find_by_regulator_id(
                     reg_complex.id)
@@ -91,7 +99,8 @@ class Regulator(BiologicalBase):
                     elif conformation.type == "regulatoryComplex":
                         complx = multigenomic_api.regulatory_complexes.find_by_id(conformation.id)
                         conformation_object = Conformation(complx, conformation.type)
-                    self._conformations.append(conformation_object.to_dict().copy())
+                    if conformation_object.to_dict() not in self._conformations:
+                        self._conformations.append(conformation_object.to_dict().copy())
 
     @property
     def genes(self):
@@ -105,7 +114,7 @@ class Regulator(BiologicalBase):
                 prod = multigenomic_api.products.find_by_id(product_id)
                 gene = self.get_gene_properties(prod.genes_id)
                 self.genes.append(gene.copy())
-        elif regulator.regulator_type == "srna":
+        elif regulator.regulator_type == "sRNA":
             prod = multigenomic_api.products.find_by_id(regulator.id)
             gene = self.get_gene_properties(prod.genes_id)
             self.genes.append(gene.copy())
@@ -156,7 +165,8 @@ class Regulator(BiologicalBase):
                 prod = multigenomic_api.products.find_by_id(product_id)
                 prod_dict = {
                     "_id": prod.id,
-                    "name": prod.name
+                    "name": prod.name,
+                    "abbreviatedName": prod.abbreviated_name
                 }
                 if prod_dict not in self._products:
                     self._products.append(prod_dict.copy())

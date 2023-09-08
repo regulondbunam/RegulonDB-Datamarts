@@ -105,7 +105,6 @@ class Operon:
         ris = multigenomic_api.regulatory_interactions.find_by_regulated_entity_ids(reg_entities)
         self._regulatory_interactions = ris
 
-
     def get_promoters(self, promoter_id):
         promoters = []
         if promoter_id:
@@ -131,7 +130,7 @@ class Operon:
             for tf in trans_factor:
                 tf = {
                     "_id": tf.id,
-                    "name": tf.name,
+                    "name": tf.abbreviated_name,
                     "function": regulator.function
                 }
                 arrangement_regulators = identify_dual(arrangement_regulators, tf)

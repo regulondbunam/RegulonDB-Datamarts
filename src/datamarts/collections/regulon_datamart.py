@@ -1,3 +1,5 @@
+from mongoengine.errors import DoesNotExist
+
 from src.datamarts.domain.general.biological_base import BiologicalBase
 import multigenomic_api
 
@@ -24,7 +26,7 @@ class RegulonDatamarts:
         for reg_obj in regulator_objects:
             print(reg_obj.id)
             regulator = reg_obj
-            if reg_obj.type == "srna":
+            if reg_obj.type == "sRNA":
                 regulator = multigenomic_api.products.find_by_id(reg_obj.id)
             if reg_obj.type == "compound":
                 regulator = multigenomic_api.regulatory_continuants.find_by_id(reg_obj.id)
@@ -88,8 +90,8 @@ class RegulonDatamarts:
             if regulator.regulator_type == "transcriptionFactor":
                 try:
                     reg_complex = multigenomic_api.regulatory_complexes.find_by_name(regulator.name)
-                except:
-                    print("This is not a Regulatory Complex")
+                except DoesNotExist:
+                    pass
                 if reg_complex is not None:
                     regulatory_interactions = multigenomic_api.regulatory_interactions.find_by_regulator_id(
                         reg_complex.id)
@@ -180,7 +182,7 @@ def get_all_regulators(reg_ints):
             product = multigenomic_api.products.find_by_id(ri.regulator.id)
             if product.type == "small RNA":
                 regulator = ri.regulator
-                regulator["type"] = "srna"
+                regulator["type"] = "sRNA"
                 if ri.regulator not in regulators:
                     regulators.append(ri.regulator)
     return regulators

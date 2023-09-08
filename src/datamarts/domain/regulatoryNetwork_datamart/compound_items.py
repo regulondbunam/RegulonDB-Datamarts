@@ -29,9 +29,9 @@ class RegulatoryNetworkCompound:
         @outdegree.setter
         def outdegree(self, node_object):
             self._outdegree = []
-            genes_ids = []
             reg_ints = multigenomic_api.regulatory_interactions.find_by_regulator_id(node_object.id)
             for ri in reg_ints:
+                genes_ids = []
                 if ri.regulated_entity.type == "promoter":
                     tus = multigenomic_api.transcription_units.find_by_promoter_id(ri.regulated_entity.id)
                     for tu in tus:
@@ -43,6 +43,7 @@ class RegulatoryNetworkCompound:
                         genes_ids.append(gene_id)
                 elif ri.regulated_entity.type == "gene":
                     genes_ids.append(ri.regulated_entity.id)
+                genes_ids = list(set(genes_ids))
                 for gene_id in genes_ids:
                     gene_outdegree_item = outdegree_gene(gene_id, ri.function, node_object.name)
                     if gene_outdegree_item not in self._outdegree:

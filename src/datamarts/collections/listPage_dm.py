@@ -1,5 +1,5 @@
 from src.datamarts.domain.general.remove_items import remove_empty_items
-from src.datamarts.domain.listPage_datamart import regulonList, geneList, operonList, sigmulonList, srnaList
+from src.datamarts.domain.listPage_datamart import regulonList, geneList, operonList, sigmulonList
 
 
 def get_all_list_page_docs():
@@ -24,10 +24,5 @@ def get_all_list_page_docs():
     for sigmulon in sigmulons:
         sigmulon_dict = remove_empty_items(sigmulon.copy())
         list_dm.append(remove_empty_items(sigmulon_dict))
-
-    srnas = srnaList.list_all_srna_datamarts()
-    for srna in srnas:
-        srna_dict = remove_empty_items(srna.copy())
-        list_dm.append(remove_empty_items(srna_dict))
 
     return list_dm

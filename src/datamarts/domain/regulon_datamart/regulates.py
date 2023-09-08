@@ -1,14 +1,15 @@
 import multigenomic_api
+from mongoengine.errors import DoesNotExist
+
 from src.datamarts.domain.general.biological_base import BiologicalBase
 
 
 class Regulates(BiologicalBase):
     def __init__(self, regulator):
         super().__init__(regulator.external_cross_references, regulator.citations, regulator.note)
-        trans_units = []
-        # TODO: cuando el active conformation es su propia conformation
         trans_units = get_all_transcription_units(regulator)
-        self.genes = trans_units
+        regulated_genes = get_all_regulated_genes(regulator)
+        self.genes = regulated_genes
         self.transcription_factors = trans_units
         self.transcription_units = trans_units
         self.operons = trans_units
@@ -29,26 +30,24 @@ class Regulates(BiologicalBase):
         return self._genes
 
     @genes.setter
-    def genes(self, trans_units):
+    def genes(self, reg_genes):
         self._genes = []
-        for tu_object in trans_units:
-            transcription_units = tu_object["transcription_units"]
-            if transcription_units:
-                for tu in transcription_units:
-                    for gene_id in tu.genes_ids:
-                        gene = multigenomic_api.genes.find_by_id(gene_id)
-                        terms = get_gene_terms(gene)
-                        products = multigenomic_api.products.find_by_gene_id(gene_id)
-                        gene_object = {
-                            "_id": gene.id,
-                            "name": gene.name,
-                            "terms": {
-                                "multifun": terms,
-                                "geneOntology": gene_ontology_extrac(products)
-                            },
-                            "function": tu_object["function"]
-                        }
-                        self._genes = insert_element_on(gene_object, self._genes)
+        for tu_object in reg_genes:
+            genes_ids = tu_object["genes"]
+            for gene_id in genes_ids:
+                gene = multigenomic_api.genes.find_by_id(gene_id)
+                terms = get_gene_terms(gene)
+                products = multigenomic_api.products.find_by_gene_id(gene_id)
+                gene_object = {
+                    "_id": gene.id,
+                    "name": gene.name,
+                    "terms": {
+                        "multifun": terms,
+                        "geneOntology": gene_ontology_extrac(products)
+                    },
+                    "function": tu_object["function"]
+                }
+                self._genes = insert_element_on(gene_object, self._genes)
 
     @property
     def transcription_factors(self):
@@ -81,10 +80,11 @@ class Regulates(BiologicalBase):
                                             "geneOntology": gene_ontology_extrac(products)
                                         }
                                     }
-                                    genes.append(gene.copy())
+                                    if gene.copy() not in genes:
+                                        genes.append(gene.copy())
                                 tf_object = {
                                     "_id": tf.id,
-                                    "name": tf.name,
+                                    "name": tf.abbreviated_name,
                                     "function": tu_object["function"],
                                     "genes": genes
                                 }
@@ -158,7 +158,7 @@ class Regulates(BiologicalBase):
                             gene = multigenomic_api.genes.find_by_id(sigma_factor.genes_id)
                             sigma_factor_object = {
                                 "_id": sigma_factor.id,
-                                "name": sigma_factor.name,
+                                "name": sigma_factor.abbreviated_name,
                                 "function": tu_object["function"],
                                 "gene": {
                                     "_id": gene.id,
@@ -176,8 +176,8 @@ def get_all_transcription_units(regulator):
         reg_complex = None
         try:
             reg_complex = multigenomic_api.regulatory_complexes.find_by_name(regulator.name)
-        except:
-            print("This is not a Regulatory Complex")
+        except DoesNotExist:
+            pass
         if reg_complex is not None:
             conformations_ids.append(reg_complex.id)
         for active_conf in regulator.active_conformations:
@@ -205,6 +205,45 @@ def get_all_transcription_units(regulator):
             if tu_object not in all_transcription_units:
                 all_transcription_units.append(tu_object)
     return all_transcription_units
+
+
+def get_all_regulated_genes(regulator):
+    conformations_ids = []
+    all_reg_genes = []
+    if regulator.regulator_type == "transcriptionFactor":
+        reg_complex = None
+        try:
+            reg_complex = multigenomic_api.regulatory_complexes.find_by_name(regulator.name)
+        except DoesNotExist:
+            pass
+        if reg_complex is not None:
+            conformations_ids.append(reg_complex.id)
+        for active_conf in regulator.active_conformations:
+            conformations_ids.append(active_conf.id)
+        conformations_ids.extend(regulator.products_ids)
+    else:
+        conformations_ids.append(regulator.id)
+    for conformation_id in conformations_ids:
+        regulatory_interactions = multigenomic_api.regulatory_interactions.find_by_regulator_id(conformation_id)
+        for ri in regulatory_interactions:
+            regulated_genes = []
+            if ri.regulated_entity.type == "promoter":
+                transcription_units = multigenomic_api.transcription_units.find_by_promoter_id(
+                    ri.regulated_entity.id)
+                for tu in transcription_units:
+                    regulated_genes.extend(tu.genes_ids)
+            elif ri.regulated_entity.type == "transcriptionUnit":
+                tu = multigenomic_api.transcription_units.find_by_id(ri.regulated_entity.id)
+                regulated_genes.extend(tu.genes_ids)
+            if ri.regulated_entity.type == "gene":
+                regulated_genes.append(ri.regulated_entity.id)
+            gene_object = {
+                "genes": list(set(regulated_genes)),
+                "function": ri.function
+            }
+            if gene_object not in all_reg_genes:
+                all_reg_genes.append(gene_object)
+    return all_reg_genes
 
 
 def gene_ontology_extrac(products):

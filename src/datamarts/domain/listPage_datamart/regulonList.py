@@ -20,6 +20,7 @@ class ListRegulonDM:
                 regulator = multigenomic_api.products.find_by_id(reg_obj.id)
             if reg_obj.type == "compound":
                 regulator = multigenomic_api.regulatory_continuants.find_by_id(reg_obj.id)
+                regulator["abbreviated_name"] = None
             regulator["regulator_type"] = reg_obj.type
             regulon_datamart = ListRegulonDM.ListRegulon(regulator)
             yield regulon_datamart
@@ -67,7 +68,7 @@ class ListRegulonDM:
         def to_dict(self):
             regulon_datamart = {
                 "_id": self.id,
-                "name": self.trans_factor.name,
+                "name": self.trans_factor.abbreviated_name or self.trans_factor.name,
                 "synonyms": self.trans_factor.synonyms,
                 "encodedGenes": self.genes,
                 "productsName": self.products,

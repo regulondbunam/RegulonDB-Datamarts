@@ -16,6 +16,7 @@ class SigmaFactor(BiologicalBase):
         sigma_factor = {
             "_id": self.sigma_factor.id,
             "name": self.sigma_factor.name,
+            "abbreviatedName": self.sigma_factor.abbreviated_name,
             "synonyms": self.sigma_factor.synonyms,
             "gene": self.gene,
             "sigmulonRegulators": self.sigmulon_regulators,
