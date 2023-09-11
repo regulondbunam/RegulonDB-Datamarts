@@ -1,6 +1,8 @@
 import multigenomic_api
 from datetime import datetime
 
+from mongoengine.errors import DoesNotExist
+
 
 class TranscriptionFactor:
 
@@ -65,8 +67,19 @@ class TranscriptionFactor:
         @active_conf.setter
         def active_conf(self, active_confs):
             self._active_conf = ""
-            for conf in active_confs:
-                self._active_conf += f"{conf['name']};"
+            if len(active_confs) > 0:
+                for conf in active_confs:
+                    conf_obj = {}
+                    if conf['type'] == "product":
+                        reg = multigenomic_api.products.find_by_id(conf["id"])
+                        conf_obj = reg.abbreviated_name or reg.name
+                    elif conf['type'] == "regulatoryComplex":
+                        reg = multigenomic_api.regulatory_complexes.find_by_id(conf["id"])
+                        conf_obj = reg.abbreviated_name or reg.name
+                    elif conf['type'] == "regulatoryContinuant":
+                        reg = multigenomic_api.regulatory_continuants.find_by_id(conf["id"])
+                        conf_obj = reg.name
+                    self._active_conf += f"{conf_obj};"
             if len(self._active_conf) > 0:
                 self._active_conf = self._active_conf[:-1]
 
@@ -82,7 +95,7 @@ class TranscriptionFactor:
                     conf = multigenomic_api.products.find_by_id(conf.id)
                 elif conf.type == "regulatoryComplex":
                     conf = multigenomic_api.regulatory_complexes.find_by_id(conf.id)
-                self._inactive_conf += f"{conf.name};"
+                self._inactive_conf += f"{conf.abbreviated_name or conf.name};"
             if len(self._inactive_conf) > 0:
                 self._inactive_conf = self._inactive_conf[:-1]
 
@@ -245,9 +258,8 @@ class TranscriptionFactor:
             self._tf_conf_pmids = "".join(self._tf_conf_pmids)[:-2]
 
         def to_row(self):
-            # TODO: add pmids
             return f"{self.tf.id}" \
-                   f"\t{self.tf.name}" \
+                   f"\t{self.tf.abbreviated_name}" \
                    f"\t{self.tf_synonyms}" \
                    f"\t{self.genes}" \
                    f"\t{self.active_conf}" \
@@ -270,8 +282,8 @@ def get_all_act_conf(tf):
     reg_complex = None
     try:
         reg_complex = multigenomic_api.regulatory_complexes.find_by_name(tf.name)
-    except:
-        print("This is not a Regulatory Complex")
+    except DoesNotExist:
+        pass
     if reg_complex is not None:
         reg_ints = multigenomic_api.regulatory_interactions.find_by_regulator_id(
             reg_complex.id)
@@ -284,6 +296,7 @@ def get_all_act_conf(tf):
                 for synonym in continuant.synonyms:
                     effectors_syn += f"{synonym};"
             conformations.append({"name": tf.name,
+                                  "id": reg_complex.id,
                                   "synonyms": tf.synonyms,
                                   "type": "regulatoryComplex",
                                   "effectors": effectors,
@@ -295,6 +308,7 @@ def get_all_act_conf(tf):
             if len(reg_ints) > 0:
                 prod = multigenomic_api.products.find_by_id(product_id)
                 conformations.append({"name": prod.name,
+                                      "id": prod.id,
                                       "synonyms": prod.synonyms,
                                       "type": "product",
                                       "citations": prod.citations})
@@ -303,6 +317,7 @@ def get_all_act_conf(tf):
             if conformation.type == "product":
                 prod = multigenomic_api.products.find_by_id(conformation.id)
                 conformation_object = {"name": prod.name,
+                                       "id": prod.id,
                                        "synonyms": prod.synonyms,
                                        "type": "product",
                                        "citations": prod.citations}
@@ -316,6 +331,7 @@ def get_all_act_conf(tf):
                     for synonym in continuant.synonyms:
                         effectors_syn += f"{synonym};"
                 conformation_object = {"name": complx.name,
+                                       "id": complx.id,
                                        "synonyms": complx.synonyms,
                                        "type": "regulatoryComplex",
                                        "effectors": effectors,

@@ -1,6 +1,8 @@
 import multigenomic_api
 from datetime import datetime
 
+from mongoengine.errors import DoesNotExist
+
 
 class Regulators:
 
@@ -29,6 +31,7 @@ class Regulators:
     class RegulatorDatamart:
         def __init__(self, regulator):
             active_conformations = get_all_act_conf(regulator)
+            self.regulator_name = regulator
             self.regulator = regulator
             self.regulator_synonyms = regulator.synonyms
             self.genes = regulator
@@ -44,6 +47,18 @@ class Regulators:
             self.regulator_evidences = regulator.citations
             self.additive_evidences = regulator.additive_evidences_ids
             self.regulator_conf_pmids = active_conformations
+
+        @property
+        def regulator_name(self):
+            return self._regulator_name
+
+        @regulator_name.setter
+        def regulator_name(self, regulator):
+            self._regulator_name = ""
+            if regulator['regulator_type'] == "compound":
+                self._regulator_name = regulator.name
+            else:
+                self._regulator_name = regulator.abbreviated_name
 
         @property
         def regulator_synonyms(self):
@@ -84,8 +99,19 @@ class Regulators:
         @active_conf.setter
         def active_conf(self, active_confs):
             self._active_conf = ""
-            for conf in active_confs:
-                self._active_conf += f"{conf['name']};"
+            if len(active_confs) > 0:
+                for conf in active_confs:
+                    conf_obj = {}
+                    if conf['type'] == "product":
+                        reg = multigenomic_api.products.find_by_id(conf["id"])
+                        conf_obj = reg.abbreviated_name or reg.name
+                    elif conf['type'] == "regulatoryComplex":
+                        reg = multigenomic_api.regulatory_complexes.find_by_id(conf["id"])
+                        conf_obj = reg.abbreviated_name or reg.name
+                    elif conf['type'] == "regulatoryContinuant":
+                        reg = multigenomic_api.regulatory_continuants.find_by_id(conf["id"])
+                        conf_obj = reg.name
+                    self._active_conf += f"{conf_obj};"
             if len(self._active_conf) > 0:
                 self._active_conf = self._active_conf[:-1]
 
@@ -102,7 +128,7 @@ class Regulators:
                         conf = multigenomic_api.products.find_by_id(conf.id)
                     elif conf.type == "regulatoryComplex":
                         conf = multigenomic_api.regulatory_complexes.find_by_id(conf.id)
-                    self._inactive_conf += f"{conf.name};"
+                    self._inactive_conf += f"{conf.abbreviated_name or conf.name};"
                 if len(self._inactive_conf) > 0:
                     self._inactive_conf = self._inactive_conf[:-1]
 
@@ -272,7 +298,7 @@ class Regulators:
         def to_row(self):
             # TODO: add pmids
             return f"{self.regulator.id}" \
-                   f"\t{self.regulator.name}" \
+                   f"\t{self.regulator_name}" \
                    f"\t{self.regulator_synonyms}" \
                    f"\t{self.regulator.regulator_type}" \
                    f"\t{self.genes}" \
@@ -314,8 +340,8 @@ def get_all_act_conf(regulator):
     reg_complex = None
     try:
         reg_complex = multigenomic_api.regulatory_complexes.find_by_name(regulator.name)
-    except:
-        print("This is not a Regulatory Complex")
+    except DoesNotExist:
+        pass
     if regulator.regulator_type == "transcriptionFactor":
         if reg_complex is not None:
             reg_ints = multigenomic_api.regulatory_interactions.find_by_regulator_id(
@@ -329,6 +355,7 @@ def get_all_act_conf(regulator):
                     for synonym in continuant.synonyms:
                         effectors_syn += f"{synonym};"
                 conformations.append({"name": regulator.name,
+                                      "id": reg_complex.id,
                                       "synonyms": regulator.synonyms,
                                       "type": "regulatoryComplex",
                                       "effectors": effectors,
@@ -340,6 +367,7 @@ def get_all_act_conf(regulator):
                 if len(reg_ints) > 0:
                     prod = multigenomic_api.products.find_by_id(product_id)
                     conformations.append({"name": prod.name,
+                                          "id": prod.id,
                                           "synonyms": prod.synonyms,
                                           "type": "product",
                                           "citations": prod.citations})
@@ -348,6 +376,7 @@ def get_all_act_conf(regulator):
                 if conformation.type == "product":
                     prod = multigenomic_api.products.find_by_id(conformation.id)
                     conformation_object = {"name": prod.name,
+                                           "id": prod.id,
                                            "synonyms": prod.synonyms,
                                            "type": "product",
                                            "citations": prod.citations}
@@ -361,6 +390,7 @@ def get_all_act_conf(regulator):
                         for synonym in continuant.synonyms:
                             effectors_syn += f"{synonym};"
                     conformation_object = {"name": complx.name,
+                                           "id": complx.id,
                                            "synonyms": complx.synonyms,
                                            "type": "regulatoryComplex",
                                            "effectors": effectors,

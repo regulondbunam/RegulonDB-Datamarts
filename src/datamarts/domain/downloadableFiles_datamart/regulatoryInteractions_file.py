@@ -19,6 +19,7 @@ class RegulatoryInteractions:
             self.type = ri
             self.transcription_factor = ri.regulator
             self.regulatory_site = ri.regulatory_sites_id
+            self.regulator_name = ri.regulator
             self.strand = ri.regulated_entity
             self.promoter = ri.regulated_entity
             self.tss = self.promoter
@@ -64,7 +65,7 @@ class RegulatoryInteractions:
         def transcription_factor(self, regulator):
             self._transcription_factor = {
                 "id": "",
-                "name": ""
+                "abbreviated_name": ""
             }
             tf = multigenomic_api.transcription_factors.find_tf_id_by_conformation_id(regulator.id)
             if len(tf) == 0:
@@ -74,10 +75,32 @@ class RegulatoryInteractions:
             if len(tf) > 0:
                 self._transcription_factor = tf[0]
             else:
+                if regulator.type == "product":
+                    product = multigenomic_api.products.find_by_id(regulator.id)
+                    abb_name = product.abbreviated_name
+                else:
+                    abb_name = regulator.name
                 self._transcription_factor = {
                     "id": regulator.id,
-                    "name": regulator.name
+                    "abbreviated_name": abb_name
                 }
+
+        @property
+        def regulator_name(self):
+            return self._regulator_name
+
+        @regulator_name.setter
+        def regulator_name(self, regulator):
+            self._regulator_name = ""
+            if regulator.type == "product":
+                reg = multigenomic_api.products.find_by_id(regulator.id)
+                self._regulator_name = reg.abbreviated_name or reg.name
+            if regulator.type == "regulatoryComplex":
+                reg = multigenomic_api.regulatory_complexes.find_by_id(regulator.id)
+                self._regulator_name = reg.abbreviated_name or reg.name
+            if regulator.type == "regulatoryContinuant":
+                reg = multigenomic_api.regulatory_continuants.find_by_id(regulator.id)
+                self._regulator_name = reg.name
 
         @property
         def regulatory_site(self):
@@ -138,7 +161,7 @@ class RegulatoryInteractions:
                 if promoter.transcription_start_site:
                     self._tss = promoter.transcription_start_site.left_end_position
             except AttributeError:
-                print("No promoter or tss")
+                pass
 
         @property
         def target_tu_gene(self):
@@ -233,8 +256,8 @@ class RegulatoryInteractions:
                 return f"{self.ri.id}" \
                        f"\t{self.type}" \
                        f"\t{self.transcription_factor['id']}" \
-                       f"\t{self._transcription_factor['name']}" \
-                       f"\t{self.ri.regulator.name}" \
+                       f"\t{self.transcription_factor['abbreviated_name']}" \
+                       f"\t{self.regulator_name}" \
                        f"\t{self.regulatory_site['id']}" \
                        f"\t{self.regulatory_site['left_end_position']}" \
                        f"\t{self.regulatory_site['right_end_position']}" \

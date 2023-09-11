@@ -33,7 +33,7 @@ class Promoters:
                 if promoter.transcription_start_site:
                     self._tss = promoter.transcription_start_site.left_end_position
             except AttributeError:
-                print("No promoter or tss")
+                pass
 
         @property
         def first_gene(self):
@@ -51,10 +51,9 @@ class Promoters:
                 first_gene = get_first_gene_of_tu(tu, promoter)
                 if promoter.transcription_start_site:
                     if promoter.strand == "forward":
-                        dist = abs(first_gene["leftEndPosition"] - promoter.transcription_start_site.left_end_position)
+                        dist = promoter.transcription_start_site.left_end_position - first_gene["leftEndPosition"]
                     if promoter.strand == "reverse":
-                        dist = abs(
-                            first_gene["rightEndPosition"] - promoter.transcription_start_site.right_end_position)
+                        dist = first_gene["rightEndPosition"] - promoter.transcription_start_site.right_end_position
                     self._first_gene = {
                         "distanceToPromoter": dist,
                         "name": first_gene["name"]
@@ -69,7 +68,7 @@ class Promoters:
             self._sigma_factor = ""
             if sigma_factor:
                 sigma_factor = multigenomic_api.sigma_factors.find_by_id(sigma_factor.sigma_factors_id)
-                self._sigma_factor = sigma_factor.name
+                self._sigma_factor = sigma_factor.abbreviated_name
 
         @property
         def prom_evidences(self):
@@ -84,7 +83,7 @@ class Promoters:
                     citation_item = f"[{citation_dict.code}:{citation_dict.type}]"
                     if citation_item not in self._prom_evidences:
                         self._prom_evidences.append(citation_item)
-            self._tu_evidences = "".join(self._prom_evidences)
+            self._prom_evidences = "".join(self._prom_evidences)
 
         @property
         def additive_evidences(self):
