@@ -105,7 +105,7 @@ def outdegree_tf(gene_id, reg_int_function, object_name, outdegree_list):
     for product in products:
         trans_factors = multigenomic_api.transcription_factors.find_tf_id_by_conformation_id(product.id)
         for tf in trans_factors:
-            tooltip = define_tooltip(reg_int_function, f"Gene {object_name}", f"Transcription Factor {tf.name}")
+            tooltip = define_tooltip(reg_int_function, f"Gene {object_name}", f"Transcription Factor {tf.abbreviated_name}")
             tf_outdegree_item = BuildDict(tf, "Transcription Factor", reg_int_function, tooltip, "Gene-TF").to_dict()
             if tf_outdegree_item not in outdegree_list:
                 outdegree_list.append(tf_outdegree_item)
@@ -117,7 +117,7 @@ def indegree_tf(reg_ints, indegree_list, node_object):
         if ri.regulator:
             trans_factors = multigenomic_api.transcription_factors.find_tf_id_by_conformation_id(ri.regulator.id)
             for tf in trans_factors:
-                tooltip = define_tooltip(ri.function, f"Transcription Factor {tf.name}", f"Gene {node_object.name}")
+                tooltip = define_tooltip(ri.function, f"Transcription Factor {tf.abbreviated_name}", f"Gene {node_object.name}")
                 tf_indegree_item = BuildDict(tf, "Transcription Factor", ri.function, tooltip, "TF-Gene").to_dict()
                 if tf_indegree_item not in indegree_list:
                     indegree_list.append(tf_indegree_item.copy())
@@ -140,7 +140,7 @@ def indegree_gene(reg_ints, indegree_list, node_object):
                 trans_factors = multigenomic_api.transcription_factors.find_tf_id_by_conformation_id(product.id)
                 if len(trans_factors) > 0:
                     for tf in trans_factors:
-                        tooltip = define_tooltip(ri.function, f"Transcription Factor {tf.name}",
+                        tooltip = define_tooltip(ri.function, f"Transcription Factor {tf.abbreviated_name}",
                                                  f"Gene {node_object.name}")
                         tf_indegree_item = BuildDict(tf, "Transcription Factor", ri.function, tooltip,
                                                      "TF-Gene").to_dict()
@@ -175,9 +175,14 @@ class BuildDict(BiologicalBase):
         self.network_type = network_type
 
     def to_dict(self):
+        name = ""
+        if self.item_type == "Transcription Factor":
+            name = self.item.abbreviated_name
+        elif self.item_type == "Gene":
+            name = self.item.name
         item_dict = {
             "_id": self.item.id,
-            "name": self.item.name,
+            "name": name,
             "type": self.item_type,
             "regulatoryEffect": self.reg_int_function[0] or "unknown",
             "citations": self.citations,

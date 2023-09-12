@@ -147,13 +147,11 @@ def find_dual_items(list):
         current_item = list[i]
         next_item = list[i + 1]
 
-        # Elimina el carácter '-' de los elementos antes de la comparación
         current_item_rep = current_item.replace("+", "-")
         next_item_rep = next_item.replace("+", "-")
         current_item_act = current_item.replace("-", "+")
         next_item_act = next_item.replace("-", "+")
 
-        # Compara los elementos sin el carácter '-' para verificar la similitud
         if current_item_rep == next_item_rep or current_item_act == next_item_act:
             new_list.append(current_item_act.replace("+", "-+"))
             list[i+1] = next_item_act.replace("+", "-+")
@@ -186,7 +184,7 @@ def get_all_rows():
         },
         "version": "",
         "creationDate": f"{creation_date.strftime('%m-%d-%Y')}",
-        "columnsDetails": "Columns:\n(1) regulatorId. Transcription Factor (TF) identifier\n(2) regulatorName. Transcription Factor (TF) Name\n(3) regulatorGeneName. Gene(s) coding for the TF\n(4) regulatedId. Gene ID regulated by the TF (regulated Gene)\n(5) regulatedName. Gene regulated by the TF (regulated Gene)\n(6) function. Regulatory Function of the TF on the regulated Gene (+ activator, - repressor, +- dual, ? unknown)\n(7) confidenceLevel. RI confidence level based on its evidence (Values: Confirmed, Strong, Weak)",
+        "columnsDetails": "Columns:\n(1) regulatorId. Regulator identifier\n(2) regulatorName. Regulator Name\n(3) regulatorGeneName. Gene(s) coding for the TF\n(4) regulatedId. Gene ID regulated by the Regulator (regulated Gene)\n(5) regulatedName. Gene regulated by the Regulator (regulated Gene)\n(6) function. Regulatory Function of the Regulator on the regulated Gene (+ activator, - repressor, -+ dual, ? unknown)\n(7) confidenceLevel. RI confidence level based on its evidence (Values: Confirmed, Strong, Weak)",
         "content": " \n".join(tfs_content)
     }
     return tfs_doc

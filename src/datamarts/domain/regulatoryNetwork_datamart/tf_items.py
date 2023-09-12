@@ -1,4 +1,6 @@
 import multigenomic_api
+from mongoengine.errors import DoesNotExist
+
 from src.datamarts.domain.general.biological_base import BiologicalBase
 
 
@@ -33,8 +35,8 @@ class RegulatoryNetworkTF:
             reg_ints = []
             try:
                 reg_complex = multigenomic_api.regulatory_complexes.find_by_name(node_object.name)
-            except:
-                print("This is not a Regulatory Complex")
+            except DoesNotExist:
+                pass
             if reg_complex is not None:
                 reg_ints.extend(multigenomic_api.regulatory_interactions.find_by_regulator_id(
                     reg_complex.id))
@@ -187,9 +189,14 @@ class BuildDict(BiologicalBase):
         self.network_type = network_type
 
     def to_dict(self):
+        name = ""
+        if self.item_type == "Transcription Factor":
+            name = self.item.abbreviated_name
+        elif self.item_type == "Gene":
+            name = self.item.name
         item_dict = {
             "_id": self.item.id,
-            "name": self.item.name,
+            "name": name,
             "type": self.item_type,
             "regulatoryEffect": self.reg_int_function[0] or "unknown",
             "citations": self.citations,
