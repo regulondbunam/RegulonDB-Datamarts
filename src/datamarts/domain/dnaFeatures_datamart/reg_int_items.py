@@ -1,5 +1,6 @@
 import multigenomic_api
 import re
+from src.datamarts.domain.general.biological_base import BiologicalBase
 
 
 class RegIntDnaFeatures(object):
@@ -18,9 +19,10 @@ class RegIntDnaFeatures(object):
                 yield dtt_datamart
         del reg_int_objects
 
-    class DTTDatamart:
+    class DTTDatamart(BiologicalBase):
 
         def __init__(self, entity, dict_colors):
+            super().__init__(entity.external_cross_references, entity.citations, entity.note)
             self.entity = entity
             self.dict_colors = dict_colors
             self.object_rgb_color = entity.function
@@ -280,6 +282,7 @@ class RegIntDnaFeatures(object):
                 "labelRGBColor": "0,0,0",
                 "labelSize": 12,
                 "labelName": self._name,
+                "citations": self.citations,
                 "leftEndPosition": self.positions["leftEndPosition"],
                 "lineRGBColor": "0,0,0",
                 "lineType": self.line_type,

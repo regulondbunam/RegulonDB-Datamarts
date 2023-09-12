@@ -1,5 +1,6 @@
 import multigenomic_api
 from string import digits
+from src.datamarts.domain.general.biological_base import BiologicalBase
 
 
 class GeneDnaFeatures(object):
@@ -26,9 +27,10 @@ class GeneDnaFeatures(object):
                     frag_count += 1
         del gene_objects
 
-    class DTTDatamart:
+    class DTTDatamart(BiologicalBase):
 
         def __init__(self, entity, dict_colors, is_fragment):
+            super().__init__(entity.external_cross_references, entity.citations, entity.note)
             self.is_fragment = is_fragment
             self.dict_colors = dict_colors
             self.entity = entity
@@ -81,6 +83,7 @@ class GeneDnaFeatures(object):
                 "labelRGBColor": "0,0,0",
                 "labelSize": 12,
                 "labelName": self.entity.name,
+                "citations": self.citations,
                 "leftEndPosition": self.entity.left_end_position,
                 "lineRGBColor": "0,0,0",
                 # TODO: this gonna be defined by evidence, if is weak or strong
