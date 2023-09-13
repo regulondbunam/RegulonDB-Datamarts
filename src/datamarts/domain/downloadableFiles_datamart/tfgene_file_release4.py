@@ -1,5 +1,6 @@
 import multigenomic_api
 from datetime import datetime
+import re
 
 
 class TFGene:
@@ -20,6 +21,7 @@ class TFGene:
             self.genes = self.trans_factor
             self.regulated_genes = ri.regulated_entity
             self.function = ri.function
+            self.ri_ev_category = ri
 
         @property
         def trans_factor(self):
@@ -27,6 +29,7 @@ class TFGene:
 
         @trans_factor.setter
         def trans_factor(self, regulator):
+            synonyms = []
             tf = multigenomic_api.transcription_factors.find_tf_id_by_conformation_id(regulator.id)
             if len(tf) == 0:
                 if regulator.type == "regulatoryComplex":
@@ -34,10 +37,13 @@ class TFGene:
                     tf = multigenomic_api.transcription_factors.find_tf_id_by_conformation_name(
                         reg_complex.name)
             if len(tf) > 0:
+                synonyms.extend(tf[0].synonyms)
+                synonyms.append(tf[0].name)
                 self._trans_factor = {
                     "id": tf[0].id,
                     "name": tf[0].abbreviated_name,
-                    "products_ids": tf[0].products_ids
+                    "products_ids": tf[0].products_ids,
+                    "synonyms": synonyms
                 }
             else:
                 products_ids = []
@@ -46,24 +52,31 @@ class TFGene:
                     for product in complex.products:
                         if product.products_id not in products_ids:
                             products_ids.append(product.products_id)
+                    synonyms.extend(complex.synonyms)
+                    synonyms.append(regulator.name)
                     self._trans_factor = {
                         "id": regulator.id,
                         "name": complex.abbreviated_name or regulator.name,
-                        "products_ids": products_ids
+                        "products_ids": products_ids,
+                        "synonyms": synonyms
                     }
                 elif regulator.type == "product":
                     products_ids.append(regulator.id)
                     product = multigenomic_api.products.find_by_id(regulator.id)
+                    synonyms.extend(product.synonyms)
+                    synonyms.append(product.name)
                     self._trans_factor = {
                         "id": regulator.id,
                         "name": product.abbreviated_name or regulator.name,
-                        "products_ids": products_ids
+                        "products_ids": products_ids,
+                        "synonyms": synonyms
                     }
                 else:
                     self._trans_factor = {
                         "id": regulator.id,
                         "name": regulator.name,
-                        "products_ids": products_ids
+                        "products_ids": products_ids,
+                        "synonyms": []
                     }
 
         @property
@@ -100,7 +113,8 @@ class TFGene:
         def regulated_genes(self, regulated_entity):
             self._regulated_genes = []
             if regulated_entity.type == "gene":
-                self._regulated_genes.append(regulated_entity)
+                gene = multigenomic_api.genes.find_by_id(regulated_entity.id)
+                self._regulated_genes.append(gene)
             elif regulated_entity.type == "promoter":
                 trans_units = multigenomic_api.transcription_units.find_by_promoter_id(regulated_entity.id)
                 genes_ids = []
@@ -117,16 +131,38 @@ class TFGene:
                     if gene not in self._regulated_genes:
                         self._regulated_genes.append(gene)
 
+        @property
+        def ri_ev_category(self):
+            return self._ri_ev_category
+
+        @ri_ev_category.setter
+        def ri_ev_category(self, ri):
+            self._ri_ev_category = ""
+            ev_categories = []
+            citations = ri.citations
+            if ri.regulatory_sites_id:
+                reg_site = multigenomic_api.regulatory_sites.find_by_id(ri.regulatory_sites_id)
+                citations.extend(reg_site.citations)
+            for citation in citations:
+                if citation.evidences_id:
+                    citation_dict = multigenomic_api.evidences.find_by_id(citation.evidences_id)
+                    if citation_dict.category:
+                        if citation_dict.category not in ev_categories:
+                            ev_categories.append(citation_dict.category)
+            self._ri_ev_category = "|".join(ev_categories)
+
         def to_row(self):
             response = []
             for gene in self._regulated_genes:
                 row = f"{self.trans_factor['id']}" \
                       f"\t{self.trans_factor['name']}" \
-                      f"\t{self.genes}" \
                       f"\t{gene['id']}" \
                       f"\t{gene['name']}" \
+                      f"\t{','.join(gene['synonyms'])}" \
+                      f"\t{','.join(self.trans_factor['synonyms'])}" \
                       f"\t{self.function}" \
-                      f"\t{self.ri.confidence_level or '?'}"
+                      f"\t{self.ri.confidence_level or '?'}" \
+                      f"\t{self.ri_ev_category}"
                 response.append(row)
             return response
 
@@ -135,7 +171,8 @@ def remove_similar_items(lista):
     resultado = []
     omitir = set()
     for cadena in lista:
-        inicio = cadena[:-1]
+        cad_inicial = cadena.rsplit('\t')
+        inicio = '\t'.join(cad_inicial[:-1])[:-1]
         if inicio not in omitir:
             resultado.append(cadena)
             omitir.add(inicio)
@@ -150,8 +187,8 @@ def find_existent_items_without_function(list):
 
         cad_inicial_curr = current_item.rsplit('\t')
         cad_inicial_next = next_item.rsplit('\t')
-        if cad_inicial_curr[:-2] == cad_inicial_next[:-2]:
-            if cad_inicial_curr[-2] != "":
+        if cad_inicial_curr[:-3] == cad_inicial_next[:-3]:
+            if cad_inicial_curr[-3] != "":
                 resultado.append(current_item)
         else:
             resultado.append(current_item)
@@ -164,12 +201,20 @@ def find_dual_items(list):
         current_item = list[i]
         next_item = list[i + 1]
 
-        current_item_rep = current_item.replace("+", "-")[:-1]
-        next_item_rep = next_item.replace("+", "-")[:-1]
-        current_item_act = current_item.replace("-", "+")[:-1]
-        next_item_act = next_item.replace("-", "+")[:-1]
+        pattern_rep = r'\t-\t'
+        pattern_act = r'\t+\t'
 
-        if current_item_rep == next_item_rep or current_item_act == next_item_act:
+        current_item_rep = re.sub(pattern_act, "\t-\t", current_item)
+        next_item_rep = re.sub(pattern_act, "\t-\t", next_item)
+        current_item_act = re.sub(pattern_rep, "\t+\t", current_item)
+        next_item_act = re.sub(pattern_rep, "\t+\t", next_item)
+
+        current_item_rep = '\t'.join(current_item_rep.rsplit('\t')[:-1])
+        next_item_rep = '\t'.join(next_item_rep.rsplit('\t')[:-1])
+        current_item_act = '\t'.join(current_item_act.rsplit('\t')[:-1])
+        next_item_act = '\t'.join(next_item_act.rsplit('\t')[:-1])
+
+        if current_item_rep[:-1] == next_item_rep[:-1] or current_item_act[:-1] == next_item_act[:-1]:
             new_list.append(current_item_act.replace("+", "-+"))
             list[i+1] = next_item_act.replace("+", "-+")
         else:
@@ -180,7 +225,7 @@ def find_dual_items(list):
 def get_all_rows():
     trans_factors = TFGene()
     tfs_content = [
-        "1)regulatorId	2)regulatorName	3)RegulatorGeneName	4)regulatedId	5)regulatedName	6)function	7)confidenceLevel"]
+        "1)regulatorId\t2)regulatorName\t3)geneId\t4)GeneName\t5)genesSynonyms\t6)regulatorSynonyms\t7)function\t8)confidenceLevel\t9)evCategory"]
     for tf in trans_factors.objects:
         tfs_content.extend(tf.to_row())
     tfs_content = list(set(tfs_content))
@@ -188,9 +233,9 @@ def get_all_rows():
     tfs_content = find_dual_items(find_existent_items_without_function(tfs_content))
     creation_date = datetime.now()
     tfs_doc = {
-        "_id": "RDBECOLIDLF00010",
-        "fileName": "NetWorkTFGene",
-        "title": "Complete TF-Gene Network Set",
+        "_id": "RDBECOLIDLF00011",
+        "fileName": "NetWorkTFGene_release4",
+        "title": "Complete TF-Gene Network Set release 4",
         "fileFormat": "rif-version 1",
         "license": "RegulonDB is free for academic/noncommercial use\t\tUser is not entitled to change or erase data sets of the RegulonDB\tdatabase or to eliminate copyright notices from RegulonDB. Furthermore,\tUser is not entitled to expand RegulonDB or to integrate RegulonDB partly\tor as a whole into other databank systems, without prior written consent\tfrom CCG-UNAM.\t\tPlease check the license at http://regulondb.ccg.unam.mx/menu/download/full_version/terms_and_conditions.jsp",
         "citation": "Tierrafría, V. H. et al. (2022). RegulonDB 11.0: Comprehensive high-throughput datasets on transcriptional regulation in Escherichia coli K-12,\tMicrob Genom. 2022 May;8(5). doi: 10.1099/mgen.0.000833. PMID: 35584008. https://doi.org/10.1099/mgen.0.000833",

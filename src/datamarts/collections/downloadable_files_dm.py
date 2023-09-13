@@ -8,6 +8,7 @@ from src.datamarts.domain.downloadableFiles_datamart import terminators_file
 from src.datamarts.domain.downloadableFiles_datamart import gene_sequence_file
 from src.datamarts.domain.downloadableFiles_datamart import regulators_file
 from src.datamarts.domain.downloadableFiles_datamart import tfgene_file
+from src.datamarts.domain.downloadableFiles_datamart import tfgene_file_release4
 
 
 def get_all_downloadable_docs():
@@ -42,5 +43,8 @@ def get_all_downloadable_docs():
     # TF-Gene
     tf_gene = tfgene_file.get_all_rows()
     downloadable_files_dm.append(tf_gene)
+    # TF-Gene
+    tf_gene_r4 = tfgene_file_release4.get_all_rows()
+    downloadable_files_dm.append(tf_gene_r4)
 
     return downloadable_files_dm

@@ -242,11 +242,14 @@ class RegulatoryInteractions:
         @ri_ev_category.setter
         def ri_ev_category(self, citations):
             self._ri_ev_category = ""
+            ev_categories = []
             for citation in citations:
                 if citation.evidences_id:
                     citation_dict = multigenomic_api.evidences.find_by_id(citation.evidences_id)
-                    self._ri_ev_category += f"{citation_dict.category}|"
-            self._ri_ev_category = self._ri_ev_category[:-1]
+                    if citation_dict.category:
+                        if citation_dict.category not in ev_categories:
+                            ev_categories.append(citation_dict.category)
+            self._ri_ev_category = "|".join(ev_categories)
 
         def to_row(self):
             regulated_genes = get_regulated_genes(self.ri.regulated_entity)
