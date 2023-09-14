@@ -59,7 +59,7 @@ class GeneDatamarts:
                 operon = None
             if operon:
                 operon = multigenomic_api.operons.find_by_id(operon.id)
-                regulation = Regulation(operon)
+                regulation = Regulation(operon, gene_id)
                 self._regulation = regulation.to_dict()
             else:
                 self._regulation = None

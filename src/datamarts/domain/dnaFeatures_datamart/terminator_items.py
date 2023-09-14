@@ -1,5 +1,6 @@
 import multigenomic_api
 import numpy as np
+from src.datamarts.domain.general.biological_base import BiologicalBase
 
 
 class TerminatorDNAFeatures:
@@ -13,9 +14,10 @@ class TerminatorDNAFeatures:
             yield dtt_datamart
         del terminator_objects
 
-    class DTTDatamart:
+    class DTTDatamart(BiologicalBase):
 
         def __init__(self, entity):
+            super().__init__(entity.external_cross_references, entity.citations, entity.note)
             self.entity = entity
             self.line_type = entity.citations
             self.strand = entity
@@ -64,6 +66,7 @@ class TerminatorDNAFeatures:
                 "labelFont": "arial",
                 "labelRGBColor": "0,0,0",
                 "labelSize": 12,
+                "citations": self.citations,
                 "leftEndPosition": self.entity.transcriptionTerminationSite.left_end_position,
                 "lineRGBColor": "0,0,0",
                 "lineType": self._line_type,

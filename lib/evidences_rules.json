@@ -24,55 +24,7 @@
   },
   {
     "rules_values": [
-      7,
       4,
-      3
-    ],
-    "type": "S",
-    "pertainsTo": [
-      "regulatory interaction"
-    ],
-    "evidenceCategory": "independent cross-validation"
-  },
-  {
-    "rules_values": [
-      7,
-      5,
-      3
-    ],
-    "type": "S",
-    "pertainsTo": [
-      "regulatory interaction"
-    ],
-    "evidenceCategory": "independent cross-validation"
-  },
-  {
-    "rules_values": [
-      6,
-      4,
-      3
-    ],
-    "type": "S",
-    "pertainsTo": [
-      "regulatory interaction"
-    ],
-    "evidenceCategory": "independent cross-validation"
-  },
-  {
-    "rules_values": [
-      6,
-      5,
-      3
-    ],
-    "type": "S",
-    "pertainsTo": [
-      "regulatory interaction"
-    ],
-    "evidenceCategory": "independent cross-validation"
-  },
-  {
-    "rules_values": [
-      7,
       6,
       3
     ],
@@ -85,76 +37,10 @@
   {
     "rules_values": [
       4,
-      5,
-      3,
-      1
-    ],
-    "type": "C",
-    "pertainsTo": [
-      "regulatory interaction"
-    ],
-    "evidenceCategory": "independent cross-validation"
-  },
-  {
-    "rules_values": [
       7,
-      4,
-      3,
-      1
+      3
     ],
-    "type": "C",
-    "pertainsTo": [
-      "regulatory interaction"
-    ],
-    "evidenceCategory": "independent cross-validation"
-  },
-  {
-    "rules_values": [
-      7,
-      5,
-      3,
-      1
-    ],
-    "type": "C",
-    "pertainsTo": [
-      "regulatory interaction"
-    ],
-    "evidenceCategory": "independent cross-validation"
-  },
-  {
-    "rules_values": [
-      6,
-      4,
-      3,
-      1
-    ],
-    "type": "C",
-    "pertainsTo": [
-      "regulatory interaction"
-    ],
-    "evidenceCategory": "independent cross-validation"
-  },
-  {
-    "rules_values": [
-      6,
-      5,
-      3,
-      1
-    ],
-    "type": "C",
-    "pertainsTo": [
-      "regulatory interaction"
-    ],
-    "evidenceCategory": "independent cross-validation"
-  },
-  {
-    "rules_values": [
-      7,
-      6,
-      3,
-      1
-    ],
-    "type": "C",
+    "type": "S",
     "pertainsTo": [
       "regulatory interaction"
     ],
@@ -163,98 +49,420 @@
   {
     "rules_values": [
       4,
-      5,
-      3,
-      2
-    ],
-    "type": "C",
-    "pertainsTo": [
-      "regulatory interaction"
-    ],
-    "evidenceCategory": "independent cross-validation"
-  },
-  {
-    "rules_values": [
-      7,
-      4,
-      3,
-      2
-    ],
-    "type": "C",
-    "pertainsTo": [
-      "regulatory interaction"
-    ],
-    "evidenceCategory": "independent cross-validation"
-  },
-  {
-    "rules_values": [
-      7,
-      5,
-      3,
-      2
-    ],
-    "type": "C",
-    "pertainsTo": [
-      "regulatory interaction"
-    ],
-    "evidenceCategory": "independent cross-validation"
-  },
-  {
-    "rules_values": [
-      6,
-      4,
-      3,
-      2
-    ],
-    "type": "C",
-    "pertainsTo": [
-      "regulatory interaction"
-    ],
-    "evidenceCategory": "independent cross-validation"
-  },
-  {
-    "rules_values": [
-      6,
-      5,
-      3,
-      2
-    ],
-    "type": "C",
-    "pertainsTo": [
-      "regulatory interaction"
-    ],
-    "evidenceCategory": "independent cross-validation"
-  },
-  {
-    "rules_values": [
-      7,
-      6,
-      3,
-      2
-    ],
-    "type": "C",
-    "pertainsTo": [
-      "regulatory interaction"
-    ],
-    "evidenceCategory": "independent cross-validation"
-  },
-  {
-    "rules_values": [
-      3,
-      4,
-      5,
-      6,
-      7
-    ],
-    "type": "C",
-    "pertainsTo": [
-      "regulatory interaction"
-    ],
-    "evidenceCategory": "independent cross-validation"
-  },
-  {
-    "rules_values": [
       8,
+      3
+    ],
+    "type": "S",
+    "pertainsTo": [
+      "regulatory interaction"
+    ],
+    "evidenceCategory": "independent cross-validation"
+  },
+  {
+    "rules_values": [
+      5,
+      6,
+      3
+    ],
+    "type": "S",
+    "pertainsTo": [
+      "regulatory interaction"
+    ],
+    "evidenceCategory": "independent cross-validation"
+  },
+  {
+    "rules_values": [
+      5,
+      7,
+      3
+    ],
+    "type": "S",
+    "pertainsTo": [
+      "regulatory interaction"
+    ],
+    "evidenceCategory": "independent cross-validation"
+  },
+  {
+    "rules_values": [
+      5,
+      8,
+      3
+    ],
+    "type": "S",
+    "pertainsTo": [
+      "regulatory interaction"
+    ],
+    "evidenceCategory": "independent cross-validation"
+  },
+  {
+    "rules_values": [
+      6,
+      7,
+      3
+    ],
+    "type": "S",
+    "pertainsTo": [
+      "regulatory interaction"
+    ],
+    "evidenceCategory": "independent cross-validation"
+  },
+  {
+    "rules_values": [
+      6,
+      8,
+      3
+    ],
+    "type": "S",
+    "pertainsTo": [
+      "regulatory interaction"
+    ],
+    "evidenceCategory": "independent cross-validation"
+  },
+  {
+    "rules_values": [
+      7,
+      8,
+      3
+    ],
+    "type": "S",
+    "pertainsTo": [
+      "regulatory interaction"
+    ],
+    "evidenceCategory": "independent cross-validation"
+  },
+  {
+    "rules_values": [
+      7,
+      4,
+      5,
+      6,
+      3
+    ],
+    "type": "C",
+    "pertainsTo": [
+      "regulatory interaction"
+    ],
+    "evidenceCategory": "independent cross-validation"
+  },
+  {
+    "rules_values": [
+      4,
+      5,
+      7,
+      8,
+      3
+    ],
+    "type": "C",
+    "pertainsTo": [
+      "regulatory interaction"
+    ],
+    "evidenceCategory": "independent cross-validation"
+  },
+  {
+    "rules_values": [
+      6,
+      5,
+      7,
+      8,
+      3
+    ],
+    "type": "C",
+    "pertainsTo": [
+      "regulatory interaction"
+    ],
+    "evidenceCategory": "independent cross-validation"
+  },
+  {
+    "rules_values": [
+      4,
+      6,
+      7,
+      8,
+      3
+    ],
+    "type": "C",
+    "pertainsTo": [
+      "regulatory interaction"
+    ],
+    "evidenceCategory": "independent cross-validation"
+  },
+  {
+    "rules_values": [
+      4,
+      6,
+      5,
+      8,
+      3
+    ],
+    "type": "C",
+    "pertainsTo": [
+      "regulatory interaction"
+    ],
+    "evidenceCategory": "independent cross-validation"
+  },
+  {
+    "rules_values": [
+      4,
+      5,
+      1,
+      3
+    ],
+    "type": "C",
+    "pertainsTo": [
+      "regulatory interaction"
+    ],
+    "evidenceCategory": "independent cross-validation"
+  },
+  {
+    "rules_values": [
+      4,
+      6,
+      1,
+      3
+    ],
+    "type": "C",
+    "pertainsTo": [
+      "regulatory interaction"
+    ],
+    "evidenceCategory": "independent cross-validation"
+  },
+  {
+    "rules_values": [
+      4,
+      7,
+      1,
+      3
+    ],
+    "type": "C",
+    "pertainsTo": [
+      "regulatory interaction"
+    ],
+    "evidenceCategory": "independent cross-validation"
+  },
+  {
+    "rules_values": [
+      4,
+      8,
+      1,
+      3
+    ],
+    "type": "C",
+    "pertainsTo": [
+      "regulatory interaction"
+    ],
+    "evidenceCategory": "independent cross-validation"
+  },
+  {
+    "rules_values": [
+      5,
+      6,
+      1,
+      3
+    ],
+    "type": "C",
+    "pertainsTo": [
+      "regulatory interaction"
+    ],
+    "evidenceCategory": "independent cross-validation"
+  },
+  {
+    "rules_values": [
+      5,
+      7,
+      1,
+      3
+    ],
+    "type": "C",
+    "pertainsTo": [
+      "regulatory interaction"
+    ],
+    "evidenceCategory": "independent cross-validation"
+  },
+  {
+    "rules_values": [
+      5,
+      8,
+      1,
+      3
+    ],
+    "type": "C",
+    "pertainsTo": [
+      "regulatory interaction"
+    ],
+    "evidenceCategory": "independent cross-validation"
+  },
+  {
+    "rules_values": [
+      6,
+      7,
+      1,
+      3
+    ],
+    "type": "C",
+    "pertainsTo": [
+      "regulatory interaction"
+    ],
+    "evidenceCategory": "independent cross-validation"
+  },
+  {
+    "rules_values": [
+      6,
+      8,
+      1,
+      3
+    ],
+    "type": "C",
+    "pertainsTo": [
+      "regulatory interaction"
+    ],
+    "evidenceCategory": "independent cross-validation"
+  },
+  {
+    "rules_values": [
+      7,
+      8,
+      1,
+      3
+    ],
+    "type": "C",
+    "pertainsTo": [
+      "regulatory interaction"
+    ],
+    "evidenceCategory": "independent cross-validation"
+  },
+  {
+    "rules_values": [
+      4,
+      5,
+      2,
+      3
+    ],
+    "type": "C",
+    "pertainsTo": [
+      "regulatory interaction"
+    ],
+    "evidenceCategory": "independent cross-validation"
+  },
+  {
+    "rules_values": [
+      4,
+      6,
+      2,
+      3
+    ],
+    "type": "C",
+    "pertainsTo": [
+      "regulatory interaction"
+    ],
+    "evidenceCategory": "independent cross-validation"
+  },
+  {
+    "rules_values": [
+      4,
+      7,
+      2,
+      3
+    ],
+    "type": "C",
+    "pertainsTo": [
+      "regulatory interaction"
+    ],
+    "evidenceCategory": "independent cross-validation"
+  },
+  {
+    "rules_values": [
+      4,
+      8,
+      2,
+      3
+    ],
+    "type": "C",
+    "pertainsTo": [
+      "regulatory interaction"
+    ],
+    "evidenceCategory": "independent cross-validation"
+  },
+  {
+    "rules_values": [
+      5,
+      6,
+      2,
+      3
+    ],
+    "type": "C",
+    "pertainsTo": [
+      "regulatory interaction"
+    ],
+    "evidenceCategory": "independent cross-validation"
+  },
+  {
+    "rules_values": [
+      5,
+      7,
+      2,
+      3
+    ],
+    "type": "C",
+    "pertainsTo": [
+      "regulatory interaction"
+    ],
+    "evidenceCategory": "independent cross-validation"
+  },
+  {
+    "rules_values": [
+      5,
+      8,
+      2,
+      3
+    ],
+    "type": "C",
+    "pertainsTo": [
+      "regulatory interaction"
+    ],
+    "evidenceCategory": "independent cross-validation"
+  },
+  {
+    "rules_values": [
+      6,
+      7,
+      2,
+      3
+    ],
+    "type": "C",
+    "pertainsTo": [
+      "regulatory interaction"
+    ],
+    "evidenceCategory": "independent cross-validation"
+  },
+  {
+    "rules_values": [
+      6,
+      8,
+      2,
+      3
+    ],
+    "type": "C",
+    "pertainsTo": [
+      "regulatory interaction"
+    ],
+    "evidenceCategory": "independent cross-validation"
+  },
+  {
+    "rules_values": [
+      7,
+      8,
+      2,
+      3
+    ],
+    "type": "C",
+    "pertainsTo": [
+      "regulatory interaction"
+    ],
+    "evidenceCategory": "independent cross-validation"
+  },
+  {
+    "rules_values": [
+      15,
       1
     ],
     "type": "C",
@@ -265,7 +473,7 @@
   },
   {
     "rules_values": [
-      8,
+      15,
       9
     ],
     "type": "C",
@@ -298,7 +506,7 @@
   },
   {
     "rules_values": [
-      8,
+      15,
       10,
       7
     ],

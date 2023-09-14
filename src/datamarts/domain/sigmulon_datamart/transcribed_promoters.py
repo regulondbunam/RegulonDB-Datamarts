@@ -23,6 +23,7 @@ class TranscribedPromoters(BiologicalBase):
             "sequence": self.promoter.sequence,
             "TSSPosition": tss_pos,
             "boxes": self.boxes,
+            "strand": self.promoter.strand,
             "citations": self.citations
         }
         return transcribed_promoters

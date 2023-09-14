@@ -16,6 +16,7 @@ class SigmaFactor(BiologicalBase):
         sigma_factor = {
             "_id": self.sigma_factor.id,
             "name": self.sigma_factor.name,
+            "abbreviatedName": self.sigma_factor.abbreviated_name,
             "synonyms": self.sigma_factor.synonyms,
             "gene": self.gene,
             "sigmulonRegulators": self.sigmulon_regulators,
@@ -69,9 +70,46 @@ class SigmaFactor(BiologicalBase):
                 if tu.genes_ids:
                     for gene_id in tu.genes_ids:
                         gene = multigenomic_api.genes.find_by_id(gene_id)
+                        products = multigenomic_api.products.find_by_gene_id(gene_id)
+                        terms = {
+                            'biologicalProcess': [],
+                            'cellularComponent': [],
+                            'molecularFunction': []
+                        }
+                        for product in products:
+                            if product.terms:
+                                for term in product.terms.biological_process:
+                                    term = Term(term)
+                                    if term.to_dict() not in terms['biologicalProcess']:
+                                        terms['biologicalProcess'].append(term.to_dict())
+
+                                for term in product.terms.cellular_component:
+                                    term = Term(term)
+                                    if term.to_dict() not in terms['cellularComponent']:
+                                        terms['cellularComponent'].append(term.to_dict())
+
+                                for term in product.terms.molecular_function:
+                                    term = Term(term)
+                                    if term.to_dict() not in terms['molecularFunction']:
+                                        terms['molecularFunction'].append(term.to_dict())
                         gene_object = {
                             "_id": gene.id,
-                            "name": gene.name
+                            "name": gene.name,
+                            "geneOntologyTerms": terms
                         }
                         if gene_object not in self._sigmulon_genes:
                             self.sigmulon_genes.append(gene_object)
+
+
+class Term(BiologicalBase):
+
+    def __init__(self, term):
+        super().__init__([], term.citations, [])
+        self.term = term
+
+    def to_dict(self):
+        term = {
+            '_id': self.term.terms_id,
+            'name': self.term.terms_name
+        }
+        return term

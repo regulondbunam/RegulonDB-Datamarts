@@ -10,10 +10,11 @@ from src.datamarts.collections import \
     operon_datamarts, \
     regulon_datamart, \
     sigmulon_datamarts, \
-    srna_datamarts, \
     dttDatamart, \
     regulatory_network_datamart, \
-    listPage_dm
+    listPage_dm, \
+    gensorUnit_datamarts, \
+    downloadable_files_dm
 
 
 def load_arguments_parser():
@@ -52,7 +53,7 @@ def write_summary(datamarts_info):
         text = "# DatamartsExtractorSummary \n" \
                "Creation date: " + datetime.today().strftime('%Y-%m-%d') + "\n \n" \
                 "Creation time: " + datetime.today().strftime('%H:%M:%S') + "\n \n" \
-                "RegulonDB Version: 10.8 \n" \
+                "RegulonDB Version: 12.0 \n" \
                 "\n" \
                 "## RegulonDB Datamarts Summary \n" \
                 "" + datamarts_info
@@ -69,10 +70,11 @@ if __name__ == '__main__':
     datamart_files["operonDatamart"] = operon_datamarts.all_operon_datamarts()
     datamart_files["regulonDatamart"] = regulon_datamart.all_regulon_datamarts()
     datamart_files["sigmulonDatamart"] = sigmulon_datamarts.all_sigmulon_datamarts()
-    datamart_files["srnaDatamart"] = srna_datamarts.all_srna_datamarts()
     datamart_files["dnaFeatures"] = dttDatamart.all_dtt_datamarts()
     datamart_files["regulatoryNetworkDatamart"] = regulatory_network_datamart.all_regulatory_network_nodes()
     datamart_files["listPage"] = listPage_dm.get_all_list_page_docs()
+    datamart_files["gensorUnitDatamart"] = gensorUnit_datamarts.all_gensor_unit_datamarts()
+    datamart_files["downloadableFilesDatamart"] = downloadable_files_dm.get_all_downloadable_docs()
 
     datamartsData = ""
     for collection_name, objects in datamart_files.items():

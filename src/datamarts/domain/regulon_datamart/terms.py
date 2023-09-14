@@ -3,11 +3,17 @@ from src.datamarts.domain.general.biological_base import BiologicalBase
 
 
 class Terms:
-    def __init__(self, transcription_factor):
+    def __init__(self, regulator):
         super().__init__()
-        regulated_genes = get_genes(transcription_factor.active_conformations)
-        self.gene_ontology = [transcription_factor.products_ids, regulated_genes]
-        self.multifun = regulated_genes
+        regulated_genes = []
+        if regulator.regulator_type == "transcriptionFactor":
+            regulated_genes = get_genes(regulator.active_conformations)
+        elif regulator.regulator_type == "sRNA":
+            srna_reg = [regulator]
+            regulated_genes = get_genes(srna_reg)
+        regulator["regulated_genes"] = regulated_genes
+        self.gene_ontology = regulator
+        self.multifun = regulator.regulated_genes
 
     def to_dict(self):
         terms = {
@@ -42,34 +48,40 @@ class Terms:
         return self._gene_ontology
 
     @gene_ontology.setter
-    def gene_ontology(self, params):
+    def gene_ontology(self, regulator):
         self._gene_ontology = {
             'biologicalProcess': [],
             'cellularComponent': [],
             'molecularFunction': []
         }
-        products_ids = params[0]
-        regulated_genes = params[1]
+        if regulator.regulator_type == "transcriptionFactor":
+            products_ids = regulator.products_ids
+            regulated_genes = regulator.regulated_genes
+        else:
+            products_ids = [regulator.id]
+            product = multigenomic_api.products.find_by_id(regulator.id)
+            regulated_genes = [product.genes_id]
         for product_id in products_ids:
             product = multigenomic_api.products.find_by_id(product_id)
             terms = product.terms
-            for term in terms.biological_process:
-                term = Term(term, regulated_genes)
-                term_dict = term.to_dict()
-                if term_dict not in self._gene_ontology['biologicalProcess']:
-                    self._gene_ontology['biologicalProcess'].append(term_dict)
+            if terms:
+                for term in terms.biological_process:
+                    term = Term(term, regulated_genes)
+                    term_dict = term.to_dict()
+                    if term_dict not in self._gene_ontology['biologicalProcess']:
+                        self._gene_ontology['biologicalProcess'].append(term_dict)
 
-            for term in terms.cellular_component:
-                term = Term(term, regulated_genes)
-                term_dict = term.to_dict()
-                if term_dict not in self._gene_ontology['cellularComponent']:
-                    self._gene_ontology['cellularComponent'].append(term_dict)
+                for term in terms.cellular_component:
+                    term = Term(term, regulated_genes)
+                    term_dict = term.to_dict()
+                    if term_dict not in self._gene_ontology['cellularComponent']:
+                        self._gene_ontology['cellularComponent'].append(term_dict)
 
-            for term in terms.molecular_function:
-                term = Term(term, regulated_genes)
-                term_dict = term.to_dict()
-                if term_dict not in self._gene_ontology['molecularFunction']:
-                    self._gene_ontology['molecularFunction'].append(term_dict)
+                for term in terms.molecular_function:
+                    term = Term(term, regulated_genes)
+                    term_dict = term.to_dict()
+                    if term_dict not in self._gene_ontology['molecularFunction']:
+                        self._gene_ontology['molecularFunction'].append(term_dict)
 
 
 class Term(BiologicalBase):
@@ -80,8 +92,8 @@ class Term(BiologicalBase):
         self.term = term
 
     def to_dict(self):
-        product_term_members = get_members_from_term(self.term.terms_id)
-        genes = intersection_genes(self.regulated_genes, product_term_members)
+        gene_term_members = get_members_from_term(self.term.terms_id)
+        genes = intersection_genes(self.regulated_genes, gene_term_members)
         term = {
             '_id': self.term.terms_id,
             'name': self.term.terms_name,

@@ -1,4 +1,5 @@
 import multigenomic_api
+from src.datamarts.domain.general.biological_base import BiologicalBase
 
 
 class PromoterDnaFeatures(object):
@@ -14,9 +15,10 @@ class PromoterDnaFeatures(object):
             yield dtt_datamart
         del promoter_objects
 
-    class DTTDatamart:
+    class DTTDatamart(BiologicalBase):
 
         def __init__(self, entity, dict_colors):
+            super().__init__(entity.external_cross_references, entity.citations, entity.note)
             self.entity = entity
             self.product = entity.id
             self.positions = entity.transcription_start_site
@@ -135,6 +137,7 @@ class PromoterDnaFeatures(object):
                 "labelRGBColor": "0,0,0",
                 "labelSize": 12,
                 "labelName": self.entity.name,
+                "citations": self.citations,
                 "leftEndPosition": self.positions["leftEndPosition"],
                 "lineRGBColor": "0,0,0",
                 # TODO: this gonna be defined by evidence, if is weak or strong

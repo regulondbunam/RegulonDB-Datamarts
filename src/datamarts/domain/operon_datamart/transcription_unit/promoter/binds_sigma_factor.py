@@ -10,6 +10,7 @@ class BindsSigmaFactor(BiologicalBase):
         binds_sigma_factor_dict = {
             "_id": self.binds_sigma_factor.id,
             "citations": self.citations,
-            "name": self.binds_sigma_factor.name
+            "name": self.binds_sigma_factor.name,
+            "abbreviatedName": self.binds_sigma_factor.abbreviated_name
         }
         return binds_sigma_factor_dict
