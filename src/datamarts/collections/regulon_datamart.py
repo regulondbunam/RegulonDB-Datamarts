@@ -108,7 +108,6 @@ class RegulonDatamarts:
                             product_id)
                         self._regulatory_interactions = get_ri_objects(regulatory_interactions,
                                                                        self._regulatory_interactions)
-            # TODO: Revisar esto
             regulatory_interactions = multigenomic_api.regulatory_interactions.find_by_regulator_id(regulator.id)
             self._regulatory_interactions = get_ri_objects(regulatory_interactions, self._regulatory_interactions)
 
