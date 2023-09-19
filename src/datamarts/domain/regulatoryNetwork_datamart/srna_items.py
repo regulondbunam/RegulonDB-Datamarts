@@ -77,7 +77,7 @@ class RegulatoryNetworkSRNA:
         def to_dict(self):
             reg_network_node = {
                 "_id": self.id,
-                "name": self.node.name,
+                "name": self.node.abbreviated_name or self.node.name,
                 "type": "Small RNA",
                 "indegree": self.indegree,
                 "outdegree": self.outdegree,

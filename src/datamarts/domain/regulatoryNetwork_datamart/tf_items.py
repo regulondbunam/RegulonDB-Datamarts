@@ -112,9 +112,11 @@ def outdegree_gene(gene_id, reg_int_function, object_name):
 
 
 def outdegree_tf(gene_id, reg_int_function, object_name, outdegree_list):
+    trans_factors = []
     products = multigenomic_api.products.find_by_gene_id(gene_id)
     for product in products:
-        trans_factors = multigenomic_api.transcription_factors.find_tf_id_by_conformation_id(product.id)
+        trans_factors.extend(multigenomic_api.transcription_factors.find_tf_id_by_conformation_id(product.id))
+        trans_factors.extend(multigenomic_api.transcription_factors.find_tf_id_by_product_id(product.id))
         for tf in trans_factors:
             tooltip = define_tooltip(reg_int_function, f"Transcription Factor {object_name}",
                                      f"Transcription Factor {tf.abbreviated_name}")
@@ -126,8 +128,11 @@ def outdegree_tf(gene_id, reg_int_function, object_name, outdegree_list):
 
 def indegree_tf(reg_ints, indegree_list, node_object):
     for ri in reg_ints:
+        trans_factors = []
         if ri.regulator:
-            trans_factors = multigenomic_api.transcription_factors.find_tf_id_by_conformation_id(ri.regulator.id)
+            trans_factors.extend(multigenomic_api.transcription_factors.find_tf_id_by_conformation_id(ri.regulator.id))
+            trans_factors.extend(multigenomic_api.transcription_factors.find_tf_id_by_product_id(ri.regulator.id))
+            trans_factors.extend(multigenomic_api.transcription_factors.find_by_name(ri.regulator.name))
             for tf in trans_factors:
                 tooltip = define_tooltip(ri.function, f"Transcription Factor {tf.abbreviated_name}",
                                          f"Transcription Factor {node_object.abbreviated_name}")
@@ -139,6 +144,7 @@ def indegree_tf(reg_ints, indegree_list, node_object):
 
 def indegree_gene(reg_ints, indegree_list, node_object):
     for ri in reg_ints:
+        trans_factors = []
         if ri.regulator:
             products = []
             if ri.regulator.type == "product":
@@ -150,7 +156,9 @@ def indegree_gene(reg_ints, indegree_list, node_object):
                     for product in reg_complex.products:
                         products.append(multigenomic_api.products.find_by_id(product.products_id))
             for product in products:
-                trans_factors = multigenomic_api.transcription_factors.find_tf_id_by_conformation_id(product.id)
+                trans_factors.extend(multigenomic_api.transcription_factors.find_tf_id_by_conformation_id(ri.regulator.id))
+                trans_factors.extend(multigenomic_api.transcription_factors.find_tf_id_by_product_id(ri.regulator.id))
+                trans_factors.extend(multigenomic_api.transcription_factors.find_by_name(ri.regulator.name))
                 if len(trans_factors) > 0:
                     for tf in trans_factors:
                         tooltip = define_tooltip(ri.function, f"Transcription Factor {tf.abbreviated_name}",

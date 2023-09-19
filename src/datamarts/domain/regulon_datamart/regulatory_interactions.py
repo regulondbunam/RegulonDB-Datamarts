@@ -86,7 +86,12 @@ class RegulatoryInteractions(BiologicalBase):
     def regulated_genes(self, regulated_entity):
         self._regulated_genes = []
         transcription_units = []
-        if regulated_entity.type == "promoter":
+        if regulated_entity.type == "gene":
+            self._regulated_genes.append({
+                        "_id": regulated_entity.id,
+                        "name": regulated_entity.name,
+                    })
+        elif regulated_entity.type == "promoter":
             transcription_units = multigenomic_api.transcription_units.find_by_promoter_id(regulated_entity.id)
         elif regulated_entity.type == "transcriptionUnit":
             trans_unit = multigenomic_api.transcription_units.find_by_id(regulated_entity.id)
