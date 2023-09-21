@@ -220,39 +220,33 @@ class RegIntDnaFeatures(object):
                         product = multigenomic_api.products.find_by_id(reg_complex.products[0].products_id)
                 if self.entity.regulator.type == "product":
                     product = multigenomic_api.products.find_by_id(self.regulator.id)
-                if product:
-                    if pattern.search(product.name[-4:]):
-                        self._name = product.name[-4:]
+                    if product.abbreviated_name:
+                        self._name = product.abbreviated_name
                     else:
-                        gene = multigenomic_api.genes.find_by_id(product.genes_id)
-                        name = gene.name[:1].upper() + gene.name[1:]
-                        self._name = name
+                        self._name = product.name
             elif obj_type == "srna":
                 product = multigenomic_api.products.find_by_id(self.regulator.id)
-                if pattern.search(product.name[-4:]):
-                    self._name = product.name[-4:]
+                if product.abbreviated_name:
+                    self._name = product.abbreviated_name
                 else:
-                    gene = multigenomic_api.genes.find_by_id(product.genes_id)
-                    name = gene.name[:1].upper() + gene.name[1:]
-                    if pattern.search(name):
-                        self._name = name
+                    self._name = product.name
             else:
                 tf = multigenomic_api.transcription_factors.find_tf_id_by_conformation_id(self.regulator.id)
                 if self.regulator.abbreviated_name:
                     self._name = self.regulator.abbreviated_name
                 if tf:
-                    self._name = tf[0].name
+                    self._name = tf[0].abbreviated_name
                 else:
                     product = {}
                     if self.entity.regulator.type == "regulatoryComplex":
                         reg_complex = multigenomic_api.regulatory_complexes.find_by_id(self.regulator.id)
                         product = multigenomic_api.products.find_by_id(reg_complex.products[0].products_id)
-                    if self.entity.regulator.type == "product":
+                    elif self.entity.regulator.type == "product":
                         product = multigenomic_api.products.find_by_id(self.regulator.id)
                     gene = multigenomic_api.genes.find_by_id(product.genes_id)
                     name = gene.name[:1].upper() + gene.name[1:]
                     if pattern.search(name):
-                        self._name = name
+                        self._name = "test"
 
         @property
         def strand(self):
@@ -281,7 +275,7 @@ class RegIntDnaFeatures(object):
                 "labelFont": "arial",
                 "labelRGBColor": "0,0,0",
                 "labelSize": 12,
-                "labelName": self._name,
+                "labelName": self.name,
                 "citations": self.citations,
                 "leftEndPosition": self.positions["leftEndPosition"],
                 "lineRGBColor": "0,0,0",

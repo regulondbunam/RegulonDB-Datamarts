@@ -140,10 +140,11 @@ def get_distance_to_first_gene(reg_int, regulated_genes):
                 strand = operon.strand
                 first_gene = get_first_gene_of_tu(regulated_genes, strand)
         if reg_sites.absolute_position:
-            if strand == "forward":
-                return reg_sites.absolute_position - first_gene["left_end_position"]
-            else:
-                return first_gene["right_end_position"] - reg_sites.absolute_position
+            if first_gene:
+                if strand == "forward":
+                    return reg_sites.absolute_position - first_gene["left_end_position"]
+                else:
+                    return first_gene["right_end_position"] - reg_sites.absolute_position
     return None
 
 
@@ -181,7 +182,7 @@ def reverse_complement(sequence=None):
 
 def get_first_gene_of_tu(genes, strand):
     dict_genes = []
-    first_gene = {}
+    first_gene = None
     for gene in genes:
         gene_object = multigenomic_api.genes.find_by_id(gene.get("_id"))
         if gene_object.fragments:
@@ -195,8 +196,9 @@ def get_first_gene_of_tu(genes, strand):
             "left_end_position": gene_object.left_end_position,
             "right_end_position": gene_object.right_end_position
         })
-    if strand == "forward":
-        first_gene = (min(dict_genes, key=lambda x: x["left_end_position"]))
-    if strand == "reverse":
-        first_gene = (max(dict_genes, key=lambda x: x["right_end_position"]))
+    if len(dict_genes) > 0:
+        if strand == "forward":
+            first_gene = (min(dict_genes, key=lambda x: x["left_end_position"]))
+        elif strand == "reverse":
+            first_gene = (max(dict_genes, key=lambda x: x["right_end_position"]))
     return first_gene
