@@ -195,9 +195,6 @@ def get_all_transcription_units(regulator):
             if ri.regulated_entity.type == "promoter":
                 transcription_units = multigenomic_api.transcription_units.find_by_promoter_id(
                     ri.regulated_entity.id)
-            if ri.regulated_entity.type == "gene":
-                transcription_units = multigenomic_api.transcription_units.find_by_gene_id(
-                    ri.regulated_entity.id)
             elif ri.regulated_entity.type == "transcriptionUnit":
                 tu = multigenomic_api.transcription_units.find_by_id(ri.regulated_entity.id)
                 transcription_units = [tu]

@@ -17,7 +17,6 @@ class Regulator(BiologicalBase):
     def to_dict(self):
         citations = self.citations
         additive_evs = AdditiveEvidences(citations)
-        regulator = None
         note = self.formatted_note
         if not note:
             note = self.get_longest_note()
@@ -30,7 +29,6 @@ class Regulator(BiologicalBase):
                 "synonyms": self.regulator.synonyms,
                 "note": note,
                 "conformations": self.conformations,
-                ## TODO: modificar esta propiedad en jsonSchema y servicios
                 "encodedBy": {
                     "genes": self.genes,
                     "operon": self.operons
@@ -84,23 +82,21 @@ class Regulator(BiologicalBase):
                     reg_complex.id)
                 if len(reg_ints) > 0:
                     self._conformations.append(Conformation(reg_complex, "regulatoryComplex").to_dict().copy())
-            else:
-                for product_id in regulator.products_ids:
-                    reg_ints = multigenomic_api.regulatory_interactions.find_by_regulator_id(product_id)
-                    if len(reg_ints) > 0:
-                        prod = multigenomic_api.products.find_by_id(product_id)
-                        self._conformations.append(Conformation(prod, "product").to_dict().copy())
-                conformations = regulator.active_conformations
-                conformation_object = None
-                for conformation in conformations:
-                    if conformation.type == "product":
-                        prod = multigenomic_api.products.find_by_id(conformation.id)
-                        conformation_object = Conformation(prod, conformation.type)
-                    elif conformation.type == "regulatoryComplex":
-                        complx = multigenomic_api.regulatory_complexes.find_by_id(conformation.id)
-                        conformation_object = Conformation(complx, conformation.type)
-                    if conformation_object.to_dict() not in self._conformations:
-                        self._conformations.append(conformation_object.to_dict().copy())
+            for product_id in regulator.products_ids:
+                if len(multigenomic_api.regulatory_interactions.find_by_regulator_id(product_id)) > 0:
+                    prod = multigenomic_api.products.find_by_id(product_id)
+                    self._conformations.append(Conformation(prod, "product").to_dict().copy())
+            conformations = regulator.active_conformations
+            conformation_object = None
+            for conformation in conformations:
+                if conformation.type == "product":
+                    prod = multigenomic_api.products.find_by_id(conformation.id)
+                    conformation_object = Conformation(prod, conformation.type)
+                elif conformation.type == "regulatoryComplex":
+                    complx = multigenomic_api.regulatory_complexes.find_by_id(conformation.id)
+                    conformation_object = Conformation(complx, conformation.type)
+                if conformation_object.to_dict() not in self._conformations:
+                    self._conformations.append(conformation_object.to_dict().copy())
 
     @property
     def genes(self):
@@ -131,10 +127,8 @@ class Regulator(BiologicalBase):
                 prod = multigenomic_api.products.find_by_id(product_id)
                 transcription_units = multigenomic_api.transcription_units.find_by_gene_id(prod.genes_id)
                 operons_id = multigenomic_api.transcription_units.get_operons_id_by_gene_id(prod.genes_id)
-                # operons_id = list(set(operons_id))
                 operon = multigenomic_api.operons.find_by_id(operons_id)
                 tus_encoding_reg = []
-                promoter = None
                 for transcription_unit in transcription_units:
                     tu_dict = {
                         "transcriptionUnitName": transcription_unit.name
@@ -152,7 +146,6 @@ class Regulator(BiologicalBase):
                 if operon_dict not in self._operons:
                     self._operons.append(operon_dict.copy())
 
-    # TODO: Check if this is correctly obtained
     @property
     def products(self):
         return self._products
