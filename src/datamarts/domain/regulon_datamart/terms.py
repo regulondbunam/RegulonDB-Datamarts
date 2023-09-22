@@ -152,15 +152,16 @@ def get_genes(regulator):
 
 def intersection_genes(regulated_genes, gene_members):
     intersected_genes = [value for value in regulated_genes if value in gene_members]
-    return intersected_genes
+    return set(intersected_genes)
 
 
 def gene_object(genes):
     gene_list = []
     for gene_id in genes:
         gene = multigenomic_api.genes.find_by_id(gene_id)
-        gene_list.append({
-            "_id": gene.id,
-            "name": gene.name
-        })
+        if gene not in gene_list:
+            gene_list.append({
+                "_id": gene.id,
+                "name": gene.name
+            })
     return gene_list
