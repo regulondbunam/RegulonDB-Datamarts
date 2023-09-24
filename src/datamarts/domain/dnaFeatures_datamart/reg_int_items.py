@@ -207,46 +207,29 @@ class RegIntDnaFeatures(object):
         @name.setter
         def name(self, obj_type):
             self._name = self.entity.regulator.name
-            pattern = re.compile("[A-Z][a-z]{2}[A-Z]")
             if obj_type == "ppGpp":
                 self._name = self.regulator.name
             elif obj_type == 'translational_tf_binding_site':
-                product = None
                 if self.entity.regulator.type == "regulatoryComplex":
                     reg_complex = multigenomic_api.regulatory_complexes.find_by_id(self.regulator.id)
-                    if reg_complex.abbreviated_name:
-                        self._name = reg_complex.abbreviated_name
-                    else:
-                        product = multigenomic_api.products.find_by_id(reg_complex.products[0].products_id)
-                if self.entity.regulator.type == "product":
+                    product = multigenomic_api.products.find_by_id(reg_complex.products[0].products_id)
+                    self._name = reg_complex.abbreviated_name or product.abbreviated_name
+                elif self.entity.regulator.type == "product":
                     product = multigenomic_api.products.find_by_id(self.regulator.id)
-                    if product.abbreviated_name:
-                        self._name = product.abbreviated_name
-                    else:
-                        self._name = product.name
+                    self._name = product.abbreviated_name or product.name
             elif obj_type == "srna":
                 product = multigenomic_api.products.find_by_id(self.regulator.id)
-                if product.abbreviated_name:
-                    self._name = product.abbreviated_name
-                else:
-                    self._name = product.name
+                self._name = product.abbreviated_name or product.name
             else:
-                tf = multigenomic_api.transcription_factors.find_tf_id_by_conformation_id(self.regulator.id)
                 if self.regulator.abbreviated_name:
                     self._name = self.regulator.abbreviated_name
-                if tf:
+                tf = multigenomic_api.transcription_factors.find_tf_id_by_conformation_id(self.regulator.id)
+                if len(tf) > 0:
                     self._name = tf[0].abbreviated_name
                 else:
-                    product = {}
-                    if self.entity.regulator.type == "regulatoryComplex":
-                        reg_complex = multigenomic_api.regulatory_complexes.find_by_id(self.regulator.id)
-                        product = multigenomic_api.products.find_by_id(reg_complex.products[0].products_id)
-                    elif self.entity.regulator.type == "product":
-                        product = multigenomic_api.products.find_by_id(self.regulator.id)
-                    gene = multigenomic_api.genes.find_by_id(product.genes_id)
-                    name = gene.name[:1].upper() + gene.name[1:]
-                    if pattern.search(name):
-                        self._name = "test"
+                    tf = multigenomic_api.transcription_factors.find_by_name(self.regulator.name)
+                    if tf:
+                        self._name = tf[0].abbreviated_name
 
         @property
         def strand(self):
