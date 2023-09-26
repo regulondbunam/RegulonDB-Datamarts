@@ -88,7 +88,7 @@ class Terms:
 class Term(BiologicalBase):
 
     def __init__(self, term, regulated_genes):
-        super().__init__([], term.citations, [])
+        super().__init__([], [], [])
         self.regulated_genes = regulated_genes
         self.term = term
 

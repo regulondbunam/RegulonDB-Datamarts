@@ -6,7 +6,7 @@ from src.datamarts.domain.general.additiveEvidences import AdditiveEvidences
 class RegulatoryInteractions(BiologicalBase):
     def __init__(self, reg_interaction):
         super().__init__([], reg_interaction.citations, "")
-        self.regulator = reg_interaction.regulator
+        self.active_conformation = reg_interaction.regulator
         self.regulatory_interaction = reg_interaction
         self.regulated_entity = reg_interaction.regulated_entity
         self.regulated_genes = reg_interaction.regulated_entity
@@ -21,7 +21,7 @@ class RegulatoryInteractions(BiologicalBase):
             "_id": self.regulatory_interaction.id,
             "function": self.regulatory_interaction.function,
             "regulatedEntity": self.regulated_entity,
-            "activeConformation": self.regulator,
+            "activeConformation": self.active_conformation,
             "distanceToFirstGene": get_distance_to_first_gene(self.regulatory_interaction, reg_genes),
             "distanceToPromoter": self.regulatory_interaction.dist_site_promoter,
             "regulatedGenes": self.regulated_genes,
@@ -35,21 +35,24 @@ class RegulatoryInteractions(BiologicalBase):
         return regulatory_interactions
 
     @property
-    def regulator(self):
-        return self._regulator
+    def active_conformation(self):
+        return self._active_conformation
 
-    @regulator.setter
-    def regulator(self, regulator):
+    @active_conformation.setter
+    def active_conformation(self, regulator):
         name = regulator.name
         if regulator.type == "regulatoryComplex":
             reg = multigenomic_api.regulatory_complexes.find_by_id(regulator.id)
             if reg.abbreviated_name:
                 name = reg.abbreviated_name
+            else:
+                tf = multigenomic_api.transcription_factors.find_by_name(regulator.name)
+                name = tf.abbreviated_name
         elif regulator.type == "product":
             reg = multigenomic_api.products.find_by_id(regulator.id)
             if reg.abbreviated_name:
                 name = reg.abbreviated_name
-        self._regulator = {
+        self._active_conformation = {
             "_id": regulator.id,
             "type": regulator.type,
             "name": name
@@ -103,20 +106,24 @@ class RegulatoryInteractions(BiologicalBase):
     @regulatory_binding_sites.setter
     def regulatory_binding_sites(self, reg_interaction):
         self._regulatory_binding_sites = {}
-        promoter = None
+        strand = ""
         if reg_interaction.regulatory_sites_id:
             if reg_interaction.regulated_entity.type == "promoter":
                 promoter = multigenomic_api.promoters.find_by_id(reg_interaction.regulated_entity.id)
-            elif reg_interaction.regulatory_sites_id == "transcriptionUnit":
-                trans_unit = multigenomic_api.transcription_units.find_by_id(reg_interaction.regulated_entity_id)
+                strand = promoter.strand
+            elif reg_interaction.regulated_entity.type == "transcriptionUnit":
+                trans_unit = multigenomic_api.transcription_units.find_by_id(reg_interaction.regulated_entity.id)
                 if trans_unit.promoters_id:
                     promoter = multigenomic_api.promoters.find_by_id(trans_unit.promoters_id)
+                    strand = promoter.strand
+            elif reg_interaction.regulated_entity.type == "gene":
+                gene = multigenomic_api.genes.find_by_id(reg_interaction.regulated_entity.id)
+                strand = gene.strand
             regulatory_sites = multigenomic_api.regulatory_sites.find_by_id(reg_interaction.regulatory_sites_id)
             reg_binding_sites_obj = RegulatoryBindingSites(regulatory_sites).to_dict()
-            if promoter:
-                if promoter.strand == "reverse":
-                    reg_binding_sites_obj["sequence"] = reverse_complement(reg_binding_sites_obj["sequence"])
-                reg_binding_sites_obj["strand"] = promoter.strand
+            if strand == "reverse":
+                reg_binding_sites_obj["sequence"] = reverse_complement(reg_binding_sites_obj["sequence"])
+            reg_binding_sites_obj["strand"] = strand
             self._regulatory_binding_sites = reg_binding_sites_obj
 
 
