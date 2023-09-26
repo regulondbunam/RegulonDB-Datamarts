@@ -21,6 +21,7 @@ class RegulatoryInteractions:
             self.regulatory_site = ri.regulatory_sites_id
             self.regulator_name = ri.regulator
             self.strand = ri.regulated_entity
+            self.sequence = self.regulatory_site
             self.promoter = ri.regulated_entity
             self.tss = self.promoter
             self.target_tu_gene = ri.regulated_entity
@@ -136,6 +137,17 @@ class RegulatoryInteractions:
                 trans_unit = multigenomic_api.transcription_units.find_by_id(regulated_entity.id)
                 gene = multigenomic_api.genes.find_by_id(trans_unit.genes_ids[0])
                 self._strand = gene.strand
+
+        @property
+        def sequence(self):
+            return self._sequence
+
+        @sequence.setter
+        def sequence(self, reg_site):
+            if self.strand == "reverse":
+                self._sequence = reverse_complement(reg_site['sequence'])
+            else:
+                self._sequence = reg_site['sequence']
 
         @property
         def promoter(self):
@@ -265,7 +277,7 @@ class RegulatoryInteractions:
                        f"\t{self.regulatory_site['left_end_position']}" \
                        f"\t{self.regulatory_site['right_end_position']}" \
                        f"\t{self.strand}" \
-                       f"\t{self.regulatory_site['sequence']}" \
+                       f"\t{self.sequence}" \
                        f"\t{self.ri.function}" \
                        f"\t{self.promoter['id']}" \
                        f"\t{self.promoter['name']}" \
@@ -415,3 +427,17 @@ def get_regulated_genes(regulated_entity):
                 if gene_object not in regulated_genes:
                     regulated_genes.append(gene_object)
     return regulated_genes
+
+def reverse_complement(sequence=None):
+    if sequence:
+        alt_map = {'ins': '0'}
+        complement = {'A': 'T', 'C': 'G', 'G': 'C', 'T': 'A', 'a': 't', 'c': 'g', 'g': 'c', 't': 'a'}
+        for k, v in alt_map.items():
+            sequence = sequence.replace(k, v)
+        bases = list(sequence)
+        bases = reversed([complement.get(base, base) for base in bases])
+        bases = ''.join(bases)
+        for k, v in alt_map.items():
+            bases = bases.replace(v, k)
+        return bases
+
