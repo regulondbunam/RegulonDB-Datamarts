@@ -7,7 +7,6 @@ class Operon(BiologicalBase):
 
     def __init__(self, operon):
         super().__init__(operon.external_cross_references, operon.citations, operon.note)
-        super().__init__([], operon.citations, operon.note)
         trans_units = multigenomic_api.transcription_units.find_by_operon_id(operon.id)
         self.operon = operon
         self.transcription_units = trans_units
