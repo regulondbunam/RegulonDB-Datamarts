@@ -47,7 +47,6 @@ class RegulatoryNetworkGene:
                         genes_ids.append(ri.regulated_entity.id)
                     genes_ids = list(set(genes_ids))
                     for gene_id in genes_ids:
-                        self._outdegree = outdegree_tf(gene_id, ri.function, node_object.name, self._outdegree)
                         gene_outdegree_item = outdegree_gene(gene_id, ri.function, node_object.name)
                         if gene_outdegree_item not in self._outdegree:
                             self._outdegree.append(gene_outdegree_item.copy())
@@ -98,18 +97,6 @@ def outdegree_gene(gene_id, reg_int_function, object_name):
     tooltip = define_tooltip(reg_int_function, f"Gene {object_name}", f"Gene {gene.name}")
     gene_outdegree_item = BuildDict(gene, "Gene", reg_int_function, tooltip, "Gene-Gene").to_dict()
     return gene_outdegree_item
-
-
-def outdegree_tf(gene_id, reg_int_function, object_name, outdegree_list):
-    products = multigenomic_api.products.find_by_gene_id(gene_id)
-    for product in products:
-        trans_factors = multigenomic_api.transcription_factors.find_tf_id_by_conformation_id(product.id)
-        for tf in trans_factors:
-            tooltip = define_tooltip(reg_int_function, f"Gene {object_name}", f"Transcription Factor {tf.abbreviated_name}")
-            tf_outdegree_item = BuildDict(tf, "Transcription Factor", reg_int_function, tooltip, "Gene-TF").to_dict()
-            if tf_outdegree_item not in outdegree_list:
-                outdegree_list.append(tf_outdegree_item)
-    return outdegree_list
 
 
 def indegree_tf(reg_ints, indegree_list, node_object):

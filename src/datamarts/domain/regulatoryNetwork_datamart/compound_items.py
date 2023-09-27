@@ -45,6 +45,7 @@ class RegulatoryNetworkCompound:
                     genes_ids.append(ri.regulated_entity.id)
                 genes_ids = list(set(genes_ids))
                 for gene_id in genes_ids:
+                    self._outdegree = outdegree_tf(gene_id, ri.function, node_object.name, self._outdegree)
                     gene_outdegree_item = outdegree_gene(gene_id, ri.function, node_object.name)
                     if gene_outdegree_item not in self._outdegree:
                         self._outdegree.append(gene_outdegree_item.copy())
@@ -65,6 +66,25 @@ def outdegree_gene(gene_id, reg_int_function, object_name):
     tooltip = define_tooltip(reg_int_function, f"Compound {object_name}", f"Gene {gene.name}")
     gene_outdegree_item = BuildDict(gene, "Gene", reg_int_function, tooltip, "Compound-Gene").to_dict()
     return gene_outdegree_item
+
+
+def outdegree_tf(gene_id, reg_int_function, object_name, outdegree_list):
+    trans_factors = []
+    products = multigenomic_api.products.find_by_gene_id(gene_id)
+    for product in products:
+        if product.type == "small RNA":
+            tooltip = define_tooltip(reg_int_function, f"Compound {object_name}", f"sRNA {product.abbreviated_name}")
+            tf_outdegree_item = BuildDict(product, "sRNA", reg_int_function, tooltip, "Compound-sRNA").to_dict()
+            if tf_outdegree_item not in outdegree_list:
+                outdegree_list.append(tf_outdegree_item.copy())
+        trans_factors.extend(multigenomic_api.transcription_factors.find_tf_id_by_conformation_id(product.id))
+        trans_factors.extend(multigenomic_api.transcription_factors.find_tf_id_by_product_id(product.id))
+        for tf in trans_factors:
+            tooltip = define_tooltip(reg_int_function, f"Compound {object_name}", f"Transcription Factor {tf.abbreviated_name}")
+            tf_outdegree_item = BuildDict(tf, "Transcription Factor", reg_int_function, tooltip, "Compound-TF").to_dict()
+            if tf_outdegree_item not in outdegree_list:
+                outdegree_list.append(tf_outdegree_item)
+    return outdegree_list
 
 
 def define_tooltip(function, regulator, regulated):
@@ -96,9 +116,13 @@ class BuildDict(BiologicalBase):
         self.network_type = network_type
 
     def to_dict(self):
+        if self.item_type == "Gene":
+            name = self.item.name
+        else:
+            name = self.item.abbreviated_name or self.item.name
         item_dict = {
             "_id": self.item.id,
-            "name": self.item.name,
+            "name": name,
             "type": self.item_type,
             "regulatoryEffect": self.reg_int_function[0] or "unknown",
             "citations": self.citations,

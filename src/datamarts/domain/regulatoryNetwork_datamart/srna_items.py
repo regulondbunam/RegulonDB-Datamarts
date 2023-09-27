@@ -46,6 +46,7 @@ class RegulatoryNetworkSRNA:
                     genes_ids.append(ri.regulated_entity.id)
                 genes_ids = list(set(genes_ids))
                 for gene_id in genes_ids:
+                    self._outdegree = outdegree_tf(gene_id, ri.function, node_object.abbreviated_name, self._outdegree)
                     gene_outdegree_item = outdegree_gene(gene_id, ri.function, node_object.name)
                     if gene_outdegree_item not in self._outdegree:
                         self._outdegree.append(gene_outdegree_item.copy())
@@ -61,6 +62,7 @@ class RegulatoryNetworkSRNA:
             reg_ints = multigenomic_api.regulatory_interactions.find_regulatory_interactions_by_reg_entity_id(
                 product.genes_id)
             if len(reg_ints) > 0:
+                self._indegree = indegree_tf(reg_ints, self._indegree, node_object)
                 self._indegree = indegree_gene(reg_ints, self._indegree, node_object)
             trans_units = multigenomic_api.transcription_units.find_by_gene_id(product.genes_id)
             if len(trans_units):
@@ -68,10 +70,12 @@ class RegulatoryNetworkSRNA:
                     reg_ints = multigenomic_api.regulatory_interactions. \
                         find_regulatory_interactions_by_reg_entity_id(tu.id)
                     if len(reg_ints) > 0:
+                        self._indegree = indegree_tf(reg_ints, self._indegree, node_object)
                         self._indegree = indegree_gene(reg_ints, self._indegree, node_object)
                     reg_ints = multigenomic_api.regulatory_interactions. \
                         find_regulatory_interactions_by_reg_entity_id(tu.promoters_id)
                     if len(reg_ints) > 0:
+                        self._indegree = indegree_tf(reg_ints, self._indegree, node_object)
                         self._indegree = indegree_gene(reg_ints, self._indegree, node_object)
 
         def to_dict(self):
@@ -93,25 +97,52 @@ def outdegree_gene(gene_id, reg_int_function, object_name):
     return gene_outdegree_item
 
 
+def outdegree_tf(gene_id, reg_int_function, object_name, outdegree_list):
+    trans_factors = []
+    products = multigenomic_api.products.find_by_gene_id(gene_id)
+    for product in products:
+        if product.type == "small RNA":
+            tooltip = define_tooltip(reg_int_function, f"sRNA {object_name}", f"sRNA {product.abbreviated_name}")
+            tf_outdegree_item = BuildDict(product, "sRNA", reg_int_function, tooltip, "sRNA-sRNA").to_dict()
+            if tf_outdegree_item not in outdegree_list:
+                outdegree_list.append(tf_outdegree_item.copy())
+        trans_factors.extend(multigenomic_api.transcription_factors.find_tf_id_by_conformation_id(product.id))
+        trans_factors.extend(multigenomic_api.transcription_factors.find_tf_id_by_product_id(product.id))
+        for tf in trans_factors:
+            tooltip = define_tooltip(reg_int_function, f"sRNA {object_name}", f"Transcription Factor {tf.abbreviated_name}")
+            tf_outdegree_item = BuildDict(tf, "Transcription Factor", reg_int_function, tooltip, "sRNA-TF").to_dict()
+            if tf_outdegree_item not in outdegree_list:
+                outdegree_list.append(tf_outdegree_item)
+    return outdegree_list
+
+
+def indegree_tf(reg_ints, indegree_list, node_object):
+    for ri in reg_ints:
+        trans_factors = []
+        if ri.regulator:
+            trans_factors.extend(multigenomic_api.transcription_factors.find_tf_id_by_conformation_id(ri.regulator.id))
+            tf = multigenomic_api.transcription_factors.find_by_name(ri.regulator.name)
+            if tf:
+                trans_factors.append(tf)
+            for tf in trans_factors:
+                tooltip = define_tooltip(ri.function, f"Transcription Factor {tf.abbreviated_name}", f"srNA {node_object.abbreviated_name}")
+                gene_indegree_item = BuildDict(tf, "Transcription Factor", ri.function, tooltip, "TF-sRNA").to_dict()
+                if gene_indegree_item not in indegree_list:
+                    indegree_list.append(gene_indegree_item.copy())
+    return indegree_list
+
+
 def indegree_gene(reg_ints, indegree_list, node_object):
     for ri in reg_ints:
         if ri.regulator:
             products = []
             if ri.regulator.type == "product":
                 product = multigenomic_api.products.find_by_id(ri.regulator.id)
-                products.append(product)
-            elif ri.regulator.type == "regulatoryComplex":
-                reg_complex = multigenomic_api.regulatory_complexes.find_by_id(ri.regulator.id)
-                if reg_complex.products:
-                    for product in reg_complex.products:
-                        products.append(multigenomic_api.products.find_by_id(product.products_id))
-            for product in products:
-                gene = multigenomic_api.genes.find_by_id(product.genes_id)
-                tooltip = define_tooltip(ri.function, f"Gene {gene.name}",
-                                         f"sRNA {node_object.name}")
-                gene_indegree_item = BuildDict(gene, "Gene", ri.function, tooltip, "Gene-sRNA").to_dict()
-                if gene_indegree_item not in indegree_list:
-                    indegree_list.append(gene_indegree_item.copy())
+                if product.type == "small RNA":
+                    tooltip = define_tooltip(ri.function, f"sRNA {product.abbreviated_name}", f"sRNA {node_object.abbreviated_name}")
+                    srna_indegree_item = BuildDict(product, "sRNA", ri.function, tooltip, "sRNA-sRNA").to_dict()
+                    if srna_indegree_item not in indegree_list:
+                        indegree_list.append(srna_indegree_item.copy())
     return indegree_list
 
 
@@ -146,9 +177,13 @@ class BuildDict(BiologicalBase):
         self.network_type = network_type
 
     def to_dict(self):
+        if self.item_type == "Gene":
+            name = self.item.name
+        else:
+            name = self.item.abbreviated_name or self.item.name
         item_dict = {
             "_id": self.item.id,
-            "name": self.item.name,
+            "name": name,
             "type": self.item_type,
             "regulatoryEffect": self.reg_int_function[0] or "unknown",
             "citations": self.citations,
