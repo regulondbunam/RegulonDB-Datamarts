@@ -162,7 +162,7 @@ def all_gene_rows():
             "webPage": "http://regulondb.ccg.unam.mx/menu/about_regulondb/contact_us/index.jsp",
             "email": "regulondb@ccg.unam.mx"
         },
-        "version": "",
+        "version": "1.0",
         "creationDate": f"{creation_date.strftime('%m-%d-%Y')}",
         "columnsDetails": "Columns:\n(1) Gene identifier assigned by RegulonDB\n(2) Gene name (bnumber)\n(3) Gene left end position in the genome\n(4) Gene right end position in the genome\n(5) DNA strand where the gene is coded\n(6) Product type\n(7) Product name\n(8) Start codon sequence\n(9) Stop codon sequence\n(10) Gene sequence\n(11) All bnumber related to gene\n(12) Other database's id  related to gene",
         "content": " \n".join(genes_content)

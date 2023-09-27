@@ -114,7 +114,7 @@ def all_tus_rows():
             "webPage": "http://regulondb.ccg.unam.mx/menu/about_regulondb/contact_us/index.jsp",
             "email": "regulondb@ccg.unam.mx"
         },
-        "version": "",
+        "version": "1.0",
         "creationDate": f"{creation_date.strftime('%m-%d-%Y')}",
         "columnsDetails": "Columns:\n(1) tuId. Transcription Unit identifier assigned by RegulonDB\n(2) tuName. Transcription unit name \n(3) operonName. Operon name containing the transcription unit\n(4) tuGenes. Name of the gene(s) contained in the transcription unit\n(5) pmName. Promoter Name\n(6) tuEvidence. Evidence that supports the existence of the transcription unit\n(7) addEvidence. Additive Evidence [CV(EvidenceCode1/EvidenceCodeN)|Confidence Level]\n(8) confidenceLevel. TU confidence level (Values: Confirmed, Strong, Weak)",
         "content": " \n".join(tus_content)

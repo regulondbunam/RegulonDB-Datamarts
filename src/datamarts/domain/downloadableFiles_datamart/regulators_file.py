@@ -418,7 +418,7 @@ def all_regulators_rows():
             "webPage": "http://regulondb.ccg.unam.mx/menu/about_regulondb/contact_us/index.jsp",
             "email": "regulondb@ccg.unam.mx"
         },
-        "version": "",
+        "version": "1.0",
         "creationDate": f"{creation_date.strftime('%m-%d-%Y')}",
         "columnsDetails": "Columns:\n(1) Regulator identifier assigned by RegulonDB\n(2) Regulator Name\n(3) Regulator Synonyms List\n(4) Regulator Synonyms List\n(5) Gene Coding for the Regulator\n(6) Regulator Active Conformations\n(7) Regulator Inactive Conformations\n(8) Regulator Active Conformations  Synonyms List\n(9) Regulator Inactive Conformations  Synonyms List\n(10) Effector Name related to  Regulator Active Conformations\n(11) Effector Name related to  Regulator Inactive Conformations\n(12) Effector Synonyms List related to Regulator Active Conformations Regulator \n(13) Effector Synonyms List related to Regulator Inactive Conformations Regulator\n(14) Regulator Symmetry\n(15) Evidence that supports the Regulator conformation [Evidence code | Evidence type: C = Confirmed, S = Strong, W = Weak | Evidence name ]\n(16) addEvidence. Additive Evidence [CV(EvidenceCode1/EvidenceCodeN)|Confidence Level]\n(17) confidenceLevel. Confidence level (Values: Confirmed, Strong, Weak)\n(18) Regulator conformation reference identifier (PMID)",
         "content": " \n".join(regulators_content)

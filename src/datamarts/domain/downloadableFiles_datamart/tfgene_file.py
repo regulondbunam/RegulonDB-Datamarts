@@ -199,7 +199,7 @@ def get_all_rows():
             "webPage": "http://regulondb.ccg.unam.mx/menu/about_regulondb/contact_us/index.jsp",
             "email": "regulondb@ccg.unam.mx"
         },
-        "version": "",
+        "version": "1.0",
         "creationDate": f"{creation_date.strftime('%m-%d-%Y')}",
         "columnsDetails": "Columns:\n(1) regulatorId. Regulator identifier\n(2) regulatorName. Regulator Name\n(3) regulatorGeneName. Gene(s) coding for the TF\n(4) regulatedId. Gene ID regulated by the Regulator (regulated Gene)\n(5) regulatedName. Gene regulated by the Regulator (regulated Gene)\n(6) function. Regulatory Function of the Regulator on the regulated Gene (+ activator, - repressor, -+ dual, ? unknown)\n(7) confidenceLevel. RI confidence level based on its evidence (Values: Confirmed, Strong, Weak)",
         "content": " \n".join(tfs_content)
