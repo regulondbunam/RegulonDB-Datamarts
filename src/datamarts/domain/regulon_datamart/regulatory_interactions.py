@@ -47,7 +47,8 @@ class RegulatoryInteractions(BiologicalBase):
                 name = reg.abbreviated_name
             else:
                 tf = multigenomic_api.transcription_factors.find_by_name(regulator.name)
-                name = tf.abbreviated_name
+                if tf:
+                    name = tf.abbreviated_name
         elif regulator.type == "product":
             reg = multigenomic_api.products.find_by_id(regulator.id)
             if reg.abbreviated_name:
