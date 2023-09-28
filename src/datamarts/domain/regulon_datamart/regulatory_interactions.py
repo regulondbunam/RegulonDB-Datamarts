@@ -153,6 +153,13 @@ def get_distance_to_first_gene(reg_int, regulated_genes):
                     return reg_sites.absolute_position - first_gene["left_end_position"]
                 else:
                     return first_gene["right_end_position"] - reg_sites.absolute_position
+        else:
+            abs_pos = (reg_sites.right_end_position - reg_sites.left_end_position)/2 + reg_sites.left_end_position
+            if first_gene:
+                if strand == "forward":
+                    return abs_pos - first_gene["left_end_position"]
+                else:
+                    return first_gene["right_end_position"] - abs_pos
     return None
 
 
