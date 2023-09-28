@@ -104,7 +104,7 @@ class SigmaFactor(BiologicalBase):
 class Term(BiologicalBase):
 
     def __init__(self, term):
-        super().__init__([], term.citations, [])
+        super().__init__([], [], [])
         self.term = term
 
     def to_dict(self):
