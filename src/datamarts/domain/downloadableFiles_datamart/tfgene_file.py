@@ -164,14 +164,16 @@ def find_dual_items(list):
         current_item = list[i]
         next_item = list[i + 1]
 
+        current_item_cl = current_item[-1:]
+
         current_item_rep = current_item.replace("+", "-")[:-1]
         next_item_rep = next_item.replace("+", "-")[:-1]
         current_item_act = current_item.replace("-", "+")[:-1]
         next_item_act = next_item.replace("-", "+")[:-1]
 
         if current_item_rep == next_item_rep or current_item_act == next_item_act:
-            new_list.append(current_item_act.replace("+", "-+"))
-            list[i+1] = next_item_act.replace("+", "-+")
+            new_list.append(current_item_act.replace("+", "-+") + current_item_cl)
+            list[i+1] = next_item_act.replace("+", "-+") + current_item_cl
         else:
             new_list.append(current_item)
     return remove_similar_items(new_list)
@@ -189,8 +191,8 @@ def get_all_rows():
     creation_date = datetime.now()
     tfs_doc = {
         "_id": "RDBECOLIDLF00010",
-        "fileName": "NetworkTFGene",
-        "title": "Complete TF-Gene Network Set",
+        "fileName": "NetworkRegulatorGene",
+        "title": "Complete Regulator-Gene Network Set",
         "fileFormat": "rif-version 1",
         "license": "RegulonDB is free for academic/noncommercial use\t\tUser is not entitled to change or erase data sets of the RegulonDB\tdatabase or to eliminate copyright notices from RegulonDB. Furthermore,\tUser is not entitled to expand RegulonDB or to integrate RegulonDB partly\tor as a whole into other databank systems, without prior written consent\tfrom CCG-UNAM.\t\tPlease check the license at http://regulondb.ccg.unam.mx/menu/download/full_version/terms_and_conditions.jsp",
         "citation": "Tierrafría, V. H. et al. (2022). RegulonDB 11.0: Comprehensive high-throughput datasets on transcriptional regulation in Escherichia coli K-12,\tMicrob Genom. 2022 May;8(5). doi: 10.1099/mgen.0.000833. PMID: 35584008. https://doi.org/10.1099/mgen.0.000833",

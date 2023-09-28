@@ -41,15 +41,15 @@ class RegulatoryInteractions:
             tf = multigenomic_api.transcription_factors.find_tf_id_by_conformation_id(ri.regulator.id)
             if len(tf) == 0:
                 if ri.regulator.type == "regulatoryComplex":
-                    reg_complex = multigenomic_api.regulatory_complexes.find_by_id(ri.regulator.id)
-                    tf = multigenomic_api.transcription_factors.find_tf_id_by_conformation_name(reg_complex.abbreviated_name)
-
-            if len(tf) > 0:
+                    tf = multigenomic_api.transcription_factors.find_by_name(ri.regulator.name)
+            if tf:
                 regulator_type = "tf"
             elif ri.regulator.type == "product":
                 regulator_type = "srna"
-            else:
+            elif ri.regulator.type == "regulatoryContinuant":
                 regulator_type = "compound"
+            else:
+                regulator_type = "regulator"
 
             if ri.regulated_entity.type == "gene":
                 self._type = f"{regulator_type}-gene"
@@ -72,7 +72,7 @@ class RegulatoryInteractions:
             if len(tf) == 0:
                 if regulator.type == "regulatoryComplex":
                     reg_complex = multigenomic_api.regulatory_complexes.find_by_id(regulator.id)
-                    tf = multigenomic_api.transcription_factors.find_tf_id_by_conformation_name(reg_complex.abbreviated_name)
+                    tf = multigenomic_api.transcription_factors.find_tf_id_by_conformation_name(reg_complex.name)
             if len(tf) > 0:
                 self._transcription_factor = tf[0]
             else:
