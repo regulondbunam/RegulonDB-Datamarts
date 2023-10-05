@@ -9,6 +9,7 @@ from src.datamarts.domain.downloadableFiles_datamart import gene_sequence_file
 from src.datamarts.domain.downloadableFiles_datamart import regulators_file
 from src.datamarts.domain.downloadableFiles_datamart import tfgene_file
 from src.datamarts.domain.downloadableFiles_datamart import tfgene_file_release4
+from src.datamarts.domain.downloadableFiles_datamart import regulatoryInteractions_tf_file
 
 
 def get_all_downloadable_docs():
@@ -46,5 +47,8 @@ def get_all_downloadable_docs():
     # TF-Gene
     tf_gene_r4 = tfgene_file_release4.get_all_rows()
     downloadable_files_dm.append(tf_gene_r4)
+    # Regulatory Interactions of TFs
+    tf_reg_ints = regulatoryInteractions_tf_file.all_ris_rows()
+    downloadable_files_dm.append(tf_reg_ints)
 
     return downloadable_files_dm

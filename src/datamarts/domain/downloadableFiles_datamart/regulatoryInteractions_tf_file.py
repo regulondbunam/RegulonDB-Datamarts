@@ -271,31 +271,30 @@ class RegulatoryInteractions:
         def to_row(self):
             regulated_genes = get_regulated_genes(self.ri.regulated_entity)
             first_gene = get_first_gene(self.ri, regulated_genes)
-            if self.regulatory_site:
-                return f"{self.ri.id}" \
-                       f"\t{self.type}" \
-                       f"\t{self.transcription_factor['id']}" \
-                       f"\t{self.transcription_factor['abbreviated_name']}" \
-                       f"\t{self.regulator_name}" \
-                       f"\t{self.regulatory_site['id']}" \
-                       f"\t{self.regulatory_site['left_end_position'] or ''}" \
-                       f"\t{self.regulatory_site['right_end_position'] or ''}" \
-                       f"\t{self.strand}" \
-                       f"\t{self.sequence}" \
-                       f"\t{self.ri.function or ''}" \
-                       f"\t{self.promoter['id']}" \
-                       f"\t{self.promoter['name']}" \
-                       f"\t{self.tss}" \
-                       f"\t{self.ri.dist_site_promoter or ''}" \
-                       f"\t{first_gene['name']}" \
-                       f"\t{first_gene['distanceTo']}" \
-                       f"\t{self.target_tu_gene}" \
-                       f"\t{self.ri.confidence_level or '?'}" \
-                       f"\t{self.reg_site_evidences}" \
-                       f"\t{self.ri_evidences}" \
-                       f"\t{self.additive_evidences}" \
-                       f"\t{self.ri_ev_tech}" \
-                       f"\t{self.ri_ev_category}" \
+            return f"{self.ri.id}" \
+                   f"\t{self.type}" \
+                   f"\t{self.transcription_factor['id']}" \
+                   f"\t{self.transcription_factor['abbreviated_name']}" \
+                   f"\t{self.regulator_name}" \
+                   f"\t{self.regulatory_site['id']}" \
+                   f"\t{self.regulatory_site['left_end_position'] or ''}" \
+                   f"\t{self.regulatory_site['right_end_position'] or ''}" \
+                   f"\t{self.strand}" \
+                   f"\t{self.sequence}" \
+                   f"\t{self.ri.function or ''}" \
+                   f"\t{self.promoter['id']}" \
+                   f"\t{self.promoter['name']}" \
+                   f"\t{self.tss}" \
+                   f"\t{self.ri.dist_site_promoter or ''}" \
+                   f"\t{first_gene['name']}" \
+                   f"\t{first_gene['distanceTo']}" \
+                   f"\t{self.target_tu_gene}" \
+                   f"\t{self.ri.confidence_level or '?'}" \
+                   f"\t{self.reg_site_evidences}" \
+                   f"\t{self.ri_evidences}" \
+                   f"\t{self.additive_evidences}" \
+                   f"\t{self.ri_ev_tech}" \
+                   f"\t{self.ri_ev_category}"
 
 
 
@@ -304,12 +303,13 @@ def all_ris_rows():
     ris_content = []
     ris_content.append("1)riId	2)riType	3)regulatorId	4)regulatorName	5)cnfName	6)tfrsID	7)tfrsLeft	8)tfrsRight	9)strand	10)tfrsSeq	11)riFunction	12)promoterID	13)promoterName	14)tss	15)tfrsDistToPm	16)firstGene	17)tfrsDistTo1Gene	18)targetTuOrGene	19)confidenceLevel	20)tfrsEvidence	21)riEvidence	22)addEvidence	23)riEvTech	24)riEvCategory")
     for ri in ris.objects:
-        ris_content.append(ri.to_row())
+        if ri.type == "tf-gene" or ri.type == "tf-promoter" or ri.type == "tf-tu":
+            ris_content.append(ri.to_row())
     creation_date = datetime.now()
     ri_doc = {
-        "_id": "RDBECOLIDLF00001",
-        "fileName": "RISet",
-        "title": "Complete RIs Set",
+        "_id": "RDBECOLIDLF00012",
+        "fileName": "TF-RISet",
+        "title": "Complete TF RIs Set",
         "fileFormat": "rif-version 1",
         "license": "RegulonDB is free for academic/noncommercial use\t\tUser is not entitled to change or erase data sets of the RegulonDB\tdatabase or to eliminate copyright notices from RegulonDB. Furthermore,\tUser is not entitled to expand RegulonDB or to integrate RegulonDB partly\tor as a whole into other databank systems, without prior written consent\tfrom CCG-UNAM.\t\tPlease check the license at http://regulondb.ccg.unam.mx/menu/download/full_version/terms_and_conditions.jsp",
         "citation": "Tierrafría, V. H. et al. (2022). RegulonDB 11.0: Comprehensive high-throughput datasets on transcriptional regulation in Escherichia coli K-12,\tMicrob Genom. 2022 May;8(5). doi: 10.1099/mgen.0.000833. PMID: 35584008. https://doi.org/10.1099/mgen.0.000833",
