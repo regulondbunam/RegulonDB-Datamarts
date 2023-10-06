@@ -396,7 +396,14 @@ def get_first_gene_of_tu(genes, strand):
 def get_regulated_genes(regulated_entity):
     regulated_genes = []
     transcription_units = []
-    if regulated_entity.type == "promoter":
+    if regulated_entity.type == "gene":
+        gene = multigenomic_api.genes.find_by_id(regulated_entity.id)
+        gene_object = {
+            "_id": gene.id,
+            "name": gene.name,
+        }
+        regulated_genes.append(gene_object)
+    elif regulated_entity.type == "promoter":
         transcription_units = multigenomic_api.transcription_units.find_by_promoter_id(regulated_entity.id)
     elif regulated_entity.type == "transcriptionUnit":
         trans_unit = multigenomic_api.transcription_units.find_by_id(regulated_entity.id)
