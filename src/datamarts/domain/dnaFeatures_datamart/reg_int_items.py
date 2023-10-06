@@ -229,7 +229,7 @@ class RegIntDnaFeatures(object):
                 else:
                     tf = multigenomic_api.transcription_factors.find_by_name(self.regulator.name)
                     if tf:
-                        self._name = tf[0].abbreviated_name
+                        self._name = tf.abbreviated_name
 
         @property
         def strand(self):
