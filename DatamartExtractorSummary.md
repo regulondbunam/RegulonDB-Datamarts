@@ -26,4 +26,4 @@ RegulonDB Version: 12.0
  ### gensorUnitDatamart: 
  238 Total Objects Generated
  ### downloadableFilesDatamart: 
- 12 Total Objects Generated
+ 13 Total Objects Generated

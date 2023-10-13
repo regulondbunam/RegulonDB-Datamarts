@@ -10,6 +10,7 @@ from src.datamarts.domain.downloadableFiles_datamart import regulators_file
 from src.datamarts.domain.downloadableFiles_datamart import tfgene_file
 from src.datamarts.domain.downloadableFiles_datamart import tfgene_file_release4
 from src.datamarts.domain.downloadableFiles_datamart import regulatoryInteractions_tf_file
+from src.datamarts.domain.downloadableFiles_datamart import object_evidences_file
 
 
 def get_all_downloadable_docs():
@@ -50,5 +51,8 @@ def get_all_downloadable_docs():
     # Regulatory Interactions of TFs
     tf_reg_ints = regulatoryInteractions_tf_file.all_ris_rows()
     downloadable_files_dm.append(tf_reg_ints)
+    # Object Evidences
+    obj_evs = object_evidences_file.all_evidences_rows()
+    downloadable_files_dm.append(obj_evs)
 
     return downloadable_files_dm
