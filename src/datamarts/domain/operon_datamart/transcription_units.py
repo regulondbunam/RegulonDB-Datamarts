@@ -107,7 +107,7 @@ class TranscriptionUnit(BiologicalBase):
         for ri in reg_int:
             if ri.regulator:
                 trans_factor = multigenomic_api.transcription_factors.find_tf_id_by_conformation_id(ri.regulator.id)
-                self._transcription_factors.extend(trans_factor)
+                self._transcription_factors.append(trans_factor)
                 trans_factor = multigenomic_api.transcription_factors.find_by_name(ri.regulator.name)
                 self._transcription_factors.append(trans_factor)
         self._transcription_factors = set(list(self._transcription_factors))

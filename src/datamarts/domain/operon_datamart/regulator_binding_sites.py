@@ -81,14 +81,14 @@ def get_abbr_regulator_name(regulator):
             reg_name = reg.abbreviated_name
 
     tf = multigenomic_api.transcription_factors.find_tf_id_by_conformation_id(regulator.id)
-    if len(tf) == 0:
+    if tf is None:
         tf = multigenomic_api.transcription_factors.find_by_name(regulator.name)
         if tf:
             reg_id = tf.id
             reg_name = tf.abbreviated_name
     else:
-        reg_id = tf[0].id
-        reg_name = tf[0].abbreviated_name
+        reg_id = tf.id
+        reg_name = tf.abbreviated_name
     return {
         "id": reg_id,
         "name": reg_name
