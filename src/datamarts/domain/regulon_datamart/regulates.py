@@ -56,6 +56,7 @@ class Regulates(BiologicalBase):
     @transcription_factors.setter
     def transcription_factors(self, trans_units):
         self._transcription_factors = []
+        trans_factors = []
         for tu_object in trans_units:
             transcription_units = tu_object["transcription_units"]
             if transcription_units:
@@ -63,9 +64,10 @@ class Regulates(BiologicalBase):
                     for gene_id in tu.genes_ids:
                         products = multigenomic_api.products.find_by_gene_id(gene_id)
                         for product in products:
-                            trans_factors = multigenomic_api.transcription_factors.\
-                                find_tf_id_by_conformation_id(product.id)
-                            for tf in trans_factors:
+                            tf = multigenomic_api.transcription_factors.find_tf_id_by_conformation_id(product.id)
+                            if tf is None:
+                                trans_factors.append(multigenomic_api.transcription_factors.find_by_name(product.name))
+                            if tf:
                                 genes = []
                                 for product_id in tf.products_ids:
                                     prod = multigenomic_api.products.find_by_id(product_id)

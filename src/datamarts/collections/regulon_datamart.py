@@ -87,26 +87,25 @@ class RegulonDatamarts:
         def regulatory_interactions(self, regulator):
             self._regulatory_interactions = []
             reg_complex = None
+            product = None
             if regulator.regulator_type == "transcriptionFactor":
                 try:
                     reg_complex = multigenomic_api.regulatory_complexes.find_by_name(regulator.name)
                 except DoesNotExist:
                     pass
                 if reg_complex is not None:
-                    regulatory_interactions = multigenomic_api.regulatory_interactions.find_by_regulator_id(
-                        reg_complex.id)
-                    self._regulatory_interactions = get_ri_objects(regulatory_interactions,
-                                                                   self._regulatory_interactions)
+                    regulatory_interactions = multigenomic_api.regulatory_interactions.find_by_regulator_id(reg_complex.id)
+                    self._regulatory_interactions = get_ri_objects(regulatory_interactions, self._regulatory_interactions)
+                try:
+                    product = multigenomic_api.products.find_by_name(regulator.name)
+                except DoesNotExist:
+                    pass
+                if product is not None:
+                    regulatory_interactions = multigenomic_api.regulatory_interactions.find_by_regulator_id(product.id)
+                    self._regulatory_interactions = get_ri_objects(regulatory_interactions, self._regulatory_interactions)
                 for active_conformation in regulator.active_conformations:
-                    regulatory_interactions = multigenomic_api.regulatory_interactions.find_by_regulator_id(
-                        active_conformation.id)
-                    self._regulatory_interactions = get_ri_objects(regulatory_interactions,
-                                                                   self._regulatory_interactions)
-                for product_id in regulator.products_ids:
-                    regulatory_interactions = multigenomic_api.regulatory_interactions.find_by_regulator_id(
-                        product_id)
-                    self._regulatory_interactions = get_ri_objects(regulatory_interactions,
-                                                                   self._regulatory_interactions)
+                    regulatory_interactions = multigenomic_api.regulatory_interactions.find_by_regulator_id(active_conformation.id)
+                    self._regulatory_interactions = get_ri_objects(regulatory_interactions, self._regulatory_interactions)
             regulatory_interactions = multigenomic_api.regulatory_interactions.find_by_regulator_id(regulator.id)
             self._regulatory_interactions = get_ri_objects(regulatory_interactions, self._regulatory_interactions)
 
