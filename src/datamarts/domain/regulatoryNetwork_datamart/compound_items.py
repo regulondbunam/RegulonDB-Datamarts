@@ -77,9 +77,10 @@ def outdegree_tf(gene_id, reg_int_function, object_name, outdegree_list):
             tf_outdegree_item = BuildDict(product, "sRNA", reg_int_function, tooltip, "Compound-sRNA").to_dict()
             if tf_outdegree_item not in outdegree_list:
                 outdegree_list.append(tf_outdegree_item.copy())
-        trans_factors.extend(multigenomic_api.transcription_factors.find_tf_id_by_conformation_id(product.id))
-        trans_factors.extend(multigenomic_api.transcription_factors.find_tf_id_by_product_id(product.id))
-        for tf in trans_factors:
+        tf = multigenomic_api.transcription_factors.find_tf_id_by_conformation_id(product.id)
+        if tf is None:
+            tf = multigenomic_api.transcription_factors.find_by_name(product.name)
+        if tf:
             tooltip = define_tooltip(reg_int_function, f"Compound {object_name}", f"Transcription Factor {tf.abbreviated_name}")
             tf_outdegree_item = BuildDict(tf, "Transcription Factor", reg_int_function, tooltip, "Compound-TF").to_dict()
             if tf_outdegree_item not in outdegree_list:

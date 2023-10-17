@@ -224,8 +224,10 @@ class RegIntDnaFeatures(object):
                 if self.regulator.abbreviated_name:
                     self._name = self.regulator.abbreviated_name
                 tf = multigenomic_api.transcription_factors.find_tf_id_by_conformation_id(self.regulator.id)
-                if len(tf) > 0:
-                    self._name = tf[0].abbreviated_name
+                if tf is None:
+                    tf = multigenomic_api.transcription_factors.find_by_name(self.regulator.name)
+                if tf:
+                    self._name = tf.abbreviated_name
                 else:
                     tf = multigenomic_api.transcription_factors.find_by_name(self.regulator.name)
                     if tf:
