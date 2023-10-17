@@ -24,6 +24,7 @@ class RegulatoryInteractions:
             self.sequence = self.regulatory_site
             self.promoter = ri.regulated_entity
             self.tss = self.promoter
+            self.sigma = self.promoter
             self.target_tu_gene = ri.regulated_entity
             self.ri_evidences = ri.citations
             self.reg_site_evidences = self.regulatory_site
@@ -183,6 +184,20 @@ class RegulatoryInteractions:
                 pass
 
         @property
+        def sigma(self):
+            return self._sigma
+
+        @sigma.setter
+        def sigma(self, promoter):
+            self._sigma = ""
+            try:
+                if promoter.binds_sigma_factor.sigma_factors_id:
+                    sigma = multigenomic_api.sigma_factors.find_by_id(promoter.binds_sigma_factor.sigma_factors_id)
+                    self._sigma = sigma.abbreviated_name
+            except AttributeError:
+                pass
+
+        @property
         def target_tu_gene(self):
             return self._target_tu_gene
 
@@ -288,6 +303,7 @@ class RegulatoryInteractions:
                        f"\t{self.promoter['id']}" \
                        f"\t{self.promoter['name']}" \
                        f"\t{self.tss}" \
+                       f"\t{self.sigma}" \
                        f"\t{self.ri.dist_site_promoter or ''}" \
                        f"\t{first_gene['name']}" \
                        f"\t{first_gene['distanceTo']}" \
@@ -304,7 +320,7 @@ class RegulatoryInteractions:
 def all_ris_rows():
     ris = RegulatoryInteractions()
     ris_content = []
-    ris_content.append("1)riId	2)riType	3)regulatorId	4)regulatorName	5)cnfName	6)tfrsID	7)tfrsLeft	8)tfrsRight	9)strand	10)tfrsSeq	11)riFunction	12)promoterID	13)promoterName	14)tss	15)tfrsDistToPm	16)firstGene	17)tfrsDistTo1Gene	18)targetTuOrGene	19)confidenceLevel	20)tfrsEvidence	21)riEvidence	22)addEvidence	23)riEvTech	24)riEvCategory")
+    ris_content.append("1)riId\t2)riType\t3)regulatorId\t4)regulatorName\t5)cnfName\t6)tfrsID\t7)tfrsLeft\t8)tfrsRight\t9)strand\t10)tfrsSeq\t11)riFunction\t12)promoterID\t13)promoterName\t14)tss\t15)sigmaF\t16)tfrsDistToPm\t17)firstGene\t18)tfrsDistTo1Gene\t19)targetTuOrGene\t20)confidenceLevel\t21)tfrsEvidence\t22)riEvidence\t23)addEvidence\t24)riEvTech\t25)riEvCategory")
     for ri in ris.objects:
         ris_content.append(ri.to_row())
     creation_date = datetime.now()
@@ -322,7 +338,7 @@ def all_ris_rows():
         },
         "version": "1.0",
         "creationDate": f"{creation_date.strftime('%m-%d-%Y')}",
-        "columnsDetails": "# Columns:\t# (1) riId. Regulatory interaction (RI) identifier assigned by RegulonDB\t# (2) riType. Regulatory interaction type [tf-promoter, tf-tu, tf-gene,srna-promoter, srna-tu, srna-gene, compound-promoter, compound-tu, compound-gene]\t# (3) tfId. Transcription Factor (TF) identifier assigned by RegulonDB\t# (4) regulatorName. Regulator name\t# (5) cnfName. regulator active conformation name\t# (6) tfrsId. regulator regulatory site (TFRS) identifier assigned by RegulonDB\t# (7) tfrsLeft. TFRS left end position in the genome\t# (8) tfrsRight. TFRS right end position in the genome\t# (9) strand. DNA strand where the TFRS is located\t# (10) tfrsSeq. TFRS sequence (upper case)\t# (11) riFunction. Gene expression effect caused by the TF bound to the TFRS\t# (12) promoterId. Promoter Identifier assigned by RegulonDB\t# (13) promoterName. Promoter name\t# (14) tss. Transcription start site (+1) position in the genome\t# (15) tfrsDistToPm. Relative distance from the center position of TFRS to the Transcription Start Site\t# (16) firstGene. first transcribed gene name\t# (17) tfrsDistTo1Gene. Relative distance from center position of TFRS to the start of first gene\t# (18) targetTuOrGene. Transcription unit or gene (id:name) regulated by the TF\t# (19) confidenceLevel. RI confidence level (Values: Confirmed, Strong, Weak)\t# (20) tfrsEvidence. Evidence that supports the existence of the TFRS [EvidenceCode|EvidenceType(C:confirmed S:strong W:weak)]]\t# (21) riEvidence. Evidence that supports the RI function [EvidenceCode|EvidenceType(C:confirmed S:strong W:weak)]\t# (22) addEvidence. Additive Evidence [CV(EvidenceCode1/EvidenceCodeN)|Confidence Level]\t# (23) riEvTech. Evidence related to the type of technology used to determine the RI\t# (24) riEvCategory. Evidence  were categorized in classical, ht or non-experimental",
+        "columnsDetails": "# Columns:\n# (1) riId. Regulatory interaction (RI) identifier assigned by RegulonDB\n# (2) riType. Regulatory interaction type [tf-promoter, tf-tu, tf-gene,srna-promoter, srna-tu, srna-gene, compound-promoter, compound-tu, compound-gene]\n# (3) tfId. Transcription Factor (TF) identifier assigned by RegulonDB\n# (4) regulatorName. Regulator name\n# (5) cnfName. regulator active conformation name\n# (6) tfrsId. regulator regulatory site (TFRS) identifier assigned by RegulonDB\n# (7) tfrsLeft. TFRS left end position in the genome\n# (8) tfrsRight. TFRS right end position in the genome\n# (9) strand. DNA strand where the TFRS is located\n# (10) tfrsSeq. TFRS sequence (upper case)\n# (11) riFunction. Gene expression effect caused by the TF bound to the TFRS\n# (12) promoterId. Promoter Identifier assigned by RegulonDB\n# (13) promoterName. Promoter name\n# (14) tss. Transcription start site (+1) position in the genome\n# (15) sigmaF. Sigma Factor that recognize the promotertfrs\n# (16)DistToPm. Relative distance from the center position of TFRS to the Transcription Start Site\n# (17) firstGene. first transcribed gene name\n# (18) tfrsDistTo1Gene. Relative distance from center position of TFRS to the start of first gene\n# (19) targetTuOrGene. Transcription unit or gene (id:name) regulated by the TF\n# (20) confidenceLevel. RI confidence level (Values: Confirmed, Strong, Weak)\n# (21) tfrsEvidence. Evidence that supports the existence of the TFRS [EvidenceCode|EvidenceType(C:confirmed S:strong W:weak)]]\n# (22) riEvidence. Evidence that supports the RI function [EvidenceCode|EvidenceType(C:confirmed S:strong W:weak)]\n# (23) addEvidence. Additive Evidence [CV(EvidenceCode1/EvidenceCodeN)|Confidence Level]\n# (24) riEvTech. Evidence related to the type of technology used to determine the RI\n# (25) riEvCategory. Evidence  were categorized in classical, ht or non-experimental",
         "content": " \n".join(ris_content),
         "rdbVersion": "12.0"
     }
@@ -334,22 +350,22 @@ def get_first_gene(reg_int, regulated_genes):
     distance_to_first_gene = ""
     first_gene = None
     if len(regulated_genes) > 0:
+        if reg_int.regulated_entity.type == "gene":
+            first_gene = multigenomic_api.genes.find_by_id(reg_int.regulated_entity.id)
+            if first_gene.strand:
+                strand = first_gene.strand
+        else:
+            if reg_int.regulated_entity.type == "promoter":
+                promoter = multigenomic_api.promoters.find_by_id(reg_int.regulated_entity.id)
+                strand = promoter.strand
+                first_gene = get_first_gene_of_tu(regulated_genes, strand)
+            elif reg_int.regulated_entity.type == "transcriptionUnit":
+                trans_unit = multigenomic_api.transcription_units.find_by_id(reg_int.regulated_entity.id)
+                operon = multigenomic_api.operons.find_by_id(trans_unit.operons_id)
+                strand = operon.strand
+                first_gene = get_first_gene_of_tu(regulated_genes, strand)
         if reg_int.regulatory_sites_id:
             reg_sites = multigenomic_api.regulatory_sites.find_by_id(reg_int.regulatory_sites_id)
-            if reg_int.regulated_entity.type == "gene":
-                first_gene = multigenomic_api.genes.find_by_id(reg_int.regulated_entity.id)
-                if first_gene.strand:
-                    strand = first_gene.strand
-            else:
-                if reg_int.regulated_entity.type == "promoter":
-                    promoter = multigenomic_api.promoters.find_by_id(reg_int.regulated_entity.id)
-                    strand = promoter.strand
-                    first_gene = get_first_gene_of_tu(regulated_genes, strand)
-                elif reg_int.regulated_entity.type == "transcriptionUnit":
-                    trans_unit = multigenomic_api.transcription_units.find_by_id(reg_int.regulated_entity.id)
-                    operon = multigenomic_api.operons.find_by_id(trans_unit.operons_id)
-                    strand = operon.strand
-                    first_gene = get_first_gene_of_tu(regulated_genes, strand)
             if reg_sites.absolute_position:
                 if strand == "forward":
                     distance_to_first_gene = reg_sites.absolute_position - first_gene["left_end_position"]
@@ -366,6 +382,10 @@ def get_first_gene(reg_int, regulated_genes):
                 "name": first_gene["name"],
                 "distanceTo": distance_to_first_gene
             }
+        return {
+            "name": first_gene["name"],
+            "distanceTo": ""
+        }
     return {
         "name": "",
         "distanceTo": ""
