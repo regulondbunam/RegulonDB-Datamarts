@@ -37,4 +37,13 @@ lib/data/*
 lib/jsonschemas/*
 __pycache__/
 
+### Django ###
+*.log
+*.pot
+*.pyc
+*/*/*/*/__pycache__/regulator_binding_sites.cpython-39.pyc
+*/*/*/__pycache__/
+*/*/__pycache__/
+*/__pycache__/
+
 # End of https://www.gitignore.io/api/macos
