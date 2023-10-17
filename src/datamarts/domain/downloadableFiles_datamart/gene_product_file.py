@@ -173,6 +173,7 @@ def all_gene_rows():
         "version": "1.0",
         "creationDate": f"{creation_date.strftime('%m-%d-%Y')}",
         "columnsDetails": "Columns:\n(1) Gene identifier assigned by RegulonDB\n(2) Gene name\n(3) Blattner number (bnumber) of the gene\n(4) Gene left end position in the genome\n(5) Gene right end position in the genome\n(6) DNA strand where the gene is coded\n(7) Product name of the gene\n(8) Evidence that supports the existence of the gene\n(9) PMIDs list\n(10) Evidence confidence level (Confirmed, Strong, Weak)\n(11) All bnumber related to gene\n(12) Other database's id  related to gene",
-        "content": " \n".join(genes_content)
+        "content": " \n".join(genes_content),
+        "rdbVersion": "12.0"
     }
     return genes_doc
