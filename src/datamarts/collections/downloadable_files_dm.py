@@ -11,6 +11,7 @@ from src.datamarts.domain.downloadableFiles_datamart import tfgene_file
 from src.datamarts.domain.downloadableFiles_datamart import tfgene_file_release4
 from src.datamarts.domain.downloadableFiles_datamart import regulatoryInteractions_tf_file
 from src.datamarts.domain.downloadableFiles_datamart import object_evidences_file
+from src.datamarts.domain.downloadableFiles_datamart import additiveEvidences_file
 
 
 def get_all_downloadable_docs():
@@ -67,5 +68,9 @@ def get_all_downloadable_docs():
     print("Evidences")
     obj_evs = object_evidences_file.all_evidences_rows()
     downloadable_files_dm.append(obj_evs)
+    # Additive Evidences
+    print("Additive Evidences")
+    add_evs = additiveEvidences_file.all_evidences_rows()
+    downloadable_files_dm.append(add_evs)
 
     return downloadable_files_dm
