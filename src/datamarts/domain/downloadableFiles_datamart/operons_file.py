@@ -9,7 +9,7 @@ class Operon:
     def objects(self):
         operon_objects = multigenomic_api.operons.get_all()
         for operon_object in operon_objects:
-            print(operon_object.id)
+            # print(operon_object.id)
             ri_row = Operon.OperonDatamart(operon_object)
             yield ri_row
         del operon_objects
@@ -184,7 +184,7 @@ def all_operons_rows():
         operons_content.append(operon.to_row())
     creation_date = datetime.now()
     operons_doc = {
-        "_id": "RDBECOLIDLF00004",
+        "_id": "RDBECOLIDLF00009",
         "fileName": "OperonSet",
         "title": "Complete Operons Set",
         "fileFormat": "rif-version 1",

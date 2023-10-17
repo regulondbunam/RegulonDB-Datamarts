@@ -8,7 +8,7 @@ class RegulatoryInteractions:
     def objects(self):
         ri_objects = multigenomic_api.regulatory_interactions.get_all()
         for ri_object in ri_objects:
-            print(ri_object.id)
+            # print(ri_object.id)
             ri_row = RegulatoryInteractions.RIDatamart(ri_object)
             yield ri_row
         del ri_objects
@@ -39,9 +39,8 @@ class RegulatoryInteractions:
         def type(self, ri):
             self._type = ""
             tf = multigenomic_api.transcription_factors.find_tf_id_by_conformation_id(ri.regulator.id)
-            if len(tf) == 0:
-                if ri.regulator.type == "regulatoryComplex":
-                    tf = multigenomic_api.transcription_factors.find_by_name(ri.regulator.name)
+            if tf is None:
+                tf = multigenomic_api.transcription_factors.find_by_name(ri.regulator.name)
             if tf:
                 regulator_type = "tf"
             elif ri.regulator.type == "product":
@@ -69,21 +68,24 @@ class RegulatoryInteractions:
                 "abbreviated_name": ""
             }
             tf = multigenomic_api.transcription_factors.find_tf_id_by_conformation_id(regulator.id)
-            if len(tf) == 0:
-                if regulator.type == "regulatoryComplex":
-                    reg_complex = multigenomic_api.regulatory_complexes.find_by_id(regulator.id)
-                    tf = multigenomic_api.transcription_factors.find_tf_id_by_conformation_name(reg_complex.name)
-            if len(tf) > 0:
-                self._transcription_factor = tf[0]
-            else:
-                if regulator.type == "product":
-                    product = multigenomic_api.products.find_by_id(regulator.id)
-                    abb_name = product.abbreviated_name
+            if tf is None:
+                tf = multigenomic_api.transcription_factors.find_by_name(regulator.name)
+                if tf is not None:
+                    self._transcription_factor = tf
                 else:
-                    abb_name = regulator.name
+                    if regulator.type == "product":
+                        product = multigenomic_api.products.find_by_id(regulator.id)
+                        abb_name = product.abbreviated_name
+                    else:
+                        abb_name = regulator.name
+                    self._transcription_factor = {
+                        "id": regulator.id,
+                        "abbreviated_name": abb_name
+                    }
+            else:
                 self._transcription_factor = {
-                    "id": regulator.id,
-                    "abbreviated_name": abb_name
+                    "id": tf.id,
+                    "abbreviated_name": tf.abbreviated_name or tf.name
                 }
 
         @property

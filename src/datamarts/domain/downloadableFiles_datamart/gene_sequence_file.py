@@ -9,7 +9,7 @@ class GeneSequence:
     def objects(self):
         gene_objects = multigenomic_api.genes.get_all()
         for gene_object in gene_objects:
-            print(gene_object.id)
+            # print(gene_object.id)
             ri_row = GeneSequence.GeneSequenceDatamart(gene_object)
             yield ri_row
         del gene_objects

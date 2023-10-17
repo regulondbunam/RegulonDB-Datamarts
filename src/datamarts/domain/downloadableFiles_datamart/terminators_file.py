@@ -8,7 +8,7 @@ class Terminator:
     def objects(self):
         terminator_objects = multigenomic_api.terminators.get_all()
         for terminator_obj in terminator_objects:
-            print(terminator_obj.id)
+            # print(terminator_obj.id)
             ri_row = Terminator.TerminatorDatamart(terminator_obj)
             yield ri_row
         del terminator_objects
@@ -115,7 +115,7 @@ def all_terminators_rows():
         terminators_content.append(terminator.to_row())
     creation_date = datetime.now()
     terminators_doc = {
-        "_id": "RDBECOLIDLF00007",
+        "_id": "RDBECOLIDLF00012",
         "fileName": "TerminatorSet",
         "title": "Complete Terminators Set",
         "fileFormat": "rif-version 1",

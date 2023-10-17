@@ -8,7 +8,7 @@ class TranscriptionUnit:
     def objects(self):
         tu_objects = multigenomic_api.transcription_units.get_all()
         for tu_object in tu_objects:
-            print(tu_object.id)
+            # print(tu_object.id)
             ri_row = TranscriptionUnit.TUDatamart(tu_object)
             yield ri_row
         del tu_objects
@@ -103,7 +103,7 @@ def all_tus_rows():
         tus_content.append(tu.to_row())
     creation_date = datetime.now()
     tus_doc = {
-        "_id": "RDBECOLIDLF00003",
+        "_id": "RDBECOLIDLF00010",
         "fileName": "TUSet",
         "title": "Complete Transcription Unit Set",
         "fileFormat": "rif-version 1",

@@ -10,7 +10,7 @@ class TranscriptionFactor:
     def objects(self):
         tf_objects = multigenomic_api.transcription_factors.get_all()
         for tf_object in tf_objects:
-            print(tf_object.id)
+            # print(tf_object.id)
             ri_row = TranscriptionFactor.TFDatamart(tf_object)
             yield ri_row
         del tf_objects
@@ -348,7 +348,7 @@ def all_tfs_rows():
         tfs_content.append(tf.to_row())
     creation_date = datetime.now()
     tfs_doc = {
-        "_id": "RDBECOLIDLF00005",
+        "_id": "RDBECOLIDLF00004",
         "fileName": "TFSet",
         "title": "Complete Transcription Factor Set",
         "fileFormat": "rif-version 1",

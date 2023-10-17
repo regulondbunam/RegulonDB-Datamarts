@@ -8,7 +8,7 @@ class Promoters:
     def objects(self):
         promoter_objects = multigenomic_api.promoters.get_all()
         for promoter_object in promoter_objects:
-            print(promoter_object.id)
+            # print(promoter_object.id)
             ri_row = Promoters.PromoterDatamart(promoter_object)
             yield ri_row
         del promoter_objects
@@ -141,7 +141,7 @@ def all_promoters_rows():
         promoters_content.append(promoter.to_row())
     creation_date = datetime.now()
     promoters_doc = {
-        "_id": "RDBECOLIDLF00002",
+        "_id": "RDBECOLIDLF00011",
         "fileName": "PromoterSet",
         "title": "Complete Promoters Set",
         "fileFormat": "rif-version 1",

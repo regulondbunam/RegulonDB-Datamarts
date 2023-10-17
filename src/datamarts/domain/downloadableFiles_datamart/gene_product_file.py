@@ -9,7 +9,7 @@ class GeneProduct:
     def objects(self):
         gene_objects = multigenomic_api.genes.get_all()
         for gene_object in gene_objects:
-            print(gene_object.id)
+            # print(gene_object.id)
             ri_row = GeneProduct.GeneProductDatamart(gene_object)
             yield ri_row
         del gene_objects
@@ -159,7 +159,7 @@ def all_gene_rows():
         genes_content.append(gene.to_row())
     creation_date = datetime.now()
     genes_doc = {
-        "_id": "RDBECOLIDLF00006",
+        "_id": "RDBECOLIDLF00007",
         "fileName": "GeneProductSet",
         "title": "Complete Gene Product Set",
         "fileFormat": "rif-version 1",

@@ -8,7 +8,7 @@ class ObjectEvidences:
     def objects(self):
         evidences_objects = multigenomic_api.evidences.get_all()
         for ev_obj in evidences_objects:
-            print(ev_obj.id)
+            # print(ev_obj.id)
             ev_row = ObjectEvidences.ObjectEvidenceFile(ev_obj)
             yield ev_row
         del evidences_objects

@@ -11,12 +11,12 @@ class Regulators:
         regulator_objects = get_all_regulators(multigenomic_api.regulatory_interactions.get_all())
         tf_objects = multigenomic_api.transcription_factors.get_all()
         for tf_obj in tf_objects:
-            print(tf_obj.id)
+            # print(tf_obj.id)
             tf_obj["regulator_type"] = "transcriptionFactor"
             regulon_datamart = Regulators.RegulatorDatamart(tf_obj)
             yield regulon_datamart
         for reg_obj in regulator_objects:
-            print(reg_obj.id)
+            # print(reg_obj.id)
             regulator = reg_obj
             if reg_obj.type == "srna":
                 regulator = multigenomic_api.products.find_by_id(reg_obj.id)
@@ -407,7 +407,7 @@ def all_regulators_rows():
         regulators_content.append(regulator.to_row())
     creation_date = datetime.now()
     regulators_doc = {
-        "_id": "RDBECOLIDLF00009",
+        "_id": "RDBECOLIDLF00003",
         "fileName": "RegulatorSet",
         "title": "Complete Regulators Set",
         "fileFormat": "rif-version 1",

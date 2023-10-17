@@ -8,7 +8,7 @@ class TFGene:
     def objects(self):
         ri_objects = multigenomic_api.regulatory_interactions.get_all()
         for ri_object in ri_objects:
-            print(ri_object.id)
+            # print(ri_object.id)
             ri_row = TFGene.TFGeneDatamart(ri_object)
             yield ri_row
         del ri_objects
@@ -28,16 +28,15 @@ class TFGene:
         @trans_factor.setter
         def trans_factor(self, regulator):
             tf = multigenomic_api.transcription_factors.find_tf_id_by_conformation_id(regulator.id)
-            if len(tf) == 0:
+            if tf is None:
                 if regulator.type == "regulatoryComplex":
                     reg_complex = multigenomic_api.regulatory_complexes.find_by_id(regulator.id)
-                    tf = multigenomic_api.transcription_factors.find_tf_id_by_conformation_name(
-                        reg_complex.name)
-            if len(tf) > 0:
+                    tf = multigenomic_api.transcription_factors.find_by_name(reg_complex.name)
+            if tf:
                 self._trans_factor = {
-                    "id": tf[0].id,
-                    "name": tf[0].abbreviated_name,
-                    "products_ids": tf[0].products_ids
+                    "id": tf.id,
+                    "name": tf.abbreviated_name,
+                    "products_ids": tf.products_ids
                 }
             else:
                 products_ids = []
@@ -190,7 +189,7 @@ def get_all_rows():
     tfs_content = find_dual_items(find_existent_items_without_function(tfs_content))
     creation_date = datetime.now()
     tfs_doc = {
-        "_id": "RDBECOLIDLF00010",
+        "_id": "RDBECOLIDLF00005",
         "fileName": "NetworkRegulatorGene",
         "title": "Complete Regulator-Gene Network Set",
         "fileFormat": "rif-version 1",
