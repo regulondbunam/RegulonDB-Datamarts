@@ -29,8 +29,8 @@ class RegulatoryInteractions:
             self.ri_evidences = ri.citations
             self.reg_site_evidences = self.regulatory_site
             self.additive_evidences = ri.additive_evidences_ids
-            self.ri_ev_tech = ri.citations
-            self.ri_ev_category = ri.citations
+            self.ri_ev_tech = ri
+            self.ri_ev_category = ri
 
         @property
         def type(self):
@@ -225,7 +225,7 @@ class RegulatoryInteractions:
                     if citation.evidences_id:
                         if citation.evidences_id:
                             citation_dict = multigenomic_api.evidences.find_by_id(citation.evidences_id)
-                            citation_item = f"[{citation_dict.code}:{citation_dict.type}]"
+                            citation_item = f"[{citation_dict.code}:{citation_dict.type or '?'}]"
                             if citation_item not in self._reg_site_evidences:
                                 self._reg_site_evidences.append(citation_item)
             self._reg_site_evidences = "".join(self._reg_site_evidences)
@@ -240,7 +240,7 @@ class RegulatoryInteractions:
             for citation in citations:
                 if citation.evidences_id:
                     citation_dict = multigenomic_api.evidences.find_by_id(citation.evidences_id)
-                    citation_item = f"[{citation_dict.code}:{citation_dict.type}]"
+                    citation_item = f"[{citation_dict.code}:{citation_dict.type or '?'}]"
                     if citation_item not in self._ri_evidences:
                         self._ri_evidences.append(citation_item)
             self._ri_evidences = "".join(self._ri_evidences)
@@ -261,22 +261,35 @@ class RegulatoryInteractions:
             return self._ri_ev_tech
 
         @ri_ev_tech.setter
-        def ri_ev_tech(self, citations):
+        def ri_ev_tech(self, ri):
             self._ri_ev_tech = ""
+            citations = []
+            ev_tech = []
+            citations.extend(ri.citations)
+            if ri.regulatory_sites_id:
+                site = multigenomic_api.regulatory_sites.find_by_id(ri.regulatory_sites_id)
+                citations.extend(site.citations)
             for citation in citations:
                 if citation.evidences_id:
                     citation_dict = multigenomic_api.evidences.find_by_id(citation.evidences_id)
-                    self._ri_ev_tech += f"{citation_dict.approach}|"
-            self._ri_ev_tech = self._ri_ev_tech[:-1]
+                    if citation_dict.approach:
+                        if citation_dict.approach not in ev_tech:
+                            ev_tech.append(citation_dict.approach)
+            self._ri_ev_tech = "|".join(ev_tech)
 
         @property
         def ri_ev_category(self):
             return self._ri_ev_category
 
         @ri_ev_category.setter
-        def ri_ev_category(self, citations):
+        def ri_ev_category(self, ri):
             self._ri_ev_category = ""
             ev_categories = []
+            citations = []
+            citations.extend(ri.citations)
+            if ri.regulatory_sites_id:
+                site = multigenomic_api.regulatory_sites.find_by_id(ri.regulatory_sites_id)
+                citations.extend(site.citations)
             for citation in citations:
                 if citation.evidences_id:
                     citation_dict = multigenomic_api.evidences.find_by_id(citation.evidences_id)
@@ -338,7 +351,7 @@ def all_ris_rows():
         },
         "version": "1.0",
         "creationDate": f"{creation_date.strftime('%m-%d-%Y')}",
-        "columnsDetails": "# Columns:\n# (1) riId. Regulatory interaction (RI) identifier assigned by RegulonDB\n# (2) riType. Regulatory interaction type [tf-promoter, tf-tu, tf-gene,srna-promoter, srna-tu, srna-gene, compound-promoter, compound-tu, compound-gene]\n# (3) tfId. Transcription Factor (TF) identifier assigned by RegulonDB\n# (4) regulatorName. Regulator name\n# (5) cnfName. regulator active conformation name\n# (6) tfrsId. regulator regulatory site (TFRS) identifier assigned by RegulonDB\n# (7) tfrsLeft. TFRS left end position in the genome\n# (8) tfrsRight. TFRS right end position in the genome\n# (9) strand. DNA strand where the TFRS is located\n# (10) tfrsSeq. TFRS sequence (upper case)\n# (11) riFunction. Gene expression effect caused by the TF bound to the TFRS\n# (12) promoterId. Promoter Identifier assigned by RegulonDB\n# (13) promoterName. Promoter name\n# (14) tss. Transcription start site (+1) position in the genome\n# (15) sigmaF. Sigma Factor that recognize the promotertfrs\n# (16)DistToPm. Relative distance from the center position of TFRS to the Transcription Start Site\n# (17) firstGene. first transcribed gene name\n# (18) tfrsDistTo1Gene. Relative distance from center position of TFRS to the start of first gene\n# (19) targetTuOrGene. Transcription unit or gene (id:name) regulated by the TF\n# (20) confidenceLevel. RI confidence level (Values: Confirmed, Strong, Weak)\n# (21) tfrsEvidence. Evidence that supports the existence of the TFRS [EvidenceCode|EvidenceType(C:confirmed S:strong W:weak)]]\n# (22) riEvidence. Evidence that supports the RI function [EvidenceCode|EvidenceType(C:confirmed S:strong W:weak)]\n# (23) addEvidence. Additive Evidence [CV(EvidenceCode1/EvidenceCodeN)|Confidence Level]\n# (24) riEvTech. Evidence related to the type of technology used to determine the RI\n# (25) riEvCategory. Evidence  were categorized in classical, ht or non-experimental",
+        "columnsDetails": "# Columns:\n# (1) riId. Regulatory interaction (RI) identifier assigned by RegulonDB\n# (2) riType. Regulatory interaction type [tf-promoter, tf-tu, tf-gene,srna-promoter, srna-tu, srna-gene, compound-promoter, compound-tu, compound-gene]\n# (3) tfId. Transcription Factor (TF) identifier assigned by RegulonDB\n# (4) regulatorName. Regulator name\n# (5) cnfName. regulator active conformation name\n# (6) tfrsId. regulator regulatory site (TFRS) identifier assigned by RegulonDB\n# (7) tfrsLeft. TFRS left end position in the genome\n# (8) tfrsRight. TFRS right end position in the genome\n# (9) strand. DNA strand where the TFRS is located\n# (10) tfrsSeq. TFRS sequence (upper case)\n# (11) riFunction. Gene expression effect caused by the TF bound to the TFRS\n# (12) promoterId. Promoter Identifier assigned by RegulonDB\n# (13) promoterName. Promoter name\n# (14) tss. Transcription start site (+1) position in the genome\n# (15) sigmaF. Sigma Factor that recognize the promoter\n# (16) DistToPm. Relative distance from the center position of TFRS to the Transcription Start Site\n# (17) firstGene. first transcribed gene name\n# (18) tfrsDistTo1Gene. Relative distance from center position of TFRS to the start of first gene\n# (19) targetTuOrGene. Transcription unit or gene (id:name) regulated by the TF\n# (20) confidenceLevel. RI confidence level (Values: Confirmed, Strong, Weak)\n# (21) tfrsEvidence. Evidence that supports the existence of the TFRS [EvidenceCode|EvidenceType(C:confirmed S:strong W:weak)]]\n# (22) riEvidence. Evidence that supports the RI function [EvidenceCode|EvidenceType(C:confirmed S:strong W:weak)]\n# (23) addEvidence. Additive Evidence [CV(EvidenceCode1/EvidenceCodeN)|Confidence Level]\n# (24) riEvTech. Evidence related to the type of technology used to determine the RI\n# (25) riEvCategory. Evidence  were categorized in classical, ht or non-experimental",
         "content": " \n".join(ris_content),
         "rdbVersion": "12.0"
     }
