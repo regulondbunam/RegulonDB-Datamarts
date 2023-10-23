@@ -15,9 +15,8 @@ class ObjectEvidences:
         all_rules = load_rules()
         for rule in all_rules:
             # print(ev_obj.id)
-            if 8 not in rule["rules_values"]:
-                add_ev_row = ObjectEvidences.ObjectEvidenceFile(rule)
-                yield add_ev_row
+            add_ev_row = ObjectEvidences.ObjectEvidenceFile(rule)
+            yield add_ev_row
 
     class ObjectEvidenceFile:
         def __init__(self, rule):
