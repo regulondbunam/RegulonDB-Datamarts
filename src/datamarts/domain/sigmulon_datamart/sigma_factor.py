@@ -47,15 +47,16 @@ class SigmaFactor(BiologicalBase):
             reg_ints = multigenomic_api.regulatory_interactions.find_regulatory_interactions_by_reg_entity_id(promoter.id)
             for reg_int in reg_ints:
                 if reg_int.regulator:
-                    trans_factors = multigenomic_api.transcription_factors.find_tf_id_by_conformation_id(reg_int.regulator.id)
-                    if trans_factors:
-                        for trans_factor in trans_factors:
-                            tf_object = {
-                                "_id": trans_factor.id,
-                                "name": trans_factor.name
-                            }
-                            if tf_object not in self._sigmulon_regulators:
-                                self._sigmulon_regulators.append(tf_object)
+                    trans_factor = multigenomic_api.transcription_factors.find_tf_id_by_conformation_id(reg_int.regulator.id)
+                    if trans_factor is None:
+                        trans_factor = multigenomic_api.transcription_factors.find_by_name(reg_int.regulator.name)
+                    if trans_factor:
+                        tf_object = {
+                            "_id": trans_factor.id,
+                            "name": trans_factor.name
+                        }
+                        if tf_object not in self._sigmulon_regulators:
+                            self._sigmulon_regulators.append(tf_object)
 
     @property
     def sigmulon_genes(self):
@@ -104,7 +105,7 @@ class SigmaFactor(BiologicalBase):
 class Term(BiologicalBase):
 
     def __init__(self, term):
-        super().__init__([], term.citations, [])
+        super().__init__([], [], [])
         self.term = term
 
     def to_dict(self):

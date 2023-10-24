@@ -8,7 +8,7 @@ class TFGene:
     def objects(self):
         ri_objects = multigenomic_api.regulatory_interactions.get_all()
         for ri_object in ri_objects:
-            print(ri_object.id)
+            # print(ri_object.id)
             ri_row = TFGene.TFGeneDatamart(ri_object)
             yield ri_row
         del ri_objects
@@ -28,16 +28,15 @@ class TFGene:
         @trans_factor.setter
         def trans_factor(self, regulator):
             tf = multigenomic_api.transcription_factors.find_tf_id_by_conformation_id(regulator.id)
-            if len(tf) == 0:
+            if tf is None:
                 if regulator.type == "regulatoryComplex":
                     reg_complex = multigenomic_api.regulatory_complexes.find_by_id(regulator.id)
-                    tf = multigenomic_api.transcription_factors.find_tf_id_by_conformation_name(
-                        reg_complex.name)
-            if len(tf) > 0:
+                    tf = multigenomic_api.transcription_factors.find_by_name(reg_complex.name)
+            if tf:
                 self._trans_factor = {
-                    "id": tf[0].id,
-                    "name": tf[0].abbreviated_name,
-                    "products_ids": tf[0].products_ids
+                    "id": tf.id,
+                    "name": tf.abbreviated_name,
+                    "products_ids": tf.products_ids
                 }
             else:
                 products_ids = []
@@ -164,14 +163,16 @@ def find_dual_items(list):
         current_item = list[i]
         next_item = list[i + 1]
 
+        current_item_cl = current_item[-1:]
+
         current_item_rep = current_item.replace("+", "-")[:-1]
         next_item_rep = next_item.replace("+", "-")[:-1]
         current_item_act = current_item.replace("-", "+")[:-1]
         next_item_act = next_item.replace("-", "+")[:-1]
 
         if current_item_rep == next_item_rep or current_item_act == next_item_act:
-            new_list.append(current_item_act.replace("+", "-+"))
-            list[i+1] = next_item_act.replace("+", "-+")
+            new_list.append(current_item_act.replace("+", "-+") + current_item_cl)
+            list[i+1] = next_item_act.replace("+", "-+") + current_item_cl
         else:
             new_list.append(current_item)
     return remove_similar_items(new_list)
@@ -188,20 +189,21 @@ def get_all_rows():
     tfs_content = find_dual_items(find_existent_items_without_function(tfs_content))
     creation_date = datetime.now()
     tfs_doc = {
-        "_id": "RDBECOLIDLF00010",
-        "fileName": "NetWorkTFGene",
-        "title": "Complete TF-Gene Network Set",
+        "_id": "RDBECOLIDLF00005",
+        "fileName": "NetworkRegulatorGene",
+        "title": "Complete Regulator-Gene Network Set",
         "fileFormat": "rif-version 1",
-        "license": "RegulonDB is free for academic/noncommercial use\t\tUser is not entitled to change or erase data sets of the RegulonDB\tdatabase or to eliminate copyright notices from RegulonDB. Furthermore,\tUser is not entitled to expand RegulonDB or to integrate RegulonDB partly\tor as a whole into other databank systems, without prior written consent\tfrom CCG-UNAM.\t\tPlease check the license at http://regulondb.ccg.unam.mx/menu/download/full_version/terms_and_conditions.jsp",
-        "citation": "Tierrafría, V. H. et al. (2022). RegulonDB 11.0: Comprehensive high-throughput datasets on transcriptional regulation in Escherichia coli K-12,\tMicrob Genom. 2022 May;8(5). doi: 10.1099/mgen.0.000833. PMID: 35584008. https://doi.org/10.1099/mgen.0.000833",
+        "license": "RegulonDB is free for academic/noncommercial use\n\nUser is not entitled to change or erase data sets of the RegulonDB\ndatabase or to eliminate copyright notices from RegulonDB. Furthermore,\nUser is not entitled to expand RegulonDB or to integrate RegulonDB partly\nor as a whole into other databank systems, without prior written consent\nfrom CCG-UNAM.\n\nPlease check the license at https://regulondb.ccg.unam.mx/manual/aboutUs/terms-conditions",
+        "citation": "Salgado H., Gama-Castro S. et al (2023). RegulonDB 12.0: A Comprehensive resource of transcriptional regulation in E. coli K-12",
         "contact": {
             "person": "RegulonDB Team",
-            "webPage": "http://regulondb.ccg.unam.mx/menu/about_regulondb/contact_us/index.jsp",
+            "webPage": None,
             "email": "regulondb@ccg.unam.mx"
         },
-        "version": "",
+        "version": "1.0",
         "creationDate": f"{creation_date.strftime('%m-%d-%Y')}",
         "columnsDetails": "Columns:\n(1) regulatorId. Regulator identifier\n(2) regulatorName. Regulator Name\n(3) regulatorGeneName. Gene(s) coding for the TF\n(4) regulatedId. Gene ID regulated by the Regulator (regulated Gene)\n(5) regulatedName. Gene regulated by the Regulator (regulated Gene)\n(6) function. Regulatory Function of the Regulator on the regulated Gene (+ activator, - repressor, -+ dual, ? unknown)\n(7) confidenceLevel. RI confidence level based on its evidence (Values: Confirmed, Strong, Weak)",
-        "content": " \n".join(tfs_content)
+        "content": " \n".join(tfs_content),
+        "rdbVersion": "12.0"
     }
     return tfs_doc

@@ -275,7 +275,8 @@ class RegulatoryInteractions:
                     if citation_dict.approach:
                         if citation_dict.approach not in ev_tech:
                             ev_tech.append(citation_dict.approach)
-            self._ri_ev_tech = "|".join(ev_tech)
+            if len(ev_tech) > 0:
+                self._ri_ev_tech = "|".join(ev_tech)
 
         @property
         def ri_ev_category(self):
@@ -296,38 +297,37 @@ class RegulatoryInteractions:
                     if citation_dict.category:
                         if citation_dict.category not in ev_categories:
                             ev_categories.append(citation_dict.category)
-            self._ri_ev_category = "|".join(ev_categories)
+            if len(ev_categories) > 0:
+                self._ri_ev_category = "|".join(ev_categories)
 
         def to_row(self):
             regulated_genes = get_regulated_genes(self.ri.regulated_entity)
             first_gene = get_first_gene(self.ri, regulated_genes)
-            if self.regulatory_site:
-                return f"{self.ri.id}" \
-                       f"\t{self.type}" \
-                       f"\t{self.transcription_factor['id']}" \
-                       f"\t{self.transcription_factor['abbreviated_name']}" \
-                       f"\t{self.regulator_name}" \
-                       f"\t{self.regulatory_site['id']}" \
-                       f"\t{self.regulatory_site['left_end_position'] or ''}" \
-                       f"\t{self.regulatory_site['right_end_position'] or ''}" \
-                       f"\t{self.strand}" \
-                       f"\t{self.sequence}" \
-                       f"\t{self.ri.function or ''}" \
-                       f"\t{self.promoter['id']}" \
-                       f"\t{self.promoter['name']}" \
-                       f"\t{self.tss}" \
-                       f"\t{self.sigma}" \
-                       f"\t{self.ri.dist_site_promoter or ''}" \
-                       f"\t{first_gene['name']}" \
-                       f"\t{first_gene['distanceTo']}" \
-                       f"\t{self.target_tu_gene}" \
-                       f"\t{self.ri.confidence_level or '?'}" \
-                       f"\t{self.reg_site_evidences}" \
-                       f"\t{self.ri_evidences}" \
-                       f"\t{self.additive_evidences}" \
-                       f"\t{self.ri_ev_tech}" \
-                       f"\t{self.ri_ev_category}" \
-
+            return f"{self.ri.id}" \
+                   f"\t{self.type}" \
+                   f"\t{self.transcription_factor['id']}" \
+                   f"\t{self.transcription_factor['abbreviated_name']}" \
+                   f"\t{self.regulator_name}" \
+                   f"\t{self.regulatory_site['id']}" \
+                   f"\t{self.regulatory_site['left_end_position'] or ''}" \
+                   f"\t{self.regulatory_site['right_end_position'] or ''}" \
+                   f"\t{self.strand}" \
+                   f"\t{self.sequence}" \
+                   f"\t{self.ri.function or ''}" \
+                   f"\t{self.promoter['id']}" \
+                   f"\t{self.promoter['name']}" \
+                   f"\t{self.tss}" \
+                   f"\t{self.sigma}" \
+                   f"\t{self.ri.dist_site_promoter or ''}" \
+                   f"\t{first_gene['name']}" \
+                   f"\t{first_gene['distanceTo']}" \
+                   f"\t{self.target_tu_gene}" \
+                   f"\t{self.ri.confidence_level or '?'}" \
+                   f"\t{self.reg_site_evidences}" \
+                   f"\t{self.ri_evidences}" \
+                   f"\t{self.additive_evidences}" \
+                   f"\t{self.ri_ev_tech}" \
+                   f"\t{self.ri_ev_category}"
 
 
 def all_ris_rows():
@@ -335,12 +335,13 @@ def all_ris_rows():
     ris_content = []
     ris_content.append("1)riId\t2)riType\t3)regulatorId\t4)regulatorName\t5)cnfName\t6)tfrsID\t7)tfrsLeft\t8)tfrsRight\t9)strand\t10)tfrsSeq\t11)riFunction\t12)promoterID\t13)promoterName\t14)tss\t15)sigmaF\t16)tfrsDistToPm\t17)firstGene\t18)tfrsDistTo1Gene\t19)targetTuOrGene\t20)confidenceLevel\t21)tfrsEvidence\t22)riEvidence\t23)addEvidence\t24)riEvTech\t25)riEvCategory")
     for ri in ris.objects:
-        ris_content.append(ri.to_row())
+        if ri.type == "tf-gene" or ri.type == "tf-promoter" or ri.type == "tf-tu":
+            ris_content.append(ri.to_row())
     creation_date = datetime.now()
     ri_doc = {
-        "_id": "RDBECOLIDLF00001",
-        "fileName": "RISet",
-        "title": "Complete RIs Set",
+        "_id": "RDBECOLIDLF00002",
+        "fileName": "TF-RISet",
+        "title": "Complete TF RIs Set",
         "fileFormat": "rif-version 1",
         "license": "RegulonDB is free for academic/noncommercial use\n\nUser is not entitled to change or erase data sets of the RegulonDB\ndatabase or to eliminate copyright notices from RegulonDB. Furthermore,\nUser is not entitled to expand RegulonDB or to integrate RegulonDB partly\nor as a whole into other databank systems, without prior written consent\nfrom CCG-UNAM.\n\nPlease check the license at https://regulondb.ccg.unam.mx/manual/aboutUs/terms-conditions",
         "citation": "Salgado H., Gama-Castro S. et al (2023). RegulonDB 12.0: A Comprehensive resource of transcriptional regulation in E. coli K-12",

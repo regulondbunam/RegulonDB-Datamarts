@@ -56,6 +56,7 @@ class Regulates(BiologicalBase):
     @transcription_factors.setter
     def transcription_factors(self, trans_units):
         self._transcription_factors = []
+        trans_factors = []
         for tu_object in trans_units:
             transcription_units = tu_object["transcription_units"]
             if transcription_units:
@@ -63,9 +64,10 @@ class Regulates(BiologicalBase):
                     for gene_id in tu.genes_ids:
                         products = multigenomic_api.products.find_by_gene_id(gene_id)
                         for product in products:
-                            trans_factors = multigenomic_api.transcription_factors.\
-                                find_tf_id_by_conformation_id(product.id)
-                            for tf in trans_factors:
+                            tf = multigenomic_api.transcription_factors.find_tf_id_by_conformation_id(product.id)
+                            if tf is None:
+                                trans_factors.append(multigenomic_api.transcription_factors.find_by_name(product.name))
+                            if tf:
                                 genes = []
                                 for product_id in tf.products_ids:
                                     prod = multigenomic_api.products.find_by_id(product_id)
@@ -103,7 +105,7 @@ class Regulates(BiologicalBase):
                 for tu in transcription_units:
                     if tu.promoters_id:
                         promoter = multigenomic_api.promoters.find_by_id(tu.promoters_id)
-                        first_gene = get_first_gene_of_tu(tu, promoter)
+                        first_gene = get_first_gene_of_tu(tu.genes_ids, promoter)
                         tu_object = {
                             "_id": tu.id,
                             "name": tu.name,
@@ -126,10 +128,13 @@ class Regulates(BiologicalBase):
         for tu_object in trans_units:
             transcription_units = tu_object["transcription_units"]
             if transcription_units:
+                genes_ids = []
+                for tu in transcription_units:
+                    genes_ids.extend(tu.genes_ids)
                 for tu in transcription_units:
                     if tu.promoters_id:
                         promoter = multigenomic_api.promoters.find_by_id(tu.promoters_id)
-                        first_gene = get_first_gene_of_tu(tu, promoter)
+                        first_gene = get_first_gene_of_tu(genes_ids, promoter)
                         operon = multigenomic_api.operons.find_by_id(tu.operons_id)
                         operon_object = {
                             "_id": operon.id,
@@ -191,9 +196,6 @@ def get_all_transcription_units(regulator):
             transcription_units = []
             if ri.regulated_entity.type == "promoter":
                 transcription_units = multigenomic_api.transcription_units.find_by_promoter_id(
-                    ri.regulated_entity.id)
-            if ri.regulated_entity.type == "gene":
-                transcription_units = multigenomic_api.transcription_units.find_by_gene_id(
                     ri.regulated_entity.id)
             elif ri.regulated_entity.type == "transcriptionUnit":
                 tu = multigenomic_api.transcription_units.find_by_id(ri.regulated_entity.id)
@@ -278,7 +280,7 @@ def gene_ontology_extrac(products):
 class Term(BiologicalBase):
 
     def __init__(self, term):
-        super().__init__([], term.citations, [])
+        super().__init__([], [], [])
         self.term = term
 
     def to_dict(self):
@@ -289,13 +291,13 @@ class Term(BiologicalBase):
         return term
 
 
-def get_first_gene_of_tu(transcription_unit, promoter):
-    first_gene = multigenomic_api.genes.find_by_id(transcription_unit.genes_ids[0])
+def get_first_gene_of_tu(genes_ids, promoter):
+    first_gene = multigenomic_api.genes.find_by_id(genes_ids[0])
     if promoter.strand == "reverse":
         first_gene.left_end_position = first_gene.right_end_position
     first_gene.left_end_position = first_gene.left_end_position or first_gene.fragments[0].left_end_position
 
-    for gene in transcription_unit.genes_ids:
+    for gene in genes_ids:
         current_gene = multigenomic_api.genes.find_by_id(gene)
         if promoter.strand == "forward":
             if current_gene.left_end_position:

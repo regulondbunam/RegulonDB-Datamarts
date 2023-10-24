@@ -39,7 +39,7 @@ def assign_colors_to_gene_multifun_type():
     for multifun_item in multifun_term_items:
         rgb_color = ""
         while True:
-            rgb_color = f"{randint(0, 255)}, {randint(0, 255)}, {randint(0, 255)}"
+            rgb_color = f"{randint(150, 255)}, {randint(150, 255)}, {randint(150, 255)}"
             if rgb_color not in used_colors:
                 break
         used_colors.append(rgb_color)

@@ -73,8 +73,10 @@ class Statistics:
             reg_interactions = multigenomic_api.regulatory_interactions.find_regulatory_interactions_by_reg_entity_id(promoter.id)
             for ri in reg_interactions:
                 if ri.regulator:
-                    trans_factors = multigenomic_api.transcription_factors.find_tf_id_by_conformation_id(ri.regulator.id)
-                    for tf in trans_factors:
+                    tf = multigenomic_api.transcription_factors.find_tf_id_by_conformation_id(ri.regulator.id)
+                    if tf is None:
+                        tf = multigenomic_api.transcription_factors.find_by_name(ri.regulator.name)
+                    if tf:
                         if tf.id not in self._cotranscription_factors:
                             self._cotranscription_factors.append(tf.id)
 

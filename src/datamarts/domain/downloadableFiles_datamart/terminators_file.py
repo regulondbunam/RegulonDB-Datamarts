@@ -8,7 +8,7 @@ class Terminator:
     def objects(self):
         terminator_objects = multigenomic_api.terminators.get_all()
         for terminator_obj in terminator_objects:
-            print(terminator_obj.id)
+            # print(terminator_obj.id)
             ri_row = Terminator.TerminatorDatamart(terminator_obj)
             yield ri_row
         del terminator_objects
@@ -115,20 +115,21 @@ def all_terminators_rows():
         terminators_content.append(terminator.to_row())
     creation_date = datetime.now()
     terminators_doc = {
-        "_id": "RDBECOLIDLF00007",
+        "_id": "RDBECOLIDLF00012",
         "fileName": "TerminatorSet",
         "title": "Complete Terminators Set",
         "fileFormat": "rif-version 1",
-        "license": "RegulonDB is free for academic/noncommercial use\t\tUser is not entitled to change or erase data sets of the RegulonDB\tdatabase or to eliminate copyright notices from RegulonDB. Furthermore,\tUser is not entitled to expand RegulonDB or to integrate RegulonDB partly\tor as a whole into other databank systems, without prior written consent\tfrom CCG-UNAM.\t\tPlease check the license at http://regulondb.ccg.unam.mx/menu/download/full_version/terms_and_conditions.jsp",
-        "citation": "Tierrafría, V. H. et al. (2022). RegulonDB 11.0: Comprehensive high-throughput datasets on transcriptional regulation in Escherichia coli K-12,\tMicrob Genom. 2022 May;8(5). doi: 10.1099/mgen.0.000833. PMID: 35584008. https://doi.org/10.1099/mgen.0.000833",
+        "license": "RegulonDB is free for academic/noncommercial use\n\nUser is not entitled to change or erase data sets of the RegulonDB\ndatabase or to eliminate copyright notices from RegulonDB. Furthermore,\nUser is not entitled to expand RegulonDB or to integrate RegulonDB partly\nor as a whole into other databank systems, without prior written consent\nfrom CCG-UNAM.\n\nPlease check the license at https://regulondb.ccg.unam.mx/manual/aboutUs/terms-conditions",
+        "citation": "Salgado H., Gama-Castro S. et al (2023). RegulonDB 12.0: A Comprehensive resource of transcriptional regulation in E. coli K-12",
         "contact": {
             "person": "RegulonDB Team",
-            "webPage": "http://regulondb.ccg.unam.mx/menu/about_regulondb/contact_us/index.jsp",
+            "webPage": None,
             "email": "regulondb@ccg.unam.mx"
         },
-        "version": "",
+        "version": "1.0",
         "creationDate": f"{creation_date.strftime('%m-%d-%Y')}",
         "columnsDetails": "Columns:\n(1) Terminator identifier assigned by RegulonDB\n(2) Terminator left end position in the genome\n(3) Terminator right end position in the genome\n(4) DNA strand where the terminator is located\n(5) Terminator sequence\n(6) Transcription unit(s) related to the terminator   *see note1\n(7) Terminator type\n(8) Operon name\n(9) References (PubMed ID)\n(10) Evidence that supports the existence of the terminator \n(11) Evidence confidence level (Confirmed, Strong, Weak)\nnote1: If there are more than one TU with the same name, it is because the promoter associated to the TU is different",
-        "content": " \n".join(terminators_content)
+        "content": " \n".join(terminators_content),
+        "rdbVersion": "12.0"
     }
     return terminators_doc

@@ -9,7 +9,7 @@ class TFGene:
     def objects(self):
         ri_objects = multigenomic_api.regulatory_interactions.get_all()
         for ri_object in ri_objects:
-            print(ri_object.id)
+            # print(ri_object.id)
             ri_row = TFGene.TFGeneDatamart(ri_object)
             yield ri_row
         del ri_objects
@@ -30,36 +30,35 @@ class TFGene:
         @trans_factor.setter
         def trans_factor(self, regulator):
             synonyms = []
+            products_ids = []
             tf = multigenomic_api.transcription_factors.find_tf_id_by_conformation_id(regulator.id)
-            if len(tf) == 0:
+            if tf is None:
                 if regulator.type == "regulatoryComplex":
-                    reg_complex = multigenomic_api.regulatory_complexes.find_by_id(regulator.id)
-                    tf = multigenomic_api.transcription_factors.find_tf_id_by_conformation_name(
-                        reg_complex.name)
-            if len(tf) > 0:
-                synonyms.extend(tf[0].synonyms)
-                synonyms.append(tf[0].name)
-                self._trans_factor = {
-                    "id": tf[0].id,
-                    "name": tf[0].abbreviated_name,
-                    "products_ids": tf[0].products_ids,
-                    "synonyms": synonyms
-                }
-            else:
-                products_ids = []
-                if regulator.type == "regulatoryComplex":
-                    complex = multigenomic_api.regulatory_complexes.find_by_id(regulator.id)
-                    for product in complex.products:
-                        if product.products_id not in products_ids:
-                            products_ids.append(product.products_id)
-                    synonyms.extend(complex.synonyms)
-                    synonyms.append(regulator.name)
-                    self._trans_factor = {
-                        "id": regulator.id,
-                        "name": complex.abbreviated_name or regulator.name,
-                        "products_ids": products_ids,
-                        "synonyms": synonyms
-                    }
+                    tf = multigenomic_api.transcription_factors.find_by_name(regulator.name)
+                    if tf:
+                        synonyms.extend(tf.synonyms)
+                        synonyms.append(tf.name)
+                        self._trans_factor = {
+                            "id": tf.id,
+                            "name": tf.abbreviated_name,
+                            "products_ids": tf.products_ids,
+                            "synonyms": synonyms,
+                            "type": "TF"
+                        }
+                    else:
+                        complx = multigenomic_api.regulatory_complexes.find_by_id(regulator.id)
+                        for product in complx.products:
+                            if product.products_id not in products_ids:
+                                products_ids.append(product.products_id)
+                        synonyms.extend(complx.synonyms)
+                        synonyms.append(regulator.name)
+                        self._trans_factor = {
+                            "id": regulator.id,
+                            "name": complx.abbreviated_name or regulator.name,
+                            "products_ids": products_ids,
+                            "synonyms": synonyms,
+                            "type": "Regulator"
+                        }
                 elif regulator.type == "product":
                     products_ids.append(regulator.id)
                     product = multigenomic_api.products.find_by_id(regulator.id)
@@ -69,15 +68,27 @@ class TFGene:
                         "id": regulator.id,
                         "name": product.abbreviated_name or regulator.name,
                         "products_ids": products_ids,
-                        "synonyms": synonyms
+                        "synonyms": synonyms,
+                        "type": "sRNA"
                     }
                 else:
                     self._trans_factor = {
                         "id": regulator.id,
                         "name": regulator.name,
                         "products_ids": products_ids,
-                        "synonyms": []
+                        "synonyms": [],
+                        "type": "compound"
                     }
+            else:
+                synonyms.extend(tf.synonyms)
+                synonyms.append(tf.name)
+                self._trans_factor = {
+                    "id": tf.id,
+                    "name": tf.abbreviated_name,
+                    "products_ids": tf.products_ids,
+                    "synonyms": synonyms,
+                    "type": "TF"
+                }
 
         @property
         def genes(self):
@@ -156,6 +167,7 @@ class TFGene:
             for gene in self._regulated_genes:
                 row = f"{self.trans_factor['id']}" \
                       f"\t{self.trans_factor['name']}" \
+                      f"\t{self.trans_factor['type']}" \
                       f"\t{gene['id']}" \
                       f"\t{gene['name']}" \
                       f"\t{','.join(gene['synonyms'])}" \
@@ -204,19 +216,22 @@ def find_dual_items(list):
         pattern_rep = r'\t-\t'
         pattern_act = r'\t+\t'
 
+        current_item_cat = '\t'.join(current_item.rsplit('\t')[-1:])
+        current_item_cl = '\t'.join(current_item.rsplit('\t')[-2:-1])
+
         current_item_rep = re.sub(pattern_act, "\t-\t", current_item)
         next_item_rep = re.sub(pattern_act, "\t-\t", next_item)
         current_item_act = re.sub(pattern_rep, "\t+\t", current_item)
         next_item_act = re.sub(pattern_rep, "\t+\t", next_item)
 
-        current_item_rep = '\t'.join(current_item_rep.rsplit('\t')[:-1])
-        next_item_rep = '\t'.join(next_item_rep.rsplit('\t')[:-1])
-        current_item_act = '\t'.join(current_item_act.rsplit('\t')[:-1])
-        next_item_act = '\t'.join(next_item_act.rsplit('\t')[:-1])
+        current_item_rep = '\t'.join(current_item_rep.rsplit('\t')[:-2])
+        next_item_rep = '\t'.join(next_item_rep.rsplit('\t')[:-2])
+        current_item_act = '\t'.join(current_item_act.rsplit('\t')[:-2])
+        next_item_act = '\t'.join(next_item_act.rsplit('\t')[:-2])
 
-        if current_item_rep[:-1] == next_item_rep[:-1] or current_item_act[:-1] == next_item_act[:-1]:
-            new_list.append(current_item_act.replace("+", "-+"))
-            list[i+1] = next_item_act.replace("+", "-+")
+        if current_item_rep == next_item_rep or current_item_act == next_item_act:
+            new_list.append(current_item_act.replace("+", "-+") + f"\t{current_item_cl}\t{current_item_cat}")
+            list[i+1] = next_item_act.replace("+", "-+") + f"\t{current_item_cl}\t{current_item_cat}"
         else:
             new_list.append(current_item)
     return remove_similar_items(new_list)
@@ -225,7 +240,7 @@ def find_dual_items(list):
 def get_all_rows():
     trans_factors = TFGene()
     tfs_content = [
-        "1)regulatorId\t2)regulatorName\t3)geneId\t4)GeneName\t5)genesSynonyms\t6)regulatorSynonyms\t7)function\t8)confidenceLevel\t9)evCategory"]
+        "1)regulatorId\t2)regulatorName\t3)regulatorType\t4)geneId\t5)GeneName\t6)genesSynonyms\t7)regulatorSynonyms\t8)function\t9)confidenceLevel\t10)evCategory"]
     for tf in trans_factors.objects:
         tfs_content.extend(tf.to_row())
     tfs_content = list(set(tfs_content))
@@ -233,20 +248,21 @@ def get_all_rows():
     tfs_content = find_dual_items(find_existent_items_without_function(tfs_content))
     creation_date = datetime.now()
     tfs_doc = {
-        "_id": "RDBECOLIDLF00011",
-        "fileName": "NetWorkTFGene_release4",
-        "title": "Complete TF-Gene Network Set release 4",
+        "_id": "RDBECOLIDLF00006",
+        "fileName": "NetworkRegulatorGene_internal",
+        "title": "Complete Regulator-Gene Network Set release 4",
         "fileFormat": "rif-version 1",
-        "license": "RegulonDB is free for academic/noncommercial use\t\tUser is not entitled to change or erase data sets of the RegulonDB\tdatabase or to eliminate copyright notices from RegulonDB. Furthermore,\tUser is not entitled to expand RegulonDB or to integrate RegulonDB partly\tor as a whole into other databank systems, without prior written consent\tfrom CCG-UNAM.\t\tPlease check the license at http://regulondb.ccg.unam.mx/menu/download/full_version/terms_and_conditions.jsp",
-        "citation": "Tierrafría, V. H. et al. (2022). RegulonDB 11.0: Comprehensive high-throughput datasets on transcriptional regulation in Escherichia coli K-12,\tMicrob Genom. 2022 May;8(5). doi: 10.1099/mgen.0.000833. PMID: 35584008. https://doi.org/10.1099/mgen.0.000833",
+        "license": "RegulonDB is free for academic/noncommercial use\n\nUser is not entitled to change or erase data sets of the RegulonDB\ndatabase or to eliminate copyright notices from RegulonDB. Furthermore,\nUser is not entitled to expand RegulonDB or to integrate RegulonDB partly\nor as a whole into other databank systems, without prior written consent\nfrom CCG-UNAM.\n\nPlease check the license at https://regulondb.ccg.unam.mx/manual/aboutUs/terms-conditions",
+        "citation": "Salgado H., Gama-Castro S. et al (2023). RegulonDB 12.0: A Comprehensive resource of transcriptional regulation in E. coli K-12",
         "contact": {
             "person": "RegulonDB Team",
-            "webPage": "http://regulondb.ccg.unam.mx/menu/about_regulondb/contact_us/index.jsp",
+            "webPage": None,
             "email": "regulondb@ccg.unam.mx"
         },
-        "version": "",
+        "version": "1.0",
         "creationDate": f"{creation_date.strftime('%m-%d-%Y')}",
-        "columnsDetails": "Columns:\n(1) regulatorId. Regulator identifier\n(2) regulatorName. Regulator Name\n(3) regulatorGeneName. Gene(s) coding for the TF\n(4) regulatedId. Gene ID regulated by the Regulator (regulated Gene)\n(5) regulatedName. Gene regulated by the Regulator (regulated Gene)\n(6) function. Regulatory Function of the Regulator on the regulated Gene (+ activator, - repressor, -+ dual, ? unknown)\n(7) confidenceLevel. RI confidence level based on its evidence (Values: Confirmed, Strong, Weak)",
-        "content": " \n".join(tfs_content)
+        "columnsDetails": "Columns:\n(1) regulatorId. Regulator identifier\n(2) regulatorName. Regulator Name\n(3) regulatorType. Gene(s) coding for the TF\n(4) geneId. Id of the regulated gene\n(5) geneName. Name of the regulated gene\n(6) geneSynonyms. Regulated Gene synonyms\n(7) regulatorSynonyms. Regulator synonyms\n(8) function. Regulatory Function of the Regulator on the regulated Gene (+ activator, - repressor, -+ dual, ? unknown)\n(9) confidenceLevel. RI confidence level based on its evidence (Values: Confirmed, Strong, Weak)\n(10)evCategory. Category of the RI evidences",
+        "content": " \n".join(tfs_content),
+        "rdbVersion": "12.0"
     }
     return tfs_doc

@@ -11,12 +11,12 @@ class Regulators:
         regulator_objects = get_all_regulators(multigenomic_api.regulatory_interactions.get_all())
         tf_objects = multigenomic_api.transcription_factors.get_all()
         for tf_obj in tf_objects:
-            print(tf_obj.id)
+            # print(tf_obj.id)
             tf_obj["regulator_type"] = "transcriptionFactor"
             regulon_datamart = Regulators.RegulatorDatamart(tf_obj)
             yield regulon_datamart
         for reg_obj in regulator_objects:
-            print(reg_obj.id)
+            # print(reg_obj.id)
             regulator = reg_obj
             if reg_obj.type == "srna":
                 regulator = multigenomic_api.products.find_by_id(reg_obj.id)
@@ -407,20 +407,21 @@ def all_regulators_rows():
         regulators_content.append(regulator.to_row())
     creation_date = datetime.now()
     regulators_doc = {
-        "_id": "RDBECOLIDLF00009",
+        "_id": "RDBECOLIDLF00003",
         "fileName": "RegulatorSet",
         "title": "Complete Regulators Set",
         "fileFormat": "rif-version 1",
-        "license": "RegulonDB is free for academic/noncommercial use\t\tUser is not entitled to change or erase data sets of the RegulonDB\tdatabase or to eliminate copyright notices from RegulonDB. Furthermore,\tUser is not entitled to expand RegulonDB or to integrate RegulonDB partly\tor as a whole into other databank systems, without prior written consent\regulatorrom CCG-UNAM.\t\tPlease check the license at http://regulondb.ccg.unam.mx/menu/download/full_version/terms_and_conditions.jsp",
-        "citation": "Tierrafría, V. H. et al. (2022). RegulonDB 11.0: Comprehensive high-throughput datasets on transcriptional regulation in Escherichia coli K-12,\tMicrob Genom. 2022 May;8(5). doi: 10.1099/mgen.0.000833. PMID: 35584008. https://doi.org/10.1099/mgen.0.000833",
+        "license": "RegulonDB is free for academic/noncommercial use\n\nUser is not entitled to change or erase data sets of the RegulonDB\ndatabase or to eliminate copyright notices from RegulonDB. Furthermore,\nUser is not entitled to expand RegulonDB or to integrate RegulonDB partly\nor as a whole into other databank systems, without prior written consent\nfrom CCG-UNAM.\n\nPlease check the license at https://regulondb.ccg.unam.mx/manual/aboutUs/terms-conditions",
+        "citation": "Salgado H., Gama-Castro S. et al (2023). RegulonDB 12.0: A Comprehensive resource of transcriptional regulation in E. coli K-12",
         "contact": {
             "person": "RegulonDB Team",
-            "webPage": "http://regulondb.ccg.unam.mx/menu/about_regulondb/contact_us/index.jsp",
+            "webPage": None,
             "email": "regulondb@ccg.unam.mx"
         },
-        "version": "",
+        "version": "1.0",
         "creationDate": f"{creation_date.strftime('%m-%d-%Y')}",
         "columnsDetails": "Columns:\n(1) Regulator identifier assigned by RegulonDB\n(2) Regulator Name\n(3) Regulator Synonyms List\n(4) Regulator Synonyms List\n(5) Gene Coding for the Regulator\n(6) Regulator Active Conformations\n(7) Regulator Inactive Conformations\n(8) Regulator Active Conformations  Synonyms List\n(9) Regulator Inactive Conformations  Synonyms List\n(10) Effector Name related to  Regulator Active Conformations\n(11) Effector Name related to  Regulator Inactive Conformations\n(12) Effector Synonyms List related to Regulator Active Conformations Regulator \n(13) Effector Synonyms List related to Regulator Inactive Conformations Regulator\n(14) Regulator Symmetry\n(15) Evidence that supports the Regulator conformation [Evidence code | Evidence type: C = Confirmed, S = Strong, W = Weak | Evidence name ]\n(16) addEvidence. Additive Evidence [CV(EvidenceCode1/EvidenceCodeN)|Confidence Level]\n(17) confidenceLevel. Confidence level (Values: Confirmed, Strong, Weak)\n(18) Regulator conformation reference identifier (PMID)",
-        "content": " \n".join(regulators_content)
+        "content": " \n".join(regulators_content),
+        "rdbVersion": "12.0"
     }
     return regulators_doc

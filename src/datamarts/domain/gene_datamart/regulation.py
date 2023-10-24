@@ -122,12 +122,13 @@ class Operon:
 
     def get_regulators(self, transcription_unit_id, promoter_id, gene_id):
         arrangement_regulators = []
-        # TODO: Añadir genes y nombre del TF
         reg_entities = [promoter_id] + [transcription_unit_id] + [gene_id]
         regulators = multigenomic_api.regulatory_interactions.find_regulators_by_regulated_entity_ids(reg_entities)
         for regulator in regulators:
-            trans_factor = multigenomic_api.transcription_factors.find_tf_id_by_conformation_id(regulator.id)
-            for tf in trans_factor:
+            tf = multigenomic_api.transcription_factors.find_tf_id_by_conformation_id(regulator.id)
+            if tf is None:
+                tf = multigenomic_api.transcription_factors.find_by_name(regulator.name)
+            if tf:
                 tf = {
                     "_id": tf.id,
                     "name": tf.abbreviated_name,
@@ -135,6 +136,25 @@ class Operon:
                 }
                 arrangement_regulators = identify_dual(arrangement_regulators, tf)
                 self.regulators = identify_dual(self.regulators, tf)
+            else:
+                if regulator.type == "product":
+                    product = multigenomic_api.products.find_by_id(regulator.id)
+                    if product.type == "small RNA":
+                        tf = {
+                            "_id": regulator.id,
+                            "name": regulator.name,
+                            "function": regulator.function
+                        }
+                        arrangement_regulators = identify_dual(arrangement_regulators, tf)
+                        self.regulators = identify_dual(self.regulators, tf)
+                elif regulator.type == "regulatoryContinuant":
+                    tf = {
+                        "_id": regulator.id,
+                        "name": regulator.name,
+                        "function": regulator.function
+                    }
+                    arrangement_regulators = identify_dual(arrangement_regulators, tf)
+                    self.regulators = identify_dual(self.regulators, tf)
         return arrangement_regulators
 
     def to_dict(self):

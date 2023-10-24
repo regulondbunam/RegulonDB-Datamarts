@@ -32,7 +32,6 @@ class RegulatoryBindingSites(BiologicalBase):
     @staticmethod
     def fill_tf_binding_sites_dict(ris):
         transcription_factor_binding_sites = []
-        mechanism = ""
         for ri in ris:
             repressor_ris = []
             activator_ris = []
@@ -46,11 +45,12 @@ class RegulatoryBindingSites(BiologicalBase):
                 repressor_ris.append(reg_int)
             elif ri.function == "activator":
                 activator_ris.append(reg_int)
+            regulator = get_abbr_regulator_name(ri.regulator)
             if len(repressor_ris) != 0:
                 transcription_factor_binding_sites.append({
                     "regulator": {
-                        "_id": ri.regulator.id,
-                        "name": ri.regulator.name,
+                        "_id": regulator["id"],
+                        "name": regulator["name"],
                         "function": "repressor"
                     },
                     "regulatoryInteractions": repressor_ris,
@@ -60,8 +60,8 @@ class RegulatoryBindingSites(BiologicalBase):
             if len(activator_ris) != 0:
                 transcription_factor_binding_sites.append({
                     "regulator": {
-                        "_id": ri.regulator.id,
-                        "name": ri.regulator.name,
+                        "_id": regulator["id"],
+                        "name": regulator["name"],
                         "function": "activator"
                     },
                     "regulatoryInteractions": activator_ris,
@@ -69,6 +69,30 @@ class RegulatoryBindingSites(BiologicalBase):
                     "mechanism": mechanism
                 })
         return transcription_factor_binding_sites
+
+
+def get_abbr_regulator_name(regulator):
+    reg_id = regulator.id
+    reg_name = regulator.name
+
+    if regulator.type == "product":
+        reg = multigenomic_api.products.find_by_id(regulator.id)
+        if reg.abbreviated_name:
+            reg_name = reg.abbreviated_name
+
+    tf = multigenomic_api.transcription_factors.find_tf_id_by_conformation_id(regulator.id)
+    if tf is None:
+        tf = multigenomic_api.transcription_factors.find_by_name(regulator.name)
+        if tf:
+            reg_id = tf.id
+            reg_name = tf.abbreviated_name
+    else:
+        reg_id = tf.id
+        reg_name = tf.abbreviated_name
+    return {
+        "id": reg_id,
+        "name": reg_name
+    }
 
 
 class RegulatorySites(BiologicalBase):

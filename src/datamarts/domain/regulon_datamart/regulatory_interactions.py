@@ -6,7 +6,7 @@ from src.datamarts.domain.general.additiveEvidences import AdditiveEvidences
 class RegulatoryInteractions(BiologicalBase):
     def __init__(self, reg_interaction):
         super().__init__([], reg_interaction.citations, "")
-        self.regulator = reg_interaction.regulator
+        self.active_conformation = reg_interaction.regulator
         self.regulatory_interaction = reg_interaction
         self.regulated_entity = reg_interaction.regulated_entity
         self.regulated_genes = reg_interaction.regulated_entity
@@ -14,7 +14,6 @@ class RegulatoryInteractions(BiologicalBase):
 
     def to_dict(self):
         reg_genes = self.regulated_genes
-        distance_to_first_gene = get_distance_to_first_gene(self.regulatory_interaction, reg_genes)
         citations = self.citations
         reg_bind_sites = self.regulatory_binding_sites
         additive_evs = AdditiveEvidences(citations + reg_bind_sites.get("citations", []))
@@ -22,8 +21,8 @@ class RegulatoryInteractions(BiologicalBase):
             "_id": self.regulatory_interaction.id,
             "function": self.regulatory_interaction.function,
             "regulatedEntity": self.regulated_entity,
-            "activeConformation": self.regulator,
-            "distanceToFirstGene": distance_to_first_gene,
+            "activeConformation": self.active_conformation,
+            "distanceToFirstGene": get_distance_to_first_gene(self.regulatory_interaction, reg_genes),
             "distanceToPromoter": self.regulatory_interaction.dist_site_promoter,
             "regulatedGenes": self.regulated_genes,
             "regulatoryBindingSites":  reg_bind_sites,
@@ -36,22 +35,25 @@ class RegulatoryInteractions(BiologicalBase):
         return regulatory_interactions
 
     @property
-    def regulator(self):
-        return self._regulator
+    def active_conformation(self):
+        return self._active_conformation
 
-    @regulator.setter
-    def regulator(self, regulator):
-        reg = regulator
+    @active_conformation.setter
+    def active_conformation(self, regulator):
         name = regulator.name
         if regulator.type == "regulatoryComplex":
             reg = multigenomic_api.regulatory_complexes.find_by_id(regulator.id)
             if reg.abbreviated_name:
                 name = reg.abbreviated_name
+            else:
+                tf = multigenomic_api.transcription_factors.find_by_name(regulator.name)
+                if tf:
+                    name = tf.abbreviated_name
         elif regulator.type == "product":
             reg = multigenomic_api.products.find_by_id(regulator.id)
             if reg.abbreviated_name:
                 name = reg.abbreviated_name
-        self._regulator = {
+        self._active_conformation = {
             "_id": regulator.id,
             "type": regulator.type,
             "name": name
@@ -63,20 +65,11 @@ class RegulatoryInteractions(BiologicalBase):
 
     @regulated_entity.setter
     def regulated_entity(self, regulated_entity):
-        self._regulated_entity = {}
-        reg_entity = {}
-        if regulated_entity.type == "promoter":
-            reg_entity = multigenomic_api.promoters.find_by_id(regulated_entity.id)
-        elif regulated_entity.type == "transcriptionUnit":
-            reg_entity = multigenomic_api.transcription_units.find_by_id(regulated_entity.id)
-        elif regulated_entity.type == "gene":
-            reg_entity = multigenomic_api.genes.find_by_id(regulated_entity.id)
-        if reg_entity:
-            self._regulated_entity = {
-                "_id": regulated_entity.id,
-                "type": regulated_entity.type,
-                "name": reg_entity["name"]
-            }
+        self._regulated_entity = {
+            "_id": regulated_entity.id,
+            "type": regulated_entity.type,
+            "name": regulated_entity.name
+        }
 
     @property
     def regulated_genes(self):
@@ -86,7 +79,12 @@ class RegulatoryInteractions(BiologicalBase):
     def regulated_genes(self, regulated_entity):
         self._regulated_genes = []
         transcription_units = []
-        if regulated_entity.type == "promoter":
+        if regulated_entity.type == "gene":
+            self._regulated_genes.append({
+                        "_id": regulated_entity.id,
+                        "name": regulated_entity.name,
+                    })
+        elif regulated_entity.type == "promoter":
             transcription_units = multigenomic_api.transcription_units.find_by_promoter_id(regulated_entity.id)
         elif regulated_entity.type == "transcriptionUnit":
             trans_unit = multigenomic_api.transcription_units.find_by_id(regulated_entity.id)
@@ -109,54 +107,60 @@ class RegulatoryInteractions(BiologicalBase):
     @regulatory_binding_sites.setter
     def regulatory_binding_sites(self, reg_interaction):
         self._regulatory_binding_sites = {}
-        promoter = None
+        strand = ""
         if reg_interaction.regulatory_sites_id:
             if reg_interaction.regulated_entity.type == "promoter":
                 promoter = multigenomic_api.promoters.find_by_id(reg_interaction.regulated_entity.id)
-            elif reg_interaction.regulatory_sites_id == "transcriptionUnit":
-                trans_unit = multigenomic_api.transcription_units.find_by_id(reg_interaction.regulated_entity_id)
+                strand = promoter.strand
+            elif reg_interaction.regulated_entity.type == "transcriptionUnit":
+                trans_unit = multigenomic_api.transcription_units.find_by_id(reg_interaction.regulated_entity.id)
                 if trans_unit.promoters_id:
                     promoter = multigenomic_api.promoters.find_by_id(trans_unit.promoters_id)
+                    strand = promoter.strand
+            elif reg_interaction.regulated_entity.type == "gene":
+                gene = multigenomic_api.genes.find_by_id(reg_interaction.regulated_entity.id)
+                strand = gene.strand
             regulatory_sites = multigenomic_api.regulatory_sites.find_by_id(reg_interaction.regulatory_sites_id)
             reg_binding_sites_obj = RegulatoryBindingSites(regulatory_sites).to_dict()
-            if promoter:
-                if promoter.strand == "reverse":
-                    reg_binding_sites_obj["sequence"] = reverse_complement(reg_binding_sites_obj["sequence"])
-                reg_binding_sites_obj["strand"] = promoter.strand
+            if strand == "reverse":
+                reg_binding_sites_obj["sequence"] = reverse_complement(reg_binding_sites_obj["sequence"])
+            reg_binding_sites_obj["strand"] = strand
             self._regulatory_binding_sites = reg_binding_sites_obj
 
 
 def get_distance_to_first_gene(reg_int, regulated_genes):
-    distance_to_first_gene = None
-    promoter = None
+    strand = None
     first_gene = None
     if reg_int.regulatory_sites_id:
         reg_sites = multigenomic_api.regulatory_sites.find_by_id(reg_int.regulatory_sites_id)
         if reg_int.regulated_entity.type == "gene":
             first_gene = multigenomic_api.genes.find_by_id(reg_int.regulated_entity.id)
             if first_gene.strand:
-                if reg_sites.absolute_position:
-                    if first_gene.strand == "forward":
-                        distance_to_first_gene = reg_sites.absolute_position - first_gene.left_end_position
-                    else:
-                        distance_to_first_gene = first_gene.right_end_position - reg_sites.absolute_position
+                strand = first_gene.strand
         else:
             if reg_int.regulated_entity.type == "promoter":
                 promoter = multigenomic_api.promoters.find_by_id(reg_int.regulated_entity.id)
-                first_gene = get_first_gene_of_tu(regulated_genes, promoter)
+                strand = promoter.strand
+                first_gene = get_first_gene_of_tu(regulated_genes, strand)
             elif reg_int.regulated_entity.type == "transcriptionUnit":
                 trans_unit = multigenomic_api.transcription_units.find_by_id(reg_int.regulated_entity.id)
-                if trans_unit.promoters_id:
-                    promoter = multigenomic_api.promoters.find_by_id(trans_unit.promoters_id)
-                first_gene = get_first_gene_of_tu(regulated_genes, promoter)
-            if promoter:
-                if reg_sites.absolute_position:
-                    if promoter.strand == "forward":
-                        distance_to_first_gene = reg_sites.absolute_position - first_gene["leftEndPosition"]
-                    else:
-                        distance_to_first_gene = first_gene["leftEndPosition"] - reg_sites.absolute_position
-
-    return distance_to_first_gene
+                operon = multigenomic_api.operons.find_by_id(trans_unit.operons_id)
+                strand = operon.strand
+                first_gene = get_first_gene_of_tu(regulated_genes, strand)
+        if reg_sites.absolute_position:
+            if first_gene:
+                if strand == "forward":
+                    return reg_sites.absolute_position - first_gene["left_end_position"]
+                else:
+                    return first_gene["right_end_position"] - reg_sites.absolute_position
+        elif reg_sites.left_end_position and reg_sites.right_end_position:
+            abs_pos = (reg_sites.right_end_position - reg_sites.left_end_position)/2 + reg_sites.left_end_position
+            if first_gene:
+                if strand == "forward":
+                    return abs_pos - first_gene["left_end_position"]
+                else:
+                    return first_gene["right_end_position"] - abs_pos
+    return None
 
 
 class RegulatoryBindingSites(BiologicalBase):
@@ -191,42 +195,25 @@ def reverse_complement(sequence=None):
         return bases
 
 
-def get_first_gene_of_tu(genes, promoter):
+def get_first_gene_of_tu(genes, strand):
+    dict_genes = []
     first_gene = None
-    if len(genes) > 0:
-        gene = genes[0]
-        first_gene = multigenomic_api.genes.find_by_id(gene.get("_id"))
-        if promoter:
-            if promoter.strand == "reverse":
-                first_gene.left_end_position = first_gene.right_end_position
-            first_gene.left_end_position = first_gene.left_end_position or first_gene.fragments[0].left_end_position
-
-            for gene in genes:
-                current_gene = multigenomic_api.genes.find_by_id(gene.get("_id"))
-                if promoter.strand == "forward":
-                    if current_gene.left_end_position:
-                        if current_gene.left_end_position < first_gene.left_end_position:
-                            first_gene = current_gene
-                    elif current_gene.fragments:
-                        for fragment in current_gene.fragments:
-                            if fragment.left_end_position < first_gene.left_end_position:
-                                first_gene = current_gene
-                                first_gene.left_end_position = fragment.left_end_position
-
-                elif promoter.strand == "reverse":
-                    if current_gene.left_end_position:
-                        if current_gene.right_end_position > first_gene.left_end_position:
-                            first_gene = current_gene
-                            first_gene.left_end_position = first_gene.right_end_position
-                    elif current_gene.fragments:
-                        for fragment in current_gene.fragments:
-                            if fragment.right_end_position > first_gene.left_end_position:
-                                first_gene = current_gene
-                                first_gene.left_end_position = fragment.right_end_position
-
-                first_gene.left_end_position = first_gene.left_end_position or first_gene.fragments[0].left_end_position
-        first_gene = {
-            "id": first_gene.id,
-            "leftEndPosition": first_gene.left_end_position
-        }
+    for gene in genes:
+        gene_object = multigenomic_api.genes.find_by_id(gene.get("_id"))
+        if gene_object.fragments:
+            min_left_pos = min(gene_object.fragments, key=lambda x: x.left_end_position)
+            max_right_pos = max(gene_object.fragments, key=lambda x: x.right_end_position)
+            gene_object.left_end_position = min_left_pos.left_end_position
+            gene_object.right_end_position = max_right_pos.right_end_position
+        dict_genes.append({
+            "id": gene_object.id,
+            "name": gene_object.name,
+            "left_end_position": gene_object.left_end_position,
+            "right_end_position": gene_object.right_end_position
+        })
+    if len(dict_genes) > 0:
+        if strand == "forward":
+            first_gene = (min(dict_genes, key=lambda x: x["left_end_position"]))
+        elif strand == "reverse":
+            first_gene = (max(dict_genes, key=lambda x: x["right_end_position"]))
     return first_gene

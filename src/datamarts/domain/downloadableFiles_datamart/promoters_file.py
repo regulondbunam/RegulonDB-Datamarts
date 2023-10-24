@@ -8,7 +8,7 @@ class Promoters:
     def objects(self):
         promoter_objects = multigenomic_api.promoters.get_all()
         for promoter_object in promoter_objects:
-            print(promoter_object.id)
+            # print(promoter_object.id)
             ri_row = Promoters.PromoterDatamart(promoter_object)
             yield ri_row
         del promoter_objects
@@ -141,20 +141,21 @@ def all_promoters_rows():
         promoters_content.append(promoter.to_row())
     creation_date = datetime.now()
     promoters_doc = {
-        "_id": "RDBECOLIDLF00002",
+        "_id": "RDBECOLIDLF00011",
         "fileName": "PromoterSet",
         "title": "Complete Promoters Set",
         "fileFormat": "rif-version 1",
-        "license": "RegulonDB is free for academic/noncommercial use\t\tUser is not entitled to change or erase data sets of the RegulonDB\tdatabase or to eliminate copyright notices from RegulonDB. Furthermore,\tUser is not entitled to expand RegulonDB or to integrate RegulonDB partly\tor as a whole into other databank systems, without prior written consent\tfrom CCG-UNAM.\t\tPlease check the license at http://regulondb.ccg.unam.mx/menu/download/full_version/terms_and_conditions.jsp",
-        "citation": "Tierrafría, V. H. et al. (2022). RegulonDB 11.0: Comprehensive high-throughput datasets on transcriptional regulation in Escherichia coli K-12,\tMicrob Genom. 2022 May;8(5). doi: 10.1099/mgen.0.000833. PMID: 35584008. https://doi.org/10.1099/mgen.0.000833",
+        "license": "RegulonDB is free for academic/noncommercial use\n\nUser is not entitled to change or erase data sets of the RegulonDB\ndatabase or to eliminate copyright notices from RegulonDB. Furthermore,\nUser is not entitled to expand RegulonDB or to integrate RegulonDB partly\nor as a whole into other databank systems, without prior written consent\nfrom CCG-UNAM.\n\nPlease check the license at https://regulondb.ccg.unam.mx/manual/aboutUs/terms-conditions",
+        "citation": "Salgado H., Gama-Castro S. et al (2023). RegulonDB 12.0: A Comprehensive resource of transcriptional regulation in E. coli K-12",
         "contact": {
             "person": "RegulonDB Team",
-            "webPage": "http://regulondb.ccg.unam.mx/menu/about_regulondb/contact_us/index.jsp",
+            "webPage": None,
             "email": "regulondb@ccg.unam.mx"
         },
-        "version": "",
+        "version": "1.0",
         "creationDate": f"{creation_date.strftime('%m-%d-%Y')}",
         "columnsDetails": "Columns:\n(1) pmId. Promoter identifier assigned by RegulonDB\n(2) pmName. Promoter Name\n(3) strand. DNA strand where the promoter is located\n(4) posTSS. Genome map position of Transcription Start Site (+1)\n(5) sigmaF. Sigma Factor that recognize the promoter\n(6) pmSequence. Promoter Sequence (+1 upper case)\n(7) firstGeneName. Name of the first gene of promoter\n(8) distToFirstGene. distance to first gene of promoter\n(9) pmEvidence. Evidence that supports the existence of the promoter\n(10)addEvidence. Additive Evidence [CV(EvidenceCode1/EvidenceCodeN)|Confidence Level]\n(11) confidenceLevel. Promoter confidence level (Values: Confirmed, Strong, Weak)",
-        "content": " \n".join(promoters_content)
+        "content": " \n".join(promoters_content),
+        "rdbVersion": "12.0"
     }
     return promoters_doc

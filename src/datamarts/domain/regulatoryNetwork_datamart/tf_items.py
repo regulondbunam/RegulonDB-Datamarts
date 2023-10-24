@@ -112,12 +112,19 @@ def outdegree_gene(gene_id, reg_int_function, object_name):
 
 
 def outdegree_tf(gene_id, reg_int_function, object_name, outdegree_list):
+    trans_factors = []
     products = multigenomic_api.products.find_by_gene_id(gene_id)
     for product in products:
-        trans_factors = multigenomic_api.transcription_factors.find_tf_id_by_conformation_id(product.id)
-        for tf in trans_factors:
-            tooltip = define_tooltip(reg_int_function, f"Transcription Factor {object_name}",
-                                     f"Transcription Factor {tf.abbreviated_name}")
+        if product.type == "small RNA":
+            tooltip = define_tooltip(reg_int_function, f"Transcription Factor {object_name}", f"sRNA {product.abbreviated_name}")
+            tf_outdegree_item = BuildDict(product, "sRNA", reg_int_function, tooltip, "TF-sRNA").to_dict()
+            if tf_outdegree_item not in outdegree_list:
+                outdegree_list.append(tf_outdegree_item.copy())
+        tf = multigenomic_api.transcription_factors.find_tf_id_by_conformation_id(product.id)
+        if tf is None:
+            tf = multigenomic_api.transcription_factors.find_by_name(product.name)
+        if tf:
+            tooltip = define_tooltip(reg_int_function, f"Transcription Factor {object_name}", f"Transcription Factor {tf.abbreviated_name}")
             tf_outdegree_item = BuildDict(tf, "Transcription Factor", reg_int_function, tooltip, "TF-TF").to_dict()
             if tf_outdegree_item not in outdegree_list:
                 outdegree_list.append(tf_outdegree_item)
@@ -126,11 +133,13 @@ def outdegree_tf(gene_id, reg_int_function, object_name, outdegree_list):
 
 def indegree_tf(reg_ints, indegree_list, node_object):
     for ri in reg_ints:
+        trans_factors = []
         if ri.regulator:
-            trans_factors = multigenomic_api.transcription_factors.find_tf_id_by_conformation_id(ri.regulator.id)
-            for tf in trans_factors:
-                tooltip = define_tooltip(ri.function, f"Transcription Factor {tf.abbreviated_name}",
-                                         f"Transcription Factor {node_object.abbreviated_name}")
+            tf = multigenomic_api.transcription_factors.find_tf_id_by_conformation_id(ri.regulator.id)
+            if tf is None:
+                tf = multigenomic_api.transcription_factors.find_by_name(ri.regulator.name)
+            if tf:
+                tooltip = define_tooltip(ri.function, f"Transcription Factor {tf.abbreviated_name}", f"Transcription Factor {node_object.abbreviated_name}")
                 gene_indegree_item = BuildDict(tf, "Transcription Factor", ri.function, tooltip, "TF-TF").to_dict()
                 if gene_indegree_item not in indegree_list:
                     indegree_list.append(gene_indegree_item.copy())
@@ -139,33 +148,30 @@ def indegree_tf(reg_ints, indegree_list, node_object):
 
 def indegree_gene(reg_ints, indegree_list, node_object):
     for ri in reg_ints:
+        trans_factors = []
         if ri.regulator:
             products = []
             if ri.regulator.type == "product":
                 product = multigenomic_api.products.find_by_id(ri.regulator.id)
+                if product.type == "small RNA":
+                    tooltip = define_tooltip(ri.function, f"sRNA {product.abbreviated_name}", f"Transcription Factor {node_object.abbreviated_name}")
+                    srna_indegree_item = BuildDict(product, "sRNA", ri.function, tooltip, "sRNA-TF").to_dict()
+                    if srna_indegree_item not in indegree_list:
+                        indegree_list.append(srna_indegree_item.copy())
                 products.append(product)
             elif ri.regulator.type == "regulatoryComplex":
                 reg_complex = multigenomic_api.regulatory_complexes.find_by_id(ri.regulator.id)
                 if reg_complex.products:
                     for product in reg_complex.products:
                         products.append(multigenomic_api.products.find_by_id(product.products_id))
-            for product in products:
-                trans_factors = multigenomic_api.transcription_factors.find_tf_id_by_conformation_id(product.id)
-                if len(trans_factors) > 0:
-                    for tf in trans_factors:
-                        tooltip = define_tooltip(ri.function, f"Transcription Factor {tf.abbreviated_name}",
-                                                 f"Transcription Factor {node_object.abbreviated_name}")
-                        gene_indegree_item = BuildDict(tf, "Transcription Factor", ri.function, tooltip,
-                                                       "TF-TF").to_dict()
-                        if gene_indegree_item not in indegree_list:
-                            indegree_list.append(gene_indegree_item.copy())
-                else:
-                    gene = multigenomic_api.genes.find_by_id(product.genes_id)
-                    tooltip = define_tooltip(ri.function, f"Gene {gene.name}",
-                                             f"Transcription Factor {node_object.abbreviated_name}")
-                    gene_indegree_item = BuildDict(gene, "Gene", ri.function, tooltip, "Gene-TF").to_dict()
-                    if gene_indegree_item not in indegree_list:
-                        indegree_list.append(gene_indegree_item.copy())
+            tf = multigenomic_api.transcription_factors.find_tf_id_by_conformation_id(ri.regulator.id)
+            if tf is None:
+                tf = multigenomic_api.transcription_factors.find_by_name(ri.regulator.name)
+            if tf:
+                tooltip = define_tooltip(ri.function, f"Transcription Factor {tf.abbreviated_name}", f"Transcription Factor {node_object.abbreviated_name}")
+                gene_indegree_item = BuildDict(tf, "Transcription Factor", ri.function, tooltip, "TF-TF").to_dict()
+                if gene_indegree_item not in indegree_list:
+                    indegree_list.append(gene_indegree_item.copy())
     return indegree_list
 
 
@@ -189,11 +195,10 @@ class BuildDict(BiologicalBase):
         self.network_type = network_type
 
     def to_dict(self):
-        name = ""
-        if self.item_type == "Transcription Factor":
-            name = self.item.abbreviated_name
-        elif self.item_type == "Gene":
+        if self.item_type == "Gene":
             name = self.item.name
+        else:
+            name = self.item.abbreviated_name or self.item.name
         item_dict = {
             "_id": self.item.id,
             "name": name,

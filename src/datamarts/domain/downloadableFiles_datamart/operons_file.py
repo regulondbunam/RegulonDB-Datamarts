@@ -9,7 +9,7 @@ class Operon:
     def objects(self):
         operon_objects = multigenomic_api.operons.get_all()
         for operon_object in operon_objects:
-            print(operon_object.id)
+            # print(operon_object.id)
             ri_row = Operon.OperonDatamart(operon_object)
             yield ri_row
         del operon_objects
@@ -184,20 +184,21 @@ def all_operons_rows():
         operons_content.append(operon.to_row())
     creation_date = datetime.now()
     operons_doc = {
-        "_id": "RDBECOLIDLF00004",
+        "_id": "RDBECOLIDLF00009",
         "fileName": "OperonSet",
         "title": "Complete Operons Set",
         "fileFormat": "rif-version 1",
-        "license": "RegulonDB is free for academic/noncommercial use\t\tUser is not entitled to change or erase data sets of the RegulonDB\tdatabase or to eliminate copyright notices from RegulonDB. Furthermore,\tUser is not entitled to expand RegulonDB or to integrate RegulonDB partly\tor as a whole into other databank systems, without prior written consent\tfrom CCG-UNAM.\t\tPlease check the license at http://regulondb.ccg.unam.mx/menu/download/full_version/terms_and_conditions.jsp",
-        "citation": "Tierrafría, V. H. et al. (2022). RegulonDB 11.0: Comprehensive high-throughput datasets on transcriptional regulation in Escherichia coli K-12,\tMicrob Genom. 2022 May;8(5). doi: 10.1099/mgen.0.000833. PMID: 35584008. https://doi.org/10.1099/mgen.0.000833",
+        "license": "RegulonDB is free for academic/noncommercial use\n\nUser is not entitled to change or erase data sets of the RegulonDB\ndatabase or to eliminate copyright notices from RegulonDB. Furthermore,\nUser is not entitled to expand RegulonDB or to integrate RegulonDB partly\nor as a whole into other databank systems, without prior written consent\nfrom CCG-UNAM.\n\nPlease check the license at https://regulondb.ccg.unam.mx/manual/aboutUs/terms-conditions",
+        "citation": "Salgado H., Gama-Castro S. et al (2023). RegulonDB 12.0: A Comprehensive resource of transcriptional regulation in E. coli K-12",
         "contact": {
             "person": "RegulonDB Team",
-            "webPage": "http://regulondb.ccg.unam.mx/menu/about_regulondb/contact_us/index.jsp",
+            "webPage": None,
             "email": "regulondb@ccg.unam.mx"
         },
-        "version": "",
+        "version": "1.0",
         "creationDate": f"{creation_date.strftime('%m-%d-%Y')}",
         "columnsDetails": "Columns:\n(1) Operon name\n(2) First gene-position left\n(3) Last gene-position right\n(4) DNA strand where the operon is coded\n(5) Number of genes contained in the operon\n(6) Name or Blattner number of the gene(s) contained in the operon\n(7) Evidence that support the existence of the operon's TUs\n(8) Evidence confidence level (Confirmed, Strong, Weak)",
-        "content": " \n".join(operons_content)
+        "content": " \n".join(operons_content),
+        "rdbVersion": "12.0"
     }
     return operons_doc

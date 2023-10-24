@@ -8,7 +8,7 @@ class TranscriptionUnit:
     def objects(self):
         tu_objects = multigenomic_api.transcription_units.get_all()
         for tu_object in tu_objects:
-            print(tu_object.id)
+            # print(tu_object.id)
             ri_row = TranscriptionUnit.TUDatamart(tu_object)
             yield ri_row
         del tu_objects
@@ -103,20 +103,21 @@ def all_tus_rows():
         tus_content.append(tu.to_row())
     creation_date = datetime.now()
     tus_doc = {
-        "_id": "RDBECOLIDLF00003",
+        "_id": "RDBECOLIDLF00010",
         "fileName": "TUSet",
         "title": "Complete Transcription Unit Set",
         "fileFormat": "rif-version 1",
-        "license": "RegulonDB is free for academic/noncommercial use\t\tUser is not entitled to change or erase data sets of the RegulonDB\tdatabase or to eliminate copyright notices from RegulonDB. Furthermore,\tUser is not entitled to expand RegulonDB or to integrate RegulonDB partly\tor as a whole into other databank systems, without prior written consent\tfrom CCG-UNAM.\t\tPlease check the license at http://regulondb.ccg.unam.mx/menu/download/full_version/terms_and_conditions.jsp",
-        "citation": "Tierrafría, V. H. et al. (2022). RegulonDB 11.0: Comprehensive high-throughput datasets on transcriptional regulation in Escherichia coli K-12,\tMicrob Genom. 2022 May;8(5). doi: 10.1099/mgen.0.000833. PMID: 35584008. https://doi.org/10.1099/mgen.0.000833",
+        "license": "RegulonDB is free for academic/noncommercial use\n\nUser is not entitled to change or erase data sets of the RegulonDB\ndatabase or to eliminate copyright notices from RegulonDB. Furthermore,\nUser is not entitled to expand RegulonDB or to integrate RegulonDB partly\nor as a whole into other databank systems, without prior written consent\nfrom CCG-UNAM.\n\nPlease check the license at https://regulondb.ccg.unam.mx/manual/aboutUs/terms-conditions",
+        "citation": "Salgado H., Gama-Castro S. et al (2023). RegulonDB 12.0: A Comprehensive resource of transcriptional regulation in E. coli K-12",
         "contact": {
             "person": "RegulonDB Team",
-            "webPage": "http://regulondb.ccg.unam.mx/menu/about_regulondb/contact_us/index.jsp",
+            "webPage": None,
             "email": "regulondb@ccg.unam.mx"
         },
-        "version": "",
+        "version": "1.0",
         "creationDate": f"{creation_date.strftime('%m-%d-%Y')}",
         "columnsDetails": "Columns:\n(1) tuId. Transcription Unit identifier assigned by RegulonDB\n(2) tuName. Transcription unit name \n(3) operonName. Operon name containing the transcription unit\n(4) tuGenes. Name of the gene(s) contained in the transcription unit\n(5) pmName. Promoter Name\n(6) tuEvidence. Evidence that supports the existence of the transcription unit\n(7) addEvidence. Additive Evidence [CV(EvidenceCode1/EvidenceCodeN)|Confidence Level]\n(8) confidenceLevel. TU confidence level (Values: Confirmed, Strong, Weak)",
-        "content": " \n".join(tus_content)
+        "content": " \n".join(tus_content),
+        "rdbVersion": "12.0"
     }
     return tus_doc

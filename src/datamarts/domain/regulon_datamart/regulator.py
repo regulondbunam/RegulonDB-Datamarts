@@ -17,7 +17,6 @@ class Regulator(BiologicalBase):
     def to_dict(self):
         citations = self.citations
         additive_evs = AdditiveEvidences(citations)
-        regulator = None
         note = self.formatted_note
         if not note:
             note = self.get_longest_note()
@@ -30,7 +29,6 @@ class Regulator(BiologicalBase):
                 "synonyms": self.regulator.synonyms,
                 "note": note,
                 "conformations": self.conformations,
-                ## TODO: modificar esta propiedad en jsonSchema y servicios
                 "encodedBy": {
                     "genes": self.genes,
                     "operon": self.operons
@@ -74,6 +72,7 @@ class Regulator(BiologicalBase):
     def conformations(self, regulator):
         self._conformations = []
         reg_complex = None
+        product = None
         if regulator.regulator_type == "transcriptionFactor":
             try:
                 reg_complex = multigenomic_api.regulatory_complexes.find_by_name(regulator.name)
@@ -83,24 +82,17 @@ class Regulator(BiologicalBase):
                 reg_ints = multigenomic_api.regulatory_interactions.find_by_regulator_id(
                     reg_complex.id)
                 if len(reg_ints) > 0:
-                    self._conformations.append(Conformation(reg_complex, "regulatoryComplex").to_dict().copy())
-            else:
-                for product_id in regulator.products_ids:
-                    reg_ints = multigenomic_api.regulatory_interactions.find_by_regulator_id(product_id)
-                    if len(reg_ints) > 0:
-                        prod = multigenomic_api.products.find_by_id(product_id)
-                        self._conformations.append(Conformation(prod, "product").to_dict().copy())
-                conformations = regulator.active_conformations
-                conformation_object = None
-                for conformation in conformations:
-                    if conformation.type == "product":
-                        prod = multigenomic_api.products.find_by_id(conformation.id)
-                        conformation_object = Conformation(prod, conformation.type)
-                    elif conformation.type == "regulatoryComplex":
-                        complx = multigenomic_api.regulatory_complexes.find_by_id(conformation.id)
-                        conformation_object = Conformation(complx, conformation.type)
-                    if conformation_object.to_dict() not in self._conformations:
-                        self._conformations.append(conformation_object.to_dict().copy())
+                    self._conformations.append(Conformation(reg_complex, "regulatoryComplex", "active").to_dict().copy())
+            try:
+                product = multigenomic_api.products.find_by_name(regulator.name)
+            except DoesNotExist:
+                pass
+            if product is not None:
+                reg_ints = multigenomic_api.regulatory_interactions.find_by_regulator_id(product.id)
+                if len(reg_ints) > 0:
+                    self._conformations.append(Conformation(product, "product", "active").to_dict().copy())
+            self._conformations = insert_conf(regulator.active_conformations, self._conformations, "active")
+            self._conformations = insert_conf(regulator.inactive_conformations, self._conformations, "inactive")
 
     @property
     def genes(self):
@@ -131,10 +123,8 @@ class Regulator(BiologicalBase):
                 prod = multigenomic_api.products.find_by_id(product_id)
                 transcription_units = multigenomic_api.transcription_units.find_by_gene_id(prod.genes_id)
                 operons_id = multigenomic_api.transcription_units.get_operons_id_by_gene_id(prod.genes_id)
-                # operons_id = list(set(operons_id))
                 operon = multigenomic_api.operons.find_by_id(operons_id)
                 tus_encoding_reg = []
-                promoter = None
                 for transcription_unit in transcription_units:
                     tu_dict = {
                         "transcriptionUnitName": transcription_unit.name
@@ -152,7 +142,6 @@ class Regulator(BiologicalBase):
                 if operon_dict not in self._operons:
                     self._operons.append(operon_dict.copy())
 
-    # TODO: Check if this is correctly obtained
     @property
     def products(self):
         return self._products
@@ -195,13 +184,28 @@ class Regulator(BiologicalBase):
         return longest_note
 
 
+def insert_conf(conformations, final_list, conf_class):
+    conformation_object = None
+    for conformation in conformations:
+        if conformation.type == "product":
+            prod = multigenomic_api.products.find_by_id(conformation.id)
+            conformation_object = Conformation(prod, conformation.type, conf_class)
+        elif conformation.type == "regulatoryComplex":
+            complx = multigenomic_api.regulatory_complexes.find_by_id(conformation.id)
+            conformation_object = Conformation(complx, conformation.type, conf_class)
+        if conformation_object.to_dict() not in final_list:
+            final_list.append(conformation_object.to_dict().copy())
+    return final_list
+
+
 class Conformation(BiologicalBase):
-    def __init__(self, conf, conformation_type):
+    def __init__(self, conf, conformation_type, conf_class):
         super().__init__([], conf.citations, conf.note)
         self.conf = conf
         self.type = conformation_type
         self.name = None
         self.effector = conf
+        self.conf_class = conf_class
 
     @property
     def effector(self):
@@ -209,14 +213,15 @@ class Conformation(BiologicalBase):
 
     @effector.setter
     def effector(self, regulator):
-        self._effector = {}
+        self._effector = []
         if self.type == "regulatoryComplex":
-            for continuant_id in self.conf.regulatory_continuants_ids:
+            for continuant_id in regulator.regulatory_continuants_ids:
                 continuant = multigenomic_api.regulatory_continuants.find_by_id(continuant_id)
-                self._effector = {
+                effector = {
                     "_id": continuant.id,
                     "name": continuant.name
                 }
+                self._effector.append(effector)
 
     def to_dict(self):
         citations = self.citations
@@ -234,6 +239,7 @@ class Conformation(BiologicalBase):
             "citations": self.citations,
             "additiveEvidences": additive_evs.to_dict(),
             "confidenceLevel": additive_evs.get_confidence_level(),
+            "class": self.conf_class,
             # TODO: This will be added later by local process
             # "effectorInteractionType": None,
             # TODO: This will be added later by local process
