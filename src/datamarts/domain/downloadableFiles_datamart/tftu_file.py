@@ -2,23 +2,23 @@ import multigenomic_api
 from datetime import datetime
 
 
-class TFGene:
+class TFTU:
 
     @property
     def objects(self):
         ri_objects = multigenomic_api.regulatory_interactions.get_all()
         for ri_object in ri_objects:
             # print(ri_object.id)
-            ri_row = TFGene.TFGeneDatamart(ri_object)
+            ri_row = TFTU.TFTUDatamart(ri_object)
             yield ri_row
         del ri_objects
 
-    class TFGeneDatamart:
+    class TFTUDatamart:
         def __init__(self, ri):
             self.ri = ri
             self.trans_factor = ri.regulator
             self.genes = self.trans_factor
-            self.regulated_genes = ri.regulated_entity
+            self.regulated_tus = ri.regulated_entity
             self.function = ri.function
 
         @property
@@ -90,38 +90,33 @@ class TFGene:
                 self._function = '+'
 
         @property
-        def regulated_genes(self):
-            return self._regulated_genes
+        def regulated_tus(self):
+            return self._regulated_tus
 
-        @regulated_genes.setter
-        def regulated_genes(self, regulated_entity):
-            self._regulated_genes = []
-            if regulated_entity.type == "gene":
-                self._regulated_genes.append(regulated_entity)
-            elif regulated_entity.type == "promoter":
+        @regulated_tus.setter
+        def regulated_tus(self, regulated_entity):
+            self._regulated_tus = []
+            if regulated_entity.type == "promoter":
                 trans_units = multigenomic_api.transcription_units.find_by_promoter_id(regulated_entity.id)
-                genes_ids = []
                 for tu in trans_units:
-                    genes_ids.extend(tu.genes_ids)
-                for gene_id in genes_ids:
-                    gene = multigenomic_api.genes.find_by_id(gene_id)
-                    if gene not in self._regulated_genes:
-                        self._regulated_genes.append(gene)
+                    if tu not in self._regulated_tus:
+                        self._regulated_tus.append(tu)
             elif regulated_entity.type == "transcriptionUnit":
                 tu = multigenomic_api.transcription_units.find_by_id(regulated_entity.id)
-                for gene_id in tu.genes_ids:
-                    gene = multigenomic_api.genes.find_by_id(gene_id)
-                    if gene not in self._regulated_genes:
-                        self._regulated_genes.append(gene)
+                self._regulated_tus.append(tu)
 
         def to_row(self):
             response = []
-            for gene in self._regulated_genes:
+            for tu in self._regulated_tus:
+                promoter_name = ""
+                if tu["promoters_id"]:
+                    promoter = multigenomic_api.promoters.find_by_id(tu["promoters_id"])
+                    promoter_name = promoter.name
                 row = f"{self.trans_factor['id']}" \
                       f"\t{self.trans_factor['name']}" \
                       f"\t{self.genes}" \
-                      f"\t{gene['id']}" \
-                      f"\t{gene['name']}" \
+                      f"\t{tu['id']}" \
+                      f"\t{tu['name']}[{promoter_name}]" \
                       f"\t{self.function}" \
                       f"\t{self.ri.confidence_level or '?'}"
                 response.append(row)
@@ -177,7 +172,7 @@ def find_dual_items(list):
 
 
 def get_all_rows():
-    trans_factors = TFGene()
+    trans_factors = TFTU()
     tfs_content = [
         "1)regulatorId	2)regulatorName	3)RegulatorGeneName	4)regulatedId	5)regulatedName	6)function	7)confidenceLevel"]
     for tf in trans_factors.objects:
@@ -187,9 +182,9 @@ def get_all_rows():
     tfs_content = find_dual_items(find_existent_items_without_function(tfs_content))
     creation_date = datetime.now()
     tfs_doc = {
-        "_id": "RDBECOLIDLF00005",
-        "fileName": "NetworkRegulatorGene",
-        "title": "Complete Regulator-Gene Network Set",
+        "_id": "RDBECOLIDLF00015",
+        "fileName": "NetworkRegulatorTU",
+        "title": "Complete Regulator-TU Network Set",
         "fileFormat": "rif-version 1",
         "license": "RegulonDB is free for academic/noncommercial use\nUser is not entitled to change or erase data sets of the RegulonDB\ndatabase or to eliminate copyright notices from RegulonDB. Furthermore,\nUser is not entitled to expand RegulonDB or to integrate RegulonDB partly\nor as a whole into other databank systems, without prior written consent\nfrom CCG-UNAM.\nPlease check the license at https://regulondb.ccg.unam.mx/manual/aboutUs/terms-conditions",
         "citation": "Salgado H., Gama-Castro S. et al (2023). RegulonDB 12.0: A Comprehensive resource of transcriptional regulation in E. coli K-12",
@@ -200,7 +195,7 @@ def get_all_rows():
         },
         "version": "1.0",
         "creationDate": f"{creation_date.strftime('%m-%d-%Y')}",
-        "columnsDetails": "Columns:\n(1) regulatorId. Regulator identifier\n(2) regulatorName. Regulator Name\n(3) regulatorGeneName. Gene(s) coding for the TF\n(4) regulatedId. Gene ID regulated by the Regulator (regulated Gene)\n(5) regulatedName. Gene regulated by the Regulator (regulated Gene)\n(6) function. Regulatory Function of the Regulator on the regulated Gene (+ activator, - repressor, -+ dual, ? unknown)\n(7) confidenceLevel. RI confidence level based on its evidence (Values: Confirmed[C], Strong[S], Weak[W], Unknown[?])",
+        "columnsDetails": "Columns:\n(1) regulatorId. Regulator identifier\n(2) regulatorName. Regulator Name\n(3) regulatorGeneName. Gene(s) coding for the TF\n(4) regulatedId. Transcription Unit ID regulated by the TF (regulated Transcription Unit)\n(5) regulatedName. Transcription Unit regulated by the TF (regulated Transcription Unit)\n(6) function. Regulatory Function of the TF on the regulated Transcription Unit (+ activator, - repressor, +- dual, ? unknown)\n(7) confidenceLevel. RI confidence level based on its evidence (Values: Confirmed[C], Strong[S], Weak[W], Unknown[?])",
         "content": " \n".join(tfs_content),
         "rdbVersion": "12.0"
     }

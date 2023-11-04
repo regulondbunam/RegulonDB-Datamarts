@@ -2,80 +2,37 @@ import multigenomic_api
 from datetime import datetime
 
 
-class TFGene:
+class SigmaGene:
 
     @property
     def objects(self):
         ri_objects = multigenomic_api.regulatory_interactions.get_all()
         for ri_object in ri_objects:
             # print(ri_object.id)
-            ri_row = TFGene.TFGeneDatamart(ri_object)
+            ri_row = SigmaGene.SigmaGeneDatamart(ri_object)
             yield ri_row
         del ri_objects
 
-    class TFGeneDatamart:
+    class SigmaGeneDatamart:
         def __init__(self, ri):
             self.ri = ri
-            self.trans_factor = ri.regulator
-            self.genes = self.trans_factor
             self.regulated_genes = ri.regulated_entity
+            self.sigma = ri.regulated_entity
             self.function = ri.function
+            self.ri_evidences = ri.citations
 
         @property
-        def trans_factor(self):
-            return self._trans_factor
+        def sigma(self):
+            return self._sigma
 
-        @trans_factor.setter
-        def trans_factor(self, regulator):
-            tf = multigenomic_api.transcription_factors.find_tf_id_by_conformation_id(regulator.id)
-            if tf is None:
-                tf = multigenomic_api.transcription_factors.find_by_name(regulator.name)
-            if tf:
-                self._trans_factor = {
-                    "id": tf.id,
-                    "name": tf.abbreviated_name,
-                    "products_ids": tf.products_ids
-                }
-            else:
-                products_ids = []
-                if regulator.type == "regulatoryComplex":
-                    complex = multigenomic_api.regulatory_complexes.find_by_id(regulator.id)
-                    for product in complex.products:
-                        if product.products_id not in products_ids:
-                            products_ids.append(product.products_id)
-                    self._trans_factor = {
-                        "id": regulator.id,
-                        "name": complex.abbreviated_name or regulator.name,
-                        "products_ids": products_ids
-                    }
-                elif regulator.type == "product":
-                    products_ids.append(regulator.id)
-                    product = multigenomic_api.products.find_by_id(regulator.id)
-                    self._trans_factor = {
-                        "id": regulator.id,
-                        "name": product.abbreviated_name or regulator.name,
-                        "products_ids": products_ids
-                    }
-                else:
-                    self._trans_factor = {
-                        "id": regulator.id,
-                        "name": regulator.name,
-                        "products_ids": products_ids
-                    }
-
-        @property
-        def genes(self):
-            return self._genes
-
-        @genes.setter
-        def genes(self, tf):
-            self._genes = ""
-            for product_id in tf["products_ids"]:
-                product = multigenomic_api.products.find_by_id(product_id)
-                gene = multigenomic_api.genes.find_by_id(product.genes_id)
-                self._genes += f"{gene.name};"
-            if len(self._genes) > 0:
-                self._genes = self._genes[:-1]
+        @sigma.setter
+        def sigma(self, regulated_entity):
+            self._sigma = ""
+            if regulated_entity.type == "promoter":
+                promoter = multigenomic_api.promoters.find_by_id(regulated_entity.id)
+                if promoter.binds_sigma_factor:
+                    sigma = multigenomic_api.sigma_factors.find_by_id(promoter.binds_sigma_factor.sigma_factors_id)
+                    self._sigma = sigma
 
         @property
         def function(self):
@@ -96,9 +53,7 @@ class TFGene:
         @regulated_genes.setter
         def regulated_genes(self, regulated_entity):
             self._regulated_genes = []
-            if regulated_entity.type == "gene":
-                self._regulated_genes.append(regulated_entity)
-            elif regulated_entity.type == "promoter":
+            if regulated_entity.type == "promoter":
                 trans_units = multigenomic_api.transcription_units.find_by_promoter_id(regulated_entity.id)
                 genes_ids = []
                 for tu in trans_units:
@@ -107,24 +62,33 @@ class TFGene:
                     gene = multigenomic_api.genes.find_by_id(gene_id)
                     if gene not in self._regulated_genes:
                         self._regulated_genes.append(gene)
-            elif regulated_entity.type == "transcriptionUnit":
-                tu = multigenomic_api.transcription_units.find_by_id(regulated_entity.id)
-                for gene_id in tu.genes_ids:
-                    gene = multigenomic_api.genes.find_by_id(gene_id)
-                    if gene not in self._regulated_genes:
-                        self._regulated_genes.append(gene)
+
+        @property
+        def ri_evidences(self):
+            return self._ri_evidences
+
+        @ri_evidences.setter
+        def ri_evidences(self, citations):
+            self._ri_evidences = []
+            for citation in citations:
+                if citation.evidences_id:
+                    citation_dict = multigenomic_api.evidences.find_by_id(citation.evidences_id)
+                    if citation_dict.code not in self._ri_evidences:
+                        self._ri_evidences.append(citation_dict.code)
+            self._ri_evidences = ",".join(self._ri_evidences)
+            self._ri_evidences = f"[{self._ri_evidences}]"
 
         def to_row(self):
             response = []
-            for gene in self._regulated_genes:
-                row = f"{self.trans_factor['id']}" \
-                      f"\t{self.trans_factor['name']}" \
-                      f"\t{self.genes}" \
-                      f"\t{gene['id']}" \
-                      f"\t{gene['name']}" \
-                      f"\t{self.function}" \
-                      f"\t{self.ri.confidence_level or '?'}"
-                response.append(row)
+            if self.sigma != "":
+                for gene in self._regulated_genes:
+                    if self.function != "":
+                        row = f"{self.sigma.abbreviated_name}" \
+                              f"\t{gene['name']}" \
+                              f"\t{self.function}" \
+                              f"\t{self.ri_evidences}" \
+                              f"\t{self.ri.confidence_level or '?'}"
+                        response.append(row)
             return response
 
 
@@ -177,9 +141,9 @@ def find_dual_items(list):
 
 
 def get_all_rows():
-    trans_factors = TFGene()
+    trans_factors = SigmaGene()
     tfs_content = [
-        "1)regulatorId	2)regulatorName	3)RegulatorGeneName	4)regulatedId	5)regulatedName	6)function	7)confidenceLevel"]
+        "1)sigmaName\t2)regulatedName\t3)function\t4)evidences\t5)confidenceLevel"]
     for tf in trans_factors.objects:
         tfs_content.extend(tf.to_row())
     tfs_content = list(set(tfs_content))
@@ -187,9 +151,9 @@ def get_all_rows():
     tfs_content = find_dual_items(find_existent_items_without_function(tfs_content))
     creation_date = datetime.now()
     tfs_doc = {
-        "_id": "RDBECOLIDLF00005",
-        "fileName": "NetworkRegulatorGene",
-        "title": "Complete Regulator-Gene Network Set",
+        "_id": "RDBECOLIDLF00018",
+        "fileName": "NetworkSigmaGene",
+        "title": "Complete Sigma-Gene Network Set",
         "fileFormat": "rif-version 1",
         "license": "RegulonDB is free for academic/noncommercial use\nUser is not entitled to change or erase data sets of the RegulonDB\ndatabase or to eliminate copyright notices from RegulonDB. Furthermore,\nUser is not entitled to expand RegulonDB or to integrate RegulonDB partly\nor as a whole into other databank systems, without prior written consent\nfrom CCG-UNAM.\nPlease check the license at https://regulondb.ccg.unam.mx/manual/aboutUs/terms-conditions",
         "citation": "Salgado H., Gama-Castro S. et al (2023). RegulonDB 12.0: A Comprehensive resource of transcriptional regulation in E. coli K-12",
@@ -200,7 +164,7 @@ def get_all_rows():
         },
         "version": "1.0",
         "creationDate": f"{creation_date.strftime('%m-%d-%Y')}",
-        "columnsDetails": "Columns:\n(1) regulatorId. Regulator identifier\n(2) regulatorName. Regulator Name\n(3) regulatorGeneName. Gene(s) coding for the TF\n(4) regulatedId. Gene ID regulated by the Regulator (regulated Gene)\n(5) regulatedName. Gene regulated by the Regulator (regulated Gene)\n(6) function. Regulatory Function of the Regulator on the regulated Gene (+ activator, - repressor, -+ dual, ? unknown)\n(7) confidenceLevel. RI confidence level based on its evidence (Values: Confirmed[C], Strong[S], Weak[W], Unknown[?])",
+        "columnsDetails": "Columns:\n(1) sigmaName. Sigma Name\n(2) regulatedName. Gene regulated by the Sigma Factor (regulated Gene)\n(3) function. Regulatory Function of the Regulator on the regulated Gene (+ activator, - repressor, -+ dual, ? unknown)\n(4)riEvidences. Evidence that supports the existence of the regulatory interaction\n(5) confidenceLevel. RI confidence level based on its evidence (Values: Confirmed[C], Strong[S], Weak[W], Unknown[?])",
         "content": " \n".join(tfs_content),
         "rdbVersion": "12.0"
     }

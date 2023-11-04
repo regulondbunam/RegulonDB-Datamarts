@@ -12,6 +12,11 @@ from src.datamarts.domain.downloadableFiles_datamart import tfgene_file_release4
 from src.datamarts.domain.downloadableFiles_datamart import regulatoryInteractions_tf_file
 from src.datamarts.domain.downloadableFiles_datamart import object_evidences_file
 from src.datamarts.domain.downloadableFiles_datamart import additiveEvidences_file
+from src.datamarts.domain.downloadableFiles_datamart import tftu_file
+from src.datamarts.domain.downloadableFiles_datamart import tf_tf_file
+from src.datamarts.domain.downloadableFiles_datamart import gene_product_ids_file
+from src.datamarts.domain.downloadableFiles_datamart import sigma_gene_file
+from src.datamarts.domain.downloadableFiles_datamart import sigma_tu_file
 
 
 def get_all_downloadable_docs():
@@ -72,5 +77,25 @@ def get_all_downloadable_docs():
     print("Additive Evidences")
     add_evs = additiveEvidences_file.all_evidences_rows()
     downloadable_files_dm.append(add_evs)
+    # NetworkRegulatorGene
+    print("Regulator-TU")
+    tf_tu = tftu_file.get_all_rows()
+    downloadable_files_dm.append(tf_tu)
+    # NetworkRegulator-Regulator
+    print("Regulator-Regulator")
+    tf_tf = tf_tf_file.get_all_rows()
+    downloadable_files_dm.append(tf_tf)
+    # Gene-Product Ids
+    print("Gene-Prod")
+    gene_prod_ids = gene_product_ids_file.all_gene_rows()
+    downloadable_files_dm.append(gene_prod_ids)
+    """# NetworkSigma-Gene (Not complete)
+    print("Sigma-Gene")
+    sigma_gene = sigma_gene_file.get_all_rows()
+    downloadable_files_dm.append(sigma_gene)
+    # NetworkSigma-TU (Not complete)
+    print("Sigma-TU")
+    sigma_tu = sigma_tu_file.get_all_rows()
+    downloadable_files_dm.append(sigma_tu)"""
 
     return downloadable_files_dm

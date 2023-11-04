@@ -2,18 +2,18 @@ import multigenomic_api
 from datetime import datetime
 
 
-class TFGene:
+class TFTF:
 
     @property
     def objects(self):
         ri_objects = multigenomic_api.regulatory_interactions.get_all()
         for ri_object in ri_objects:
             # print(ri_object.id)
-            ri_row = TFGene.TFGeneDatamart(ri_object)
+            ri_row = TFTF.TFTFDatamart(ri_object)
             yield ri_row
         del ri_objects
 
-    class TFGeneDatamart:
+    class TFTFDatamart:
         def __init__(self, ri):
             self.ri = ri
             self.trans_factor = ri.regulator
@@ -117,14 +117,24 @@ class TFGene:
         def to_row(self):
             response = []
             for gene in self._regulated_genes:
-                row = f"{self.trans_factor['id']}" \
-                      f"\t{self.trans_factor['name']}" \
-                      f"\t{self.genes}" \
-                      f"\t{gene['id']}" \
-                      f"\t{gene['name']}" \
-                      f"\t{self.function}" \
-                      f"\t{self.ri.confidence_level or '?'}"
-                response.append(row)
+                gene_products = multigenomic_api.products.find_by_gene_id(gene['id'])
+                for product in gene_products:
+                    tf = multigenomic_api.transcription_factors.find_tf_id_by_conformation_id(product.id)
+                    if tf is None:
+                        tf = multigenomic_api.transcription_factors.find_by_name(product.name)
+                    if tf:
+                        if tf.abbreviated_name:
+                            tf_name = tf.abbreviated_name
+                        else:
+                            tf_name = tf.name
+                        row = f"{self.trans_factor['id']}" \
+                              f"\t{self.trans_factor['name']}" \
+                              f"\t{self.genes}" \
+                              f"\t{tf['id']}" \
+                              f"\t{tf_name}" \
+                              f"\t{self.function}" \
+                              f"\t{self.ri.confidence_level or '?'}"
+                        response.append(row)
             return response
 
 
@@ -177,7 +187,7 @@ def find_dual_items(list):
 
 
 def get_all_rows():
-    trans_factors = TFGene()
+    trans_factors = TFTF()
     tfs_content = [
         "1)regulatorId	2)regulatorName	3)RegulatorGeneName	4)regulatedId	5)regulatedName	6)function	7)confidenceLevel"]
     for tf in trans_factors.objects:
@@ -187,9 +197,9 @@ def get_all_rows():
     tfs_content = find_dual_items(find_existent_items_without_function(tfs_content))
     creation_date = datetime.now()
     tfs_doc = {
-        "_id": "RDBECOLIDLF00005",
-        "fileName": "NetworkRegulatorGene",
-        "title": "Complete Regulator-Gene Network Set",
+        "_id": "RDBECOLIDLF00016",
+        "fileName": "NetworkRegulatorRegulator",
+        "title": "Complete Regulator-Regulator Network Set",
         "fileFormat": "rif-version 1",
         "license": "RegulonDB is free for academic/noncommercial use\nUser is not entitled to change or erase data sets of the RegulonDB\ndatabase or to eliminate copyright notices from RegulonDB. Furthermore,\nUser is not entitled to expand RegulonDB or to integrate RegulonDB partly\nor as a whole into other databank systems, without prior written consent\nfrom CCG-UNAM.\nPlease check the license at https://regulondb.ccg.unam.mx/manual/aboutUs/terms-conditions",
         "citation": "Salgado H., Gama-Castro S. et al (2023). RegulonDB 12.0: A Comprehensive resource of transcriptional regulation in E. coli K-12",
@@ -200,7 +210,7 @@ def get_all_rows():
         },
         "version": "1.0",
         "creationDate": f"{creation_date.strftime('%m-%d-%Y')}",
-        "columnsDetails": "Columns:\n(1) regulatorId. Regulator identifier\n(2) regulatorName. Regulator Name\n(3) regulatorGeneName. Gene(s) coding for the TF\n(4) regulatedId. Gene ID regulated by the Regulator (regulated Gene)\n(5) regulatedName. Gene regulated by the Regulator (regulated Gene)\n(6) function. Regulatory Function of the Regulator on the regulated Gene (+ activator, - repressor, -+ dual, ? unknown)\n(7) confidenceLevel. RI confidence level based on its evidence (Values: Confirmed[C], Strong[S], Weak[W], Unknown[?])",
+        "columnsDetails": "Columns:\n(1) regulatorId. Regulator identifier\n(2) regulatorName. Regulator Name\n(3) regulatorGeneName. Gene(s) coding for the TF\n(4) regulatedId. Regulator ID regulated by the Regulator (regulated Regulator)\n(5) regulatedName. Regulator regulated by the Regulator (regulated Regulator)\n(6) function. Regulatory Function of the Regulator on the regulated Gene (+ activator, - repressor, -+ dual, ? unknown)\n(7) confidenceLevel. RI confidence level based on its evidence (Values: Confirmed[C], Strong[S], Weak[W], Unknown[?])",
         "content": " \n".join(tfs_content),
         "rdbVersion": "12.0"
     }

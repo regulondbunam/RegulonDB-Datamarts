@@ -411,7 +411,7 @@ def all_regulators_rows():
         "fileName": "RegulatorSet",
         "title": "Complete Regulators Set",
         "fileFormat": "rif-version 1",
-        "license": "RegulonDB is free for academic/noncommercial use\n\nUser is not entitled to change or erase data sets of the RegulonDB\ndatabase or to eliminate copyright notices from RegulonDB. Furthermore,\nUser is not entitled to expand RegulonDB or to integrate RegulonDB partly\nor as a whole into other databank systems, without prior written consent\nfrom CCG-UNAM.\n\nPlease check the license at https://regulondb.ccg.unam.mx/manual/aboutUs/terms-conditions",
+        "license": "RegulonDB is free for academic/noncommercial use\nUser is not entitled to change or erase data sets of the RegulonDB\ndatabase or to eliminate copyright notices from RegulonDB. Furthermore,\nUser is not entitled to expand RegulonDB or to integrate RegulonDB partly\nor as a whole into other databank systems, without prior written consent\nfrom CCG-UNAM.\nPlease check the license at https://regulondb.ccg.unam.mx/manual/aboutUs/terms-conditions",
         "citation": "Salgado H., Gama-Castro S. et al (2023). RegulonDB 12.0: A Comprehensive resource of transcriptional regulation in E. coli K-12",
         "contact": {
             "person": "RegulonDB Team",
