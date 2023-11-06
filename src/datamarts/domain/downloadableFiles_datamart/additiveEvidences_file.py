@@ -61,15 +61,15 @@ class ObjectEvidences:
                 self._rules_matched += ") </br>"
 
         def to_row(self):
-            return f"{self.rule['type'] or ''}" \
-                   f"\t{self.rules}" \
+            return f"{self.rules}" \
                    f"\t{self.rules_matched}" \
-                   f"\t{self.object_type}"
+                   f"\t{self.object_type}" \
+                   f"\t{self.rule['type'] or ''}"
 
 
 def all_evidences_rows():
     evidences = ObjectEvidences()
-    evidences_content = ["1)confidence_level\t2)rule_title\t3)matched_rules\t4)object_type"]
+    evidences_content = ["1)rule_title\t2)matched_rules\t3)object_type\t4)confidence_level"]
     for ev in evidences.objects:
         evidences_content.append(ev.to_row())
     creation_date = datetime.now()
@@ -87,7 +87,7 @@ def all_evidences_rows():
         },
         "version": "1.0",
         "creationDate": f"{creation_date.strftime('%m-%d-%Y')}",
-        "columnsDetails": "Columns:\n(1) Confidence Level of the evidence\n(2) Title of the evidence\n(3) Matched evidences with their respective rule\n(4) Object(s) were this evidence appears (Promoter,Transcription Units,Regulatory Interactions,Transcription Factors)",
+        "columnsDetails": "Columns:\n(1) Title of the evidence\n(2) Matched evidences with their respective rule\n(3) Object(s) were this evidence appears (Promoter,Transcription Units,Regulatory Interactions,Transcription Factors)\n(4) Confidence Level of the evidence",
         "content": " \n".join(evidences_content),
         "rdbVersion": "12.0"
     }

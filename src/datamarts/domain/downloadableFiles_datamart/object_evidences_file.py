@@ -50,17 +50,18 @@ class ObjectEvidences:
             return rows
 
         def to_row(self, object_type):
-            return f"{self.evidence.type or ''}" \
+            return f"{self.code}" \
                    f"\t{self.evidence.name}" \
-                   f"\t{self.code}" \
-                   f"\t{self.evidence.category or ''}" \
                    f"\t{self.evidence.cv_code_rule or ''}" \
-                   f"\t{object_type}"
+                   f"\t{self.evidence.type or ''}" \
+                   f"\t{object_type}" \
+                   f"\t{self.evidence.category or ''}"
 
 
 def all_evidences_rows():
     evidences = ObjectEvidences()
-    evidences_content = ["1)confidence_level\t2)evidence_name\t3)evidence_code\t4)evidence_category\t5)evidence_group\t6)object_type"]
+    evidences_content = [
+        "1)evidence_code\t2)evidence_name\t3)confidence_level\t4)evidence_group\t5)object_type\t6)evidence_category"]
     for ev in evidences.objects:
         evidences_content.extend(ev.get_rows())
     creation_date = datetime.now()
@@ -78,7 +79,7 @@ def all_evidences_rows():
         },
         "version": "1.0",
         "creationDate": f"{creation_date.strftime('%m-%d-%Y')}",
-        "columnsDetails": "Columns:\n(1) Confidence Level of the evidence\n(2) Name of the Evidence\n(3) Code associated to evidence\n(4) Category of the Evidence\n(5) Group of the evidence (Code rule)\n(6) Object(s) were this evidence appears (Promoter,Transcription Units,Regulatory Interactions,Transcription Factors)",
+        "columnsDetails": "Columns:\n(1) Code associated to evidence\n(2) Name of the Evidence\n(3) Confidence Level of the evidence\n(4) Group of the evidence (Code rule)\n(5) Object(s) were this evidence appears (Promoter,Transcription Units,Regulatory Interactions,Transcription Factors)\n(6) Category of the Evidence",
         "content": " \n".join(evidences_content),
         "rdbVersion": "12.0"
     }

@@ -80,12 +80,11 @@ class SigmaTU:
             row = None
             if self.sigma != "":
                 if self.regulated_tu:
-                    if self.function != "":
-                        row = f"{self.sigma.abbreviated_name}" \
-                              f"\t{self.regulated_tu}" \
-                              f"\t{self.function}" \
-                              f"\t{self.ri_evidences}" \
-                              f"\t{self.ri.confidence_level or '?'}"
+                    row = f"{self.sigma.abbreviated_name}" \
+                          f"\t{self.regulated_tu}" \
+                          f"\t{'+'}" \
+                          f"\t{self.ri_evidences}" \
+                          f"\t{self.ri.confidence_level or '?'}"
             return row
 
 
@@ -100,41 +99,27 @@ def remove_similar_items(lista):
     return resultado
 
 
-def find_existent_items_without_function(list):
+def remove_repeated_items_by_different_evidences(list):
     resultado = []
+    omitir = []
     for i in range(0, len(list) - 1):
         current_item = list[i]
         next_item = list[i + 1]
 
         cad_inicial_curr = current_item.rsplit('\t')
         cad_inicial_next = next_item.rsplit('\t')
+        print(cad_inicial_curr[:-2], cad_inicial_next[:-2])
         if cad_inicial_curr[:-2] == cad_inicial_next[:-2]:
-            if cad_inicial_curr[-2] != "":
+            cad_inicial_curr = "\t".join(cad_inicial_curr[:-2])
+            if cad_inicial_curr not in omitir:
+                omitir.append(cad_inicial_curr)
                 resultado.append(current_item)
         else:
-            resultado.append(current_item)
+            cad_inicial_curr = "\t".join(cad_inicial_curr[:-2])
+            if cad_inicial_curr not in omitir:
+                omitir.append(cad_inicial_curr)
+                resultado.append(current_item)
     return resultado
-
-
-def find_dual_items(list):
-    new_list = []
-    for i in range(0, len(list) - 1):
-        current_item = list[i]
-        next_item = list[i + 1]
-
-        current_item_cl = current_item[-1:]
-
-        current_item_rep = current_item.replace("+", "-")[:-1]
-        next_item_rep = next_item.replace("+", "-")[:-1]
-        current_item_act = current_item.replace("-", "+")[:-1]
-        next_item_act = next_item.replace("-", "+")[:-1]
-
-        if current_item_rep == next_item_rep or current_item_act == next_item_act:
-            new_list.append(current_item_act.replace("+", "-+") + current_item_cl)
-            list[i+1] = next_item_act.replace("+", "-+") + current_item_cl
-        else:
-            new_list.append(current_item)
-    return remove_similar_items(new_list)
 
 
 def get_all_rows():
@@ -146,7 +131,7 @@ def get_all_rows():
             tfs_content.append(tf.to_row())
     tfs_content = list(set(tfs_content))
     tfs_content = sorted(remove_similar_items(tfs_content))
-    tfs_content = find_dual_items(find_existent_items_without_function(tfs_content))
+    tfs_content = remove_repeated_items_by_different_evidences(tfs_content)
     creation_date = datetime.now()
     tfs_doc = {
         "_id": "RDBECOLIDLF00019",
