@@ -6,77 +6,64 @@ class SigmaGene:
 
     @property
     def objects(self):
-        ri_objects = multigenomic_api.regulatory_interactions.get_all()
-        for ri_object in ri_objects:
-            # print(ri_object.id)
-            ri_row = SigmaGene.SigmaGeneDatamart(ri_object)
+        promoter_objects = multigenomic_api.promoters.get_all()
+        for promoter_obj in promoter_objects:
+            print(promoter_obj.id)
+            ri_row = SigmaGene.SigmaGeneDatamart(promoter_obj)
             yield ri_row
-        del ri_objects
+        del promoter_objects
 
     class SigmaGeneDatamart:
-        def __init__(self, ri):
-            self.ri = ri
-            self.regulated_genes = ri.regulated_entity
-            self.sigma = ri.regulated_entity
-            self.function = ri.function
-            self.ri_evidences = ri.citations
+        def __init__(self, promoter):
+            self.promoter = promoter
+            self.sigma = promoter.binds_sigma_factor
+            self.regulated_genes = promoter
+            self.sigma_evidences = promoter
 
         @property
         def sigma(self):
             return self._sigma
 
         @sigma.setter
-        def sigma(self, regulated_entity):
+        def sigma(self, binds_sigma_factor):
             self._sigma = ""
-            if regulated_entity.type == "promoter":
-                promoter = multigenomic_api.promoters.find_by_id(regulated_entity.id)
-                if promoter.binds_sigma_factor:
-                    sigma = multigenomic_api.sigma_factors.find_by_id(promoter.binds_sigma_factor.sigma_factors_id)
-                    self._sigma = sigma
-
-        @property
-        def function(self):
-            return self._function
-
-        @function.setter
-        def function(self, function):
-            self._function = ""
-            if function == "repressor":
-                self._function = '-'
-            elif function == "activator":
-                self._function = '+'
+            if binds_sigma_factor:
+                self._sigma = multigenomic_api.sigma_factors.find_by_id(binds_sigma_factor.sigma_factors_id)
 
         @property
         def regulated_genes(self):
             return self._regulated_genes
 
         @regulated_genes.setter
-        def regulated_genes(self, regulated_entity):
+        def regulated_genes(self, promoter):
             self._regulated_genes = []
-            if regulated_entity.type == "promoter":
-                trans_units = multigenomic_api.transcription_units.find_by_promoter_id(regulated_entity.id)
-                genes_ids = []
-                for tu in trans_units:
-                    genes_ids.extend(tu.genes_ids)
-                for gene_id in genes_ids:
-                    gene = multigenomic_api.genes.find_by_id(gene_id)
-                    if gene not in self._regulated_genes:
-                        self._regulated_genes.append(gene)
+            trans_units = multigenomic_api.transcription_units.find_by_promoter_id(promoter.id)
+            genes_ids = []
+            for tu in trans_units:
+                genes_ids.extend(tu.genes_ids)
+            for gene_id in genes_ids:
+                gene = multigenomic_api.genes.find_by_id(gene_id)
+                if gene not in self._regulated_genes:
+                    self._regulated_genes.append(gene)
 
         @property
-        def ri_evidences(self):
-            return self._ri_evidences
+        def sigma_evidences(self):
+            return self._sigma_evidences
 
-        @ri_evidences.setter
-        def ri_evidences(self, citations):
-            self._ri_evidences = []
+        @sigma_evidences.setter
+        def sigma_evidences(self, promoter):
+            self._sigma_evidences = []
+            citations = []
+            if promoter.binds_sigma_factor:
+                citations.extend(promoter.binds_sigma_factor.citations)
+            citations.extend(promoter.citations)
             for citation in citations:
                 if citation.evidences_id:
                     citation_dict = multigenomic_api.evidences.find_by_id(citation.evidences_id)
-                    if citation_dict.code not in self._ri_evidences:
-                        self._ri_evidences.append(citation_dict.code)
-            self._ri_evidences = ",".join(self._ri_evidences)
-            self._ri_evidences = f"[{self._ri_evidences}]"
+                    if citation_dict.code not in self._sigma_evidences:
+                        self._sigma_evidences.append(citation_dict.code)
+            self._sigma_evidences = ",".join(self._sigma_evidences)
+            self._sigma_evidences = f"[{self._sigma_evidences}]"
 
         def to_row(self):
             response = []
@@ -85,8 +72,8 @@ class SigmaGene:
                     row = f"{self.sigma.abbreviated_name}" \
                           f"\t{gene['name']}" \
                           f"\t{'+'}" \
-                          f"\t{self.ri_evidences}" \
-                          f"\t{self.ri.confidence_level or '?'}"
+                          f"\t{self.sigma_evidences}" \
+                          f"\t{self.promoter.confidence_level or '?'}"
                     response.append(row)
             return response
 
@@ -111,7 +98,6 @@ def remove_repeated_items_by_different_evidences(list):
 
         cad_inicial_curr = current_item.rsplit('\t')
         cad_inicial_next = next_item.rsplit('\t')
-        print(cad_inicial_curr[:-2], cad_inicial_next[:-2])
         if cad_inicial_curr[:-2] == cad_inicial_next[:-2]:
             cad_inicial_curr = "\t".join(cad_inicial_curr[:-2])
             if cad_inicial_curr not in omitir:
@@ -128,7 +114,7 @@ def remove_repeated_items_by_different_evidences(list):
 def get_all_rows():
     trans_factors = SigmaGene()
     tfs_content = [
-        "1)sigmaName\t2)regulatedName\t3)function\t4)evidences\t5)confidenceLevel"]
+        "1)sigmaName\t2)regulatedName\t3)function\t4)promoterEvidences\t5)confidenceLevel"]
     for tf in trans_factors.objects:
         tfs_content.extend(tf.to_row())
     tfs_content = list(set(tfs_content))
@@ -149,7 +135,7 @@ def get_all_rows():
         },
         "version": "1.0",
         "creationDate": f"{creation_date.strftime('%m-%d-%Y')}",
-        "columnsDetails": "Columns:\n(1) sigmaName. Sigma Name\n(2) regulatedName. Gene regulated by the Sigma Factor (regulated Gene)\n(3) function. Regulatory Function of the Regulator on the regulated Gene (+ activator, - repressor, -+ dual, ? unknown)\n(4)riEvidences. Evidence that supports the existence of the regulatory interaction\n(5) confidenceLevel. RI confidence level based on its evidence (Values: Confirmed[C], Strong[S], Weak[W], Unknown[?])",
+        "columnsDetails": "Columns:\n(1) sigmaName. Sigma Name\n(2) regulatedName. Gene regulated by the Sigma Factor (regulated Gene)\n(3) function. Regulatory Function of the Sigma on the regulated Gene (+ activator, - repressor, -+ dual, ? unknown)\n(4)promoterEvidences. Evidence that supports the regulation the sigma on the promoter and the promoter evidences\n(5) confidenceLevel. RI confidence level based on its evidence (Values: Confirmed[C], Strong[S], Weak[W], Unknown[?])",
         "content": " \n".join(tfs_content),
         "rdbVersion": "12.0"
     }

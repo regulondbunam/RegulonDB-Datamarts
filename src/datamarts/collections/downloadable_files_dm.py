@@ -89,13 +89,13 @@ def get_all_downloadable_docs():
     print("Gene-Prod")
     gene_prod_ids = gene_product_ids_file.all_gene_rows()
     downloadable_files_dm.append(gene_prod_ids)
-    """# NetworkSigma-Gene (Not complete)
+    # NetworkSigma-Gene (Not complete)
     print("Sigma-Gene")
     sigma_gene = sigma_gene_file.get_all_rows()
     downloadable_files_dm.append(sigma_gene)
     # NetworkSigma-TU (Not complete)
     print("Sigma-TU")
     sigma_tu = sigma_tu_file.get_all_rows()
-    downloadable_files_dm.append(sigma_tu)"""
+    downloadable_files_dm.append(sigma_tu)
 
     return downloadable_files_dm
