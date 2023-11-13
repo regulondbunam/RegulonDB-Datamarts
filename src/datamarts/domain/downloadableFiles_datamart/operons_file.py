@@ -1,6 +1,5 @@
 import multigenomic_api
 from datetime import datetime
-from src.datamarts.domain.general.additiveEvidences import AdditiveEvidences
 
 
 class Operon:
@@ -188,7 +187,7 @@ def all_operons_rows():
         "fileName": "OperonSet",
         "title": "Complete Operons Set",
         "fileFormat": "rif-version 1",
-        "license": "RegulonDB is free for academic/noncommercial use\nUser is not entitled to change or erase data sets of the RegulonDB\ndatabase or to eliminate copyright notices from RegulonDB. Furthermore,\nUser is not entitled to expand RegulonDB or to integrate RegulonDB partly\nor as a whole into other databank systems, without prior written consent\nfrom CCG-UNAM.\nPlease check the license at https://regulondb.ccg.unam.mx/manual/aboutUs/terms-conditions",
+        "license": "# RegulonDB is free for academic/noncommercial use\n# User is not entitled to change or erase data sets of the RegulonDB\n# database or to eliminate copyright notices from RegulonDB. Furthermore,\n# User is not entitled to expand RegulonDB or to integrate RegulonDB partly\n# or as a whole into other databank systems, without prior written consent\n# from CCG-UNAM.\n# Please check the license at https://regulondb.ccg.unam.mx/manual/aboutUs/terms-conditions",
         "citation": "Salgado H., Gama-Castro S. et al (2023). RegulonDB 12.0: A Comprehensive resource of transcriptional regulation in E. coli K-12",
         "contact": {
             "person": "RegulonDB Team",
@@ -197,7 +196,7 @@ def all_operons_rows():
         },
         "version": "1.0",
         "creationDate": f"{creation_date.strftime('%m-%d-%Y')}",
-        "columnsDetails": "Columns:\n(1) Operon name\n(2) First gene-position left\n(3) Last gene-position right\n(4) DNA strand where the operon is coded\n(5) Number of genes contained in the operon\n(6) Name or Blattner number of the gene(s) contained in the operon\n(7) Evidence that support the existence of the operon's TUs\n(8) Evidence confidence level (Confirmed, Strong, Weak)",
+        "columnsDetails": "# Columns:\n# (1) Operon name\n# (2) First gene-position left\n# (3) Last gene-position right\n# (4) DNA strand where the operon is coded\n# (5) Number of genes contained in the operon\n# (6) Name or Blattner number of the gene(s) contained in the operon\n# (7) Evidence that support the existence of the operon's TUs\n# (8) Evidence confidence level (Confirmed, Strong, Weak)",
         "content": " \n".join(operons_content),
         "rdbVersion": "12.0"
     }

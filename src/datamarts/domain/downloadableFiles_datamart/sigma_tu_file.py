@@ -8,7 +8,7 @@ class SigmaTU:
     def objects(self):
         promoter_objects = multigenomic_api.promoters.get_all()
         for promoter_obj in promoter_objects:
-            print(promoter_obj.id)
+            #print(promoter_obj.id)
             ri_row = SigmaTU.SigmaTUDatamart(promoter_obj)
             yield ri_row
         del promoter_objects
@@ -61,7 +61,7 @@ class SigmaTU:
             self._sigma_evidences = f"[{self._sigma_evidences}]"
 
         def to_row(self):
-            row = None
+            response = []
             if self.sigma != "":
                 for tu in self.regulated_tus:
                     row = f"{self.sigma.abbreviated_name}" \
@@ -69,7 +69,8 @@ class SigmaTU:
                           f"\t{'+'}" \
                           f"\t{self.sigma_evidences}" \
                           f"\t{self.promoter.confidence_level or '?'}"
-            return row
+                    response.append(row)
+            return response
 
 
 def remove_similar_items(lista):
@@ -109,10 +110,10 @@ def remove_repeated_items_by_different_evidences(list):
 def get_all_rows():
     trans_factors = SigmaTU()
     tfs_content = [
-        "1)sigmaName\t2)regulatedName\t3)function\t4)promoterEvidences\t5)confidenceLevel"]
+        "1)sigmaName\t2)regulatedName\t3)function\t4)promoterEvidence\t5)confidenceLevel"]
     for tf in trans_factors.objects:
         if tf.to_row() is not None:
-            tfs_content.append(tf.to_row())
+            tfs_content.extend(tf.to_row())
     tfs_content = list(set(tfs_content))
     tfs_content = sorted(remove_similar_items(tfs_content))
     tfs_content = remove_repeated_items_by_different_evidences(tfs_content)
@@ -122,7 +123,7 @@ def get_all_rows():
         "fileName": "NetworkSigmaTU",
         "title": "Complete Sigma-TU Network Set",
         "fileFormat": "rif-version 1",
-        "license": "RegulonDB is free for academic/noncommercial use\nUser is not entitled to change or erase data sets of the RegulonDB\ndatabase or to eliminate copyright notices from RegulonDB. Furthermore,\nUser is not entitled to expand RegulonDB or to integrate RegulonDB partly\nor as a whole into other databank systems, without prior written consent\nfrom CCG-UNAM.\nPlease check the license at https://regulondb.ccg.unam.mx/manual/aboutUs/terms-conditions",
+        "license": "# RegulonDB is free for academic/noncommercial use\n# User is not entitled to change or erase data sets of the RegulonDB\n# database or to eliminate copyright notices from RegulonDB. Furthermore,\n# User is not entitled to expand RegulonDB or to integrate RegulonDB partly\n# or as a whole into other databank systems, without prior written consent\n# from CCG-UNAM.\n# Please check the license at https://regulondb.ccg.unam.mx/manual/aboutUs/terms-conditions",
         "citation": "Salgado H., Gama-Castro S. et al (2023). RegulonDB 12.0: A Comprehensive resource of transcriptional regulation in E. coli K-12",
         "contact": {
             "person": "RegulonDB Team",
@@ -131,7 +132,7 @@ def get_all_rows():
         },
         "version": "1.0",
         "creationDate": f"{creation_date.strftime('%m-%d-%Y')}",
-        "columnsDetails": "Columns:\n(1) sigmaName. Sigma Name\n(2) regulatedName. TU regulated by the Sigma Factor (regulated TU)\n(3) function. Regulatory Function of the Sigma on the regulated TU (+ activator, - repressor, -+ dual, ? unknown)\n(4)promoterEvidences. Evidence that supports the regulation the sigma on the promoter and the promoter evidences\n(5) confidenceLevel. RI confidence level based on its evidence (Values: Confirmed[C], Strong[S], Weak[W], Unknown[?])",
+        "columnsDetails": "# Columns:\n# (1) sigmaName. Sigma Name\n# (2) regulatedName. TU regulated by the Sigma Factor (regulated TU)\n# (3) function. Regulatory Function of the Sigma on the regulated TU (+ activator, - repressor, -+ dual, ? unknown)\n# (4)promoterEvidences. Evidence that supports the regulation the sigma on the promoter and the promoter evidences\n# (5) confidenceLevel. RI confidence level based on its evidence (Values: Confirmed[C], Strong[S], Weak[W], Unknown[?])",
         "content": " \n".join(tfs_content),
         "rdbVersion": "12.0"
     }

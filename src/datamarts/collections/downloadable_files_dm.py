@@ -17,6 +17,7 @@ from src.datamarts.domain.downloadableFiles_datamart import tf_tf_file
 from src.datamarts.domain.downloadableFiles_datamart import gene_product_ids_file
 from src.datamarts.domain.downloadableFiles_datamart import sigma_gene_file
 from src.datamarts.domain.downloadableFiles_datamart import sigma_tu_file
+from src.datamarts.domain.downloadableFiles_datamart import utr_5_3_sequence_file
 
 
 def get_all_downloadable_docs():
@@ -89,13 +90,17 @@ def get_all_downloadable_docs():
     print("Gene-Prod")
     gene_prod_ids = gene_product_ids_file.all_gene_rows()
     downloadable_files_dm.append(gene_prod_ids)
-    # NetworkSigma-Gene (Not complete)
+    # NetworkSigma-Gene
     print("Sigma-Gene")
     sigma_gene = sigma_gene_file.get_all_rows()
     downloadable_files_dm.append(sigma_gene)
-    # NetworkSigma-TU (Not complete)
+    # NetworkSigma-TU
     print("Sigma-TU")
     sigma_tu = sigma_tu_file.get_all_rows()
     downloadable_files_dm.append(sigma_tu)
+    """# NetworkSigma-TU (Working On)
+    print("UTR Sequences")
+    utr_seq = utr_5_3_sequence_file.all_utr_rows()
+    downloadable_files_dm.append(utr_seq)"""
 
     return downloadable_files_dm

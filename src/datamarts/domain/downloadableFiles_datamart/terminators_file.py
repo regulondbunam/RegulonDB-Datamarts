@@ -119,7 +119,7 @@ def all_terminators_rows():
         "fileName": "TerminatorSet",
         "title": "Complete Terminators Set",
         "fileFormat": "rif-version 1",
-        "license": "RegulonDB is free for academic/noncommercial use\nUser is not entitled to change or erase data sets of the RegulonDB\ndatabase or to eliminate copyright notices from RegulonDB. Furthermore,\nUser is not entitled to expand RegulonDB or to integrate RegulonDB partly\nor as a whole into other databank systems, without prior written consent\nfrom CCG-UNAM.\nPlease check the license at https://regulondb.ccg.unam.mx/manual/aboutUs/terms-conditions",
+        "license": "# RegulonDB is free for academic/noncommercial use\n# User is not entitled to change or erase data sets of the RegulonDB\n# database or to eliminate copyright notices from RegulonDB. Furthermore,\n# User is not entitled to expand RegulonDB or to integrate RegulonDB partly\n# or as a whole into other databank systems, without prior written consent\n# from CCG-UNAM.\n# Please check the license at https://regulondb.ccg.unam.mx/manual/aboutUs/terms-conditions",
         "citation": "Salgado H., Gama-Castro S. et al (2023). RegulonDB 12.0: A Comprehensive resource of transcriptional regulation in E. coli K-12",
         "contact": {
             "person": "RegulonDB Team",
@@ -128,7 +128,7 @@ def all_terminators_rows():
         },
         "version": "1.0",
         "creationDate": f"{creation_date.strftime('%m-%d-%Y')}",
-        "columnsDetails": "Columns:\n(1) Terminator identifier assigned by RegulonDB\n(2) Terminator left end position in the genome\n(3) Terminator right end position in the genome\n(4) DNA strand where the terminator is located\n(5) Terminator sequence\n(6) Transcription unit(s) related to the terminator   *see note1\n(7) Terminator type\n(8) Operon name\n(9) References (PubMed ID)\n(10) Evidence that supports the existence of the terminator \n(11) Evidence confidence level (Confirmed, Strong, Weak)\nnote1: If there are more than one TU with the same name, it is because the promoter associated to the TU is different",
+        "columnsDetails": "# Columns:\n# (1) Terminator identifier assigned by RegulonDB\n# (2) Terminator left end position in the genome\n# (3) Terminator right end position in the genome\n# (4) DNA strand where the terminator is located\n# (5) Terminator sequence\n# (6) Transcription unit(s) related to the terminator   *see note1\n# (7) Terminator type\n# (8) Operon name\n# (9) References (PubMed ID)\n# (10) Evidence that supports the existence of the terminator \n# (11) Evidence confidence level (Confirmed, Strong, Weak)\n# note1: If there are more than one TU with the same name, it is because the promoter associated to the TU is different",
         "content": " \n".join(terminators_content),
         "rdbVersion": "12.0"
     }

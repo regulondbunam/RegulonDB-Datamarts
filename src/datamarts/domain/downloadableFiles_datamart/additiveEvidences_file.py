@@ -78,7 +78,7 @@ def all_evidences_rows():
         "fileName": "AdditiveEvidenceSet",
         "title": "Complete Additive Evidences Set",
         "fileFormat": "rif-version 1",
-        "license": "RegulonDB is free for academic/noncommercial use\nUser is not entitled to change or erase data sets of the RegulonDB\ndatabase or to eliminate copyright notices from RegulonDB. Furthermore,\nUser is not entitled to expand RegulonDB or to integrate RegulonDB partly\nor as a whole into other databank systems, without prior written consent\nfrom CCG-UNAM.\nPlease check the license at https://regulondb.ccg.unam.mx/manual/aboutUs/terms-conditions",
+        "license": "# RegulonDB is free for academic/noncommercial use\n# User is not entitled to change or erase data sets of the RegulonDB\n# database or to eliminate copyright notices from RegulonDB. Furthermore,\n# User is not entitled to expand RegulonDB or to integrate RegulonDB partly\n# or as a whole into other databank systems, without prior written consent\n# from CCG-UNAM.\n# Please check the license at https://regulondb.ccg.unam.mx/manual/aboutUs/terms-conditions",
         "citation": "Salgado H., Gama-Castro S. et al (2023). RegulonDB 12.0: A Comprehensive resource of transcriptional regulation in E. coli K-12",
         "contact": {
             "person": "RegulonDB Team",
@@ -87,7 +87,7 @@ def all_evidences_rows():
         },
         "version": "1.0",
         "creationDate": f"{creation_date.strftime('%m-%d-%Y')}",
-        "columnsDetails": "Columns:\n(1) Title of the evidence\n(2) Matched evidences with their respective rule\n(3) Object(s) were this evidence appears (Promoter,Transcription Units,Regulatory Interactions,Transcription Factors)\n(4) Confidence Level of the evidence",
+        "columnsDetails": "# Columns:\n# (1) Title of the evidence\n# (2) Matched evidences with their respective rule\n# (3) Object(s) were this evidence appears (Promoter,Transcription Units,Regulatory Interactions,Transcription Factors)\n# (4) Confidence Level of the evidence",
         "content": " \n".join(evidences_content),
         "rdbVersion": "12.0"
     }

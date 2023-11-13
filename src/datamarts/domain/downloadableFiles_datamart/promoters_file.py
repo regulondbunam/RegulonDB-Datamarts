@@ -145,7 +145,7 @@ def all_promoters_rows():
         "fileName": "PromoterSet",
         "title": "Complete Promoters Set",
         "fileFormat": "rif-version 1",
-        "license": "RegulonDB is free for academic/noncommercial use\nUser is not entitled to change or erase data sets of the RegulonDB\ndatabase or to eliminate copyright notices from RegulonDB. Furthermore,\nUser is not entitled to expand RegulonDB or to integrate RegulonDB partly\nor as a whole into other databank systems, without prior written consent\nfrom CCG-UNAM.\nPlease check the license at https://regulondb.ccg.unam.mx/manual/aboutUs/terms-conditions",
+        "license": "# RegulonDB is free for academic/noncommercial use\n# User is not entitled to change or erase data sets of the RegulonDB\n# database or to eliminate copyright notices from RegulonDB. Furthermore,\n# User is not entitled to expand RegulonDB or to integrate RegulonDB partly\n# or as a whole into other databank systems, without prior written consent\n# from CCG-UNAM.\n# Please check the license at https://regulondb.ccg.unam.mx/manual/aboutUs/terms-conditions",
         "citation": "Salgado H., Gama-Castro S. et al (2023). RegulonDB 12.0: A Comprehensive resource of transcriptional regulation in E. coli K-12",
         "contact": {
             "person": "RegulonDB Team",
@@ -154,7 +154,7 @@ def all_promoters_rows():
         },
         "version": "1.0",
         "creationDate": f"{creation_date.strftime('%m-%d-%Y')}",
-        "columnsDetails": "Columns:\n(1) pmId. Promoter identifier assigned by RegulonDB\n(2) pmName. Promoter Name\n(3) strand. DNA strand where the promoter is located\n(4) posTSS. Genome map position of Transcription Start Site (+1)\n(5) sigmaF. Sigma Factor that recognize the promoter\n(6) pmSequence. Promoter Sequence (+1 upper case)\n(7) firstGeneName. Name of the first gene of promoter\n(8) distToFirstGene. distance to first gene of promoter\n(9) pmEvidence. Evidence that supports the existence of the promoter\n(10)addEvidence. Additive Evidence [CV(EvidenceCode1/EvidenceCodeN)|Confidence Level]\n(11) confidenceLevel. Promoter confidence level (Values: Confirmed, Strong, Weak)",
+        "columnsDetails": "# Columns:\n# (1) pmId. Promoter identifier assigned by RegulonDB\n# (2) pmName. Promoter Name\n# (3) strand. DNA strand where the promoter is located\n# (4) posTSS. Genome map position of Transcription Start Site (+1)\n# (5) sigmaF. Sigma Factor that recognize the promoter\n# (6) pmSequence. Promoter Sequence (+1 upper case)\n# (7) firstGeneName. Name of the first gene of promoter\n# (8) distToFirstGene. distance to first gene of promoter\n# (9) pmEvidence. Evidence that supports the existence of the promoter\n# (10)addEvidence. Additive Evidence [CV(EvidenceCode1/EvidenceCodeN)|Confidence Level]\n# (11) confidenceLevel. Promoter confidence level (Values: Confirmed, Strong, Weak)",
         "content": " \n".join(promoters_content),
         "rdbVersion": "12.0"
     }

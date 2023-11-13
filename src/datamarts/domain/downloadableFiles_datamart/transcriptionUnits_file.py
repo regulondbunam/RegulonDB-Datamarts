@@ -107,7 +107,7 @@ def all_tus_rows():
         "fileName": "TUSet",
         "title": "Complete Transcription Unit Set",
         "fileFormat": "rif-version 1",
-        "license": "RegulonDB is free for academic/noncommercial use\nUser is not entitled to change or erase data sets of the RegulonDB\ndatabase or to eliminate copyright notices from RegulonDB. Furthermore,\nUser is not entitled to expand RegulonDB or to integrate RegulonDB partly\nor as a whole into other databank systems, without prior written consent\nfrom CCG-UNAM.\nPlease check the license at https://regulondb.ccg.unam.mx/manual/aboutUs/terms-conditions",
+        "license": "# RegulonDB is free for academic/noncommercial use\n# User is not entitled to change or erase data sets of the RegulonDB\n# database or to eliminate copyright notices from RegulonDB. Furthermore,\n# User is not entitled to expand RegulonDB or to integrate RegulonDB partly\n# or as a whole into other databank systems, without prior written consent\n# from CCG-UNAM.\n# Please check the license at https://regulondb.ccg.unam.mx/manual/aboutUs/terms-conditions",
         "citation": "Salgado H., Gama-Castro S. et al (2023). RegulonDB 12.0: A Comprehensive resource of transcriptional regulation in E. coli K-12",
         "contact": {
             "person": "RegulonDB Team",
@@ -116,7 +116,7 @@ def all_tus_rows():
         },
         "version": "1.0",
         "creationDate": f"{creation_date.strftime('%m-%d-%Y')}",
-        "columnsDetails": "Columns:\n(1) tuId. Transcription Unit identifier assigned by RegulonDB\n(2) tuName. Transcription unit name \n(3) operonName. Operon name containing the transcription unit\n(4) tuGenes. Name of the gene(s) contained in the transcription unit\n(5) pmName. Promoter Name\n(6) tuEvidence. Evidence that supports the existence of the transcription unit\n(7) addEvidence. Additive Evidence [CV(EvidenceCode1/EvidenceCodeN)|Confidence Level]\n(8) confidenceLevel. TU confidence level (Values: Confirmed, Strong, Weak)",
+        "columnsDetails": "# Columns:\n# (1) tuId. Transcription Unit identifier assigned by RegulonDB\n# (2) tuName. Transcription unit name \n# (3) operonName. Operon name containing the transcription unit\n# (4) tuGenes. Name of the gene(s) contained in the transcription unit\n# (5) pmName. Promoter Name\n# (6) tuEvidence. Evidence that supports the existence of the transcription unit\n# (7) addEvidence. Additive Evidence [CV(EvidenceCode1/EvidenceCodeN)|Confidence Level]\n# (8) confidenceLevel. TU confidence level (Values: Confirmed, Strong, Weak)",
         "content": " \n".join(tus_content),
         "rdbVersion": "12.0"
     }

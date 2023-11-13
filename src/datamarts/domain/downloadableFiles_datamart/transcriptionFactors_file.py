@@ -352,7 +352,7 @@ def all_tfs_rows():
         "fileName": "TFSet",
         "title": "Complete Transcription Factor Set",
         "fileFormat": "rif-version 1",
-        "license": "RegulonDB is free for academic/noncommercial use\nUser is not entitled to change or erase data sets of the RegulonDB\ndatabase or to eliminate copyright notices from RegulonDB. Furthermore,\nUser is not entitled to expand RegulonDB or to integrate RegulonDB partly\nor as a whole into other databank systems, without prior written consent\nfrom CCG-UNAM.\nPlease check the license at https://regulondb.ccg.unam.mx/manual/aboutUs/terms-conditions",
+        "license": "# RegulonDB is free for academic/noncommercial use\n# User is not entitled to change or erase data sets of the RegulonDB\n# database or to eliminate copyright notices from RegulonDB. Furthermore,\n# User is not entitled to expand RegulonDB or to integrate RegulonDB partly\n# or as a whole into other databank systems, without prior written consent\n# from CCG-UNAM.\n# Please check the license at https://regulondb.ccg.unam.mx/manual/aboutUs/terms-conditions",
         "citation": "Salgado H., Gama-Castro S. et al (2023). RegulonDB 12.0: A Comprehensive resource of transcriptional regulation in E. coli K-12",
         "contact": {
             "person": "RegulonDB Team",
@@ -361,7 +361,7 @@ def all_tfs_rows():
         },
         "version": "1.0",
         "creationDate": f"{creation_date.strftime('%m-%d-%Y')}",
-        "columnsDetails": "Columns:\n(1) Transcription Factor (TF) identifier assigned by RegulonDB\n(2) TF Name\n(3) TF Synonyms List\n(4) Gene Coding for the TF\n(5) TF Active Conformations\n(6) TF Inactive Conformations\n(7) TF Active Conformations  Synonyms List\n(8) TF Inactive Conformations  Synonyms List\n(9) Effector Name related to  TF Active Conformations\n(10) Effector Name related to  TF Inactive Conformations\n(11) Effector Synonyms List related to TF Active Conformations TF \n(12) Effector Synonyms List related to TF Inactive Conformations TF\n(13) TF Symmetry\n(14) Evidence that supports the TF conformation [Evidence code | Evidence type: C = Confirmed, S = Strong, W = Weak | Evidence name ]\n(15) addEvidence. Additive Evidence [CV(EvidenceCode1/EvidenceCodeN)|Confidence Level]\n(16) confidenceLevel. Confidence level (Values: Confirmed, Strong, Weak)\n(17) TF conformation reference identifier (PMID)",
+        "columnsDetails": "# Columns:\n# (1) Transcription Factor (TF) identifier assigned by RegulonDB\n# (2) TF Name\n# (3) TF Synonyms List\n# (4) Gene Coding for the TF\n# (5) TF Active Conformations\n# (6) TF Inactive Conformations\n# (7) TF Active Conformations  Synonyms List\n# (8) TF Inactive Conformations  Synonyms List\n# (9) Effector Name related to  TF Active Conformations\n# (10) Effector Name related to  TF Inactive Conformations\n# (11) Effector Synonyms List related to TF Active Conformations TF \n# (12) Effector Synonyms List related to TF Inactive Conformations TF\n# (13) TF Symmetry\n# (14) Evidence that supports the TF conformation [Evidence code | Evidence type: C = Confirmed, S = Strong, W = Weak | Evidence name ]\n# (15) addEvidence. Additive Evidence [CV(EvidenceCode1/EvidenceCodeN)|Confidence Level]\n# (16) confidenceLevel. Confidence level (Values: Confirmed, Strong, Weak)\n# (17) TF conformation reference identifier (PMID)",
         "content": " \n".join(tfs_content),
         "rdbVersion": "12.0"
     }
