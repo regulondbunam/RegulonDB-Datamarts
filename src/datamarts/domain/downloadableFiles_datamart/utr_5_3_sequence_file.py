@@ -45,24 +45,42 @@ class UTR_Sequence:
                 coordinates = ""
                 operon = multigenomic_api.operons.find_by_id(tu.operons_id)
                 genes = get_tu_genes(tu)
-                for terminator_id in tu.terminators.ids:
-                    terminator = multigenomic_api.terminators.find_by_id(terminator_id)
-                    if self.promoter.transcription_start_site is not None:
-                        promoter_tss = self.promoter.transcription_start_site.left_end_position
-                    else:
-                        promoter_tss = ""
-
-                    if self.promoter.transcription_start_site is not None and terminator.transcriptionTerminationSite is not None:
-                        coordinates = f"{self.promoter.transcription_start_site.left_end_position}-{terminator.transcriptionTerminationSite.right_end_position}"
-
+                if self.promoter.transcription_start_site is not None:
+                    promoter_tss = self.promoter.transcription_start_site.left_end_position
+                else:
+                    promoter_tss = ""
+                if tu.terminators_ids:
+                    for terminator_id in tu.terminators_ids:
+                        terminator = multigenomic_api.terminators.find_by_id(terminator_id)
+                        first_gene = get_first_gene(genes)
+                        last_gene = get_last_gene(genes)
+                        coordinates = get_coordinates(self.promoter.transcription_start_site, terminator.transcriptionTerminationSite, first_gene, last_gene, operon.strand)
+                        row = f"{operon.name}" \
+                              f"\t{tu.name}" \
+                              f"\t{self.promoter.name}" \
+                              f"\t{promoter_tss}" \
+                              f"\t{operon.strand}" \
+                              f"\t{first_gene['resume']}" \
+                              f"\t{last_gene['resume']}" \
+                              f"\t{terminator.class_}({terminator.transcriptionTerminationSite.left_end_position},{terminator.transcriptionTerminationSite.right_end_position})" \
+                              f"\t{coordinates}" \
+                              f"\t{'Coordinates 5´ UTR'}" \
+                              f"\t{'5´ UTR Sequence'}" \
+                              f"\t{'Coordinates 3´ UTR'}" \
+                              f"\t{'3´ UTR Sequence'}"
+                        response.append(row)
+                else:
+                    first_gene = get_first_gene(genes)
+                    last_gene = get_last_gene(genes)
+                    coordinates = get_coordinates(self.promoter.transcription_start_site, None, first_gene, last_gene, operon.strand)
                     row = f"{operon.name}" \
                           f"\t{tu.name}" \
                           f"\t{self.promoter.name}" \
                           f"\t{promoter_tss}" \
                           f"\t{operon.strand}" \
-                          f"\t{get_first_gene(genes)}" \
-                          f"\t{get_last_gene(genes)}" \
-                          f"\t{terminator.class_}({terminator.transcriptionTerminationSite.left_end_position},{terminator.transcriptionTerminationSite.right_end_position})" \
+                          f"\t{first_gene['resume']}" \
+                          f"\t{last_gene['resume']}" \
+                          f"\t{''}" \
                           f"\t{coordinates}" \
                           f"\t{'Coordinates 5´ UTR'}" \
                           f"\t{'5´ UTR Sequence'}" \
@@ -118,7 +136,8 @@ def get_first_gene(genes):
             for gene in genes:
                 if gene.right_end_position > first_gene.right_end_position:
                     first_gene = gene
-    return f"{first_gene.name}({first_gene.left_end_position},{first_gene.right_end_position})"
+    first_gene["resume"] = f"{first_gene.name}({first_gene.left_end_position},{first_gene.right_end_position})"
+    return first_gene
 
 
 def get_last_gene(genes):
@@ -140,7 +159,30 @@ def get_last_gene(genes):
             for gene in genes:
                 if gene.right_end_position < last_gene.right_end_position:
                     last_gene = gene
-    return f"{last_gene.name}({last_gene.left_end_position},{last_gene.right_end_position})"
+    last_gene["resume"] = f"{last_gene.name}({last_gene.left_end_position},{last_gene.right_end_position})"
+    return last_gene
+
+
+def get_coordinates(tss, tts, first_gene, last_gene, strand):
+    coordinates = ""
+    if tss is not None and tts is not None:
+        coordinates = f"{tss.left_end_position}-{tts.right_end_position}"
+    elif tss is not None:
+        if strand == "forward":
+            coordinates = f"{tss.left_end_position}-{last_gene.right_end_position}"
+        elif strand == "reverse":
+            coordinates = f"{first_gene.right_end_position}-{tss.left_end_position}"
+    elif tts is not None:
+        if strand == "forward":
+            coordinates = f"{tts.left_end_position}-{last_gene.right_end_position}"
+        elif strand == "reverse":
+            coordinates = f"{first_gene.right_end_position}-{tts.left_end_position}"
+    else:
+        if strand == "forward":
+            coordinates = f"{first_gene.left_end_position}-{last_gene.right_end_position}"
+        elif strand == "reverse":
+            coordinates = f"{last_gene.left_end_position}-{first_gene.right_end_position}"
+    return coordinates
 
 
 def all_utr_rows():
