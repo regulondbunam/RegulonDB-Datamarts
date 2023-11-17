@@ -98,9 +98,9 @@ def get_all_downloadable_docs():
     print("Sigma-TU")
     sigma_tu = sigma_tu_file.get_all_rows()
     downloadable_files_dm.append(sigma_tu)
-    """# NetworkSigma-TU (Working On)
+    # NetworkSigma-TU
     print("UTR Sequences")
     utr_seq = utr_5_3_sequence_file.all_utr_rows()
-    downloadable_files_dm.append(utr_seq)"""
+    downloadable_files_dm.append(utr_seq)
 
     return downloadable_files_dm

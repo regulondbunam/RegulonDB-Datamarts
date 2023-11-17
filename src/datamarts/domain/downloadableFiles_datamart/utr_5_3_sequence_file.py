@@ -17,6 +17,7 @@ class UTR_Sequence:
         def __init__(self, promoter):
             self.promoter = promoter
             self.trans_units = promoter.id
+            self.seq = read_dna_full_seq_file()
 
         @property
         def operon(self):
@@ -55,6 +56,8 @@ class UTR_Sequence:
                         first_gene = get_first_gene(genes)
                         last_gene = get_last_gene(genes)
                         coordinates = get_coordinates(self.promoter.transcription_start_site, terminator.transcriptionTerminationSite, first_gene, last_gene, operon.strand)
+                        five_utr_ccs = get_5_utr_coords(self.promoter.transcription_start_site, first_gene, last_gene, operon.strand)
+                        three_utr_ccs = get_3_utr_coords(terminator.transcriptionTerminationSite, first_gene, last_gene, operon.strand)
                         row = f"{operon.name}" \
                               f"\t{tu.name}" \
                               f"\t{self.promoter.name}" \
@@ -64,15 +67,16 @@ class UTR_Sequence:
                               f"\t{last_gene['resume']}" \
                               f"\t{terminator.class_}({terminator.transcriptionTerminationSite.left_end_position},{terminator.transcriptionTerminationSite.right_end_position})" \
                               f"\t{coordinates}" \
-                              f"\t{'Coordinates 5´ UTR'}" \
-                              f"\t{'5´ UTR Sequence'}" \
-                              f"\t{'Coordinates 3´ UTR'}" \
-                              f"\t{'3´ UTR Sequence'}"
+                              f"\t{five_utr_ccs}" \
+                              f"\t{get_seq_from_coords(five_utr_ccs, self.seq, operon.strand)}" \
+                              f"\t{three_utr_ccs}" \
+                              f"\t{get_seq_from_coords(three_utr_ccs, self.seq, operon.strand)}"
                         response.append(row)
                 else:
                     first_gene = get_first_gene(genes)
                     last_gene = get_last_gene(genes)
                     coordinates = get_coordinates(self.promoter.transcription_start_site, None, first_gene, last_gene, operon.strand)
+                    five_utr_ccs = get_5_utr_coords(self.promoter.transcription_start_site, first_gene, last_gene, operon.strand)
                     row = f"{operon.name}" \
                           f"\t{tu.name}" \
                           f"\t{self.promoter.name}" \
@@ -82,10 +86,10 @@ class UTR_Sequence:
                           f"\t{last_gene['resume']}" \
                           f"\t{''}" \
                           f"\t{coordinates}" \
-                          f"\t{'Coordinates 5´ UTR'}" \
-                          f"\t{'5´ UTR Sequence'}" \
-                          f"\t{'Coordinates 3´ UTR'}" \
-                          f"\t{'3´ UTR Sequence'}"
+                          f"\t{five_utr_ccs}" \
+                          f"\t{get_seq_from_coords(five_utr_ccs, self.seq, operon.strand)}" \
+                          f"\t{''}" \
+                          f"\t{''}"
                     response.append(row)
             return response
 
@@ -166,7 +170,10 @@ def get_last_gene(genes):
 def get_coordinates(tss, tts, first_gene, last_gene, strand):
     coordinates = ""
     if tss is not None and tts is not None:
-        coordinates = f"{tss.left_end_position}-{tts.right_end_position}"
+        if strand == "forward":
+            coordinates = f"{tss.left_end_position}-{tts.right_end_position}"
+        elif strand == "reverse":
+            coordinates = f"{tts.left_end_position}-{tss.left_end_position}"
     elif tss is not None:
         if strand == "forward":
             coordinates = f"{tss.left_end_position}-{last_gene.right_end_position}"
@@ -185,6 +192,56 @@ def get_coordinates(tss, tts, first_gene, last_gene, strand):
     return coordinates
 
 
+def get_5_utr_coords(tss, first_gene, last_gene, strand):
+    coordinates = ""
+    if tss is not None:
+        if strand == "forward":
+            coordinates = f"{tss.left_end_position}-{first_gene.left_end_position}"
+        elif strand == "reverse":
+            coordinates = f"{last_gene.right_end_position}-{tss.left_end_position}"
+    return coordinates
+
+
+def get_3_utr_coords(tts, first_gene, last_gene, strand):
+    coordinates = ""
+    if tts is not None:
+        if strand == "forward":
+            coordinates = f"{first_gene.right_end_position}-{tts.right_end_position}"
+        elif strand == "reverse":
+            coordinates = f"{tts.left_end_position}-{last_gene.left_end_position}"
+    return coordinates
+
+
+def read_dna_full_seq_file():
+    with open('docs/full-dna_sequence.txt', 'r') as archivo:
+        sequence = archivo.read()
+        return sequence.replace('\n', '')
+
+
+def get_seq_from_coords(coords, seq, strand):
+    ccs = coords.split("-")
+    sequence = ""
+    if len(ccs) > 1:
+        sequence = seq[int(ccs[0])-1:int(ccs[1])-1]
+        if strand == "reverse":
+            sequence = reverse_complement(sequence)
+    return sequence
+
+
+def reverse_complement(sequence=None):
+    if sequence:
+        alt_map = {'ins': '0'}
+        complement = {'A': 'T', 'C': 'G', 'G': 'C', 'T': 'A', 'a': 't', 'c': 'g', 'g': 'c', 't': 'a'}
+        for k, v in alt_map.items():
+            sequence = sequence.replace(k, v)
+        bases = list(sequence)
+        bases = reversed([complement.get(base, base) for base in bases])
+        bases = ''.join(bases)
+        for k, v in alt_map.items():
+            bases = bases.replace(v, k)
+        return bases
+
+
 def all_utr_rows():
     operons = UTR_Sequence()
     operons_content = [
@@ -198,7 +255,7 @@ def all_utr_rows():
         "title": "Complete UTR_5_3_sequence Set",
         "fileFormat": "rif-version 1",
         "license": "# RegulonDB is free for academic/noncommercial use\n# User is not entitled to change or erase data sets of the RegulonDB\n# database or to eliminate copyright notices from RegulonDB. Furthermore,\n# User is not entitled to expand RegulonDB or to integrate RegulonDB partly\n# or as a whole into other databank systems, without prior written consent\n# from CCG-UNAM.\n# Please check the license at https://regulondb.ccg.unam.mx/manual/aboutUs/terms-conditions",
-        "citation": "Salgado H., Gama-Castro S. et al (2023). RegulonDB 12.0: A Comprehensive resource of transcriptional regulation in E. coli K-12",
+        "citation": "# Heladia Salgado, Socorro Gama-Castro, et al., RegulonDB v12.0: a comprehensive resource of transcriptional regulation in E. coli K-12,\n# Nucleic Acids Research, 2023;, gkad1072, https://doi.org/10.1093/nar/gkad1072",
         "contact": {
             "person": "RegulonDB Team",
             "webPage": None,

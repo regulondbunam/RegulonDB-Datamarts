@@ -93,7 +93,6 @@ def remove_repeated_items_by_different_evidences(list):
 
         cad_inicial_curr = current_item.rsplit('\t')
         cad_inicial_next = next_item.rsplit('\t')
-        print(cad_inicial_curr[:-2], cad_inicial_next[:-2])
         if cad_inicial_curr[:-2] == cad_inicial_next[:-2]:
             cad_inicial_curr = "\t".join(cad_inicial_curr[:-2])
             if cad_inicial_curr not in omitir:
@@ -124,7 +123,7 @@ def get_all_rows():
         "title": "Complete Sigma-TU Network Set",
         "fileFormat": "rif-version 1",
         "license": "# RegulonDB is free for academic/noncommercial use\n# User is not entitled to change or erase data sets of the RegulonDB\n# database or to eliminate copyright notices from RegulonDB. Furthermore,\n# User is not entitled to expand RegulonDB or to integrate RegulonDB partly\n# or as a whole into other databank systems, without prior written consent\n# from CCG-UNAM.\n# Please check the license at https://regulondb.ccg.unam.mx/manual/aboutUs/terms-conditions",
-        "citation": "Salgado H., Gama-Castro S. et al (2023). RegulonDB 12.0: A Comprehensive resource of transcriptional regulation in E. coli K-12",
+        "citation": "# Heladia Salgado, Socorro Gama-Castro, et al., RegulonDB v12.0: a comprehensive resource of transcriptional regulation in E. coli K-12,\n# Nucleic Acids Research, 2023;, gkad1072, https://doi.org/10.1093/nar/gkad1072",
         "contact": {
             "person": "RegulonDB Team",
             "webPage": None,

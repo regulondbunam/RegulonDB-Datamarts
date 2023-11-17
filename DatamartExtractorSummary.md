@@ -1,7 +1,7 @@
 # DatamartsExtractorSummary 
-Creation date: 2023-11-06
+Creation date: 2023-11-16
  
-Creation time: 14:03:33
+Creation time: 18:37:52
  
 RegulonDB Version: 12.0 
 
@@ -26,4 +26,4 @@ RegulonDB Version: 12.0
  ### gensorUnitDatamart: 
  238 Total Objects Generated
  ### downloadableFilesDatamart: 
- 17 Total Objects Generated
+ 20 Total Objects Generated
