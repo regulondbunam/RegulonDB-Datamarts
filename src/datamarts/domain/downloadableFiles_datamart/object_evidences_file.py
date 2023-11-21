@@ -61,7 +61,7 @@ class ObjectEvidences:
 def all_evidences_rows():
     evidences = ObjectEvidences()
     evidences_content = [
-        "1)evidence_code\t2)evidence_name\t3)confidence_level\t4)evidence_group\t5)object_type\t6)evidence_category"]
+        "1)evidence_code\t2)evidence_name\t3)evidence_group\t4)confidence_level\t5)object_type\t6)evidence_category"]
     for ev in evidences.objects:
         evidences_content.extend(ev.get_rows())
     creation_date = datetime.now()
