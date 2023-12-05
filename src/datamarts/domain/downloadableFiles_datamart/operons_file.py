@@ -18,8 +18,7 @@ class Operon:
             operon_genes = get_genes(operon.id)
             self.operon = operon
             self.genes = operon_genes
-            self.first_gene = operon_genes
-            self.last_gene = operon_genes
+            self.genes_positions = operon_genes
             self.tus_evidences = operon.id
             self.evidences = self.tus_evidences
             self.confidence_level = self.tus_evidences
@@ -30,57 +29,31 @@ class Operon:
 
         @genes.setter
         def genes(self, genes):
-            self._genes = ""
+            self._genes = []
+            genes = order_genes(genes, self.operon.strand)
+            if self.operon.strand == "reverse":
+                genes = reversed(genes)
             for gene in genes:
-                self._genes += f"{gene.name};"
+                self._genes.append(gene['name'])
             if len(self._genes) > 0:
-                self._genes = self._genes[:-1]
+                self._genes = ";".join(self._genes)
 
         @property
-        def first_gene(self):
-            return self._first_gene
+        def genes_positions(self):
+            return self._genes_positions
 
-        @first_gene.setter
-        def first_gene(self, genes):
-            self._first_gene = {
-                "leftEndPosition": "",
-            }
-            if len(genes) == 1:
-                self._first_gene = genes[0]
-            elif len(genes) > 1:
-                self._first_gene = genes[0]
-                strand = genes[0].strand
-                if strand == "forward":
-                    for gene in genes:
-                        if gene.left_end_position < self._first_gene.left_end_position:
-                            self._first_gene = gene
-                elif strand == "reverse":
-                    for gene in genes:
-                        if gene.right_end_position > self._first_gene.right_end_position:
-                            self._first_gene = gene
-
-        @property
-        def last_gene(self):
-            return self._last_gene
-
-        @last_gene.setter
-        def last_gene(self, genes):
-            self._last_gene = {
-                "rightEndPosition": "",
-            }
-            if len(genes) == 1:
-                self._last_gene = genes[0]
-            elif len(genes) > 1:
-                self._last_gene = genes[0]
-                strand = genes[0].strand
-                if strand == "forward":
-                    for gene in genes:
-                        if gene.left_end_position > self._last_gene.left_end_position:
-                            self._last_gene = gene
-                elif strand == "reverse":
-                    for gene in genes:
-                        if gene.right_end_position < self._last_gene.right_end_position:
-                            self._last_gene = gene
+        @genes_positions.setter
+        def genes_positions(self, genes):
+            self._genes_positions = []
+            for gene in genes:
+                if gene.fragments:
+                    for fragment in gene.fragments:
+                        self._genes_positions.append(fragment.left_end_position)
+                        self._genes_positions.append(fragment.right_end_position)
+                else:
+                    self._genes_positions.append(gene.left_end_position)
+                    self._genes_positions.append(gene.right_end_position)
+            self._genes_positions = sorted(self._genes_positions)
 
         @property
         def tus_evidences(self):
@@ -137,8 +110,8 @@ class Operon:
         def to_row(self):
             return f"{self.operon.id}" \
                    f"\t{self.operon.name}" \
-                   f"\t{self.first_gene['left_end_position']}" \
-                   f"\t{self.last_gene['right_end_position']}" \
+                   f"\t{self.genes_positions[0]}" \
+                   f"\t{self.genes_positions[-1]}" \
                    f"\t{self.operon.strand}" \
                    f"\t{len(self.genes.split(';'))}" \
                    f"\t{self.genes}" \
@@ -156,24 +129,27 @@ def get_genes(operon_id):
                 gene = multigenomic_api.genes.find_by_id(gene_id)
                 if gene not in genes:
                     genes.append(gene)
-    genes = find_fragments(genes)
     return genes
 
 
-def find_fragments(genes):
+def order_genes(genes, strand):
+    dict_genes = []
     for gene in genes:
         if gene.fragments:
-            first_fragment = gene.fragments[0]
-            for fragment in gene.fragments:
-                if first_fragment.left_end_position < fragment.left_end_position:
-                    first_fragment = fragment
-            last_fragment = gene.fragments[0]
-            for fragment in gene.fragments:
-                if last_fragment.right_end_position < fragment.right_end_position:
-                    last_fragment = fragment
-            gene.left_end_position = first_fragment.left_end_position
-            gene.right_end_position = last_fragment.right_end_position
-    return genes
+            min_left_pos = min(gene.fragments, key=lambda x: x.left_end_position)
+            max_right_pos = max(gene.fragments, key=lambda x: x.right_end_position)
+            gene.left_end_position = min_left_pos.left_end_position
+            gene.right_end_position = max_right_pos.right_end_position
+        dict_genes.append({
+            "id": gene.id,
+            "name": gene.name,
+            "left_end_position": gene.left_end_position,
+            "right_end_position": gene.right_end_position
+        })
+    if strand == "forward":
+        return sorted(dict_genes, key=lambda x: x['left_end_position'])
+    elif strand == "reverse":
+        return sorted(dict_genes, key=lambda x: x['right_end_position'])
 
 
 def all_operons_rows():

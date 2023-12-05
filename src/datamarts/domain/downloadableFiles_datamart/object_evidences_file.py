@@ -79,7 +79,7 @@ def all_evidences_rows():
         },
         "version": "1.0",
         "creationDate": f"{creation_date.strftime('%m-%d-%Y')}",
-        "columnsDetails": "# Columns:\n# (1) Code associated to evidence\n# (2) Name of the Evidence\n# (3) Confidence Level of the evidence\n# (4) Group of the evidence (Code rule)\n# (5) Object(s) were this evidence appears (Promoter,Transcription Units,Regulatory Interactions,Transcription Factors)\n# (6) Category of the Evidence",
+        "columnsDetails": "# Columns:\n# (1) Code associated to evidence\n# (2) Name of the Evidence\n# (3) Group of the evidence (Code rule)\n# (4) Confidence Level of the evidence\n# (5) Object(s) were this evidence appears (Promoter,Transcription Units,Regulatory Interactions,Transcription Factors)\n# (6) Category of the Evidence",
         "content": " \n".join(evidences_content),
         "rdbVersion": "12.0"
     }
