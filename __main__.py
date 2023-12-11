@@ -14,7 +14,8 @@ from src.datamarts.collections import \
     regulatory_network_datamart, \
     listPage_dm, \
     gensorUnit_datamarts, \
-    downloadable_files_dm
+    downloadable_files_dm, \
+    termTree_datamart
 
 
 def load_arguments_parser():
@@ -48,10 +49,11 @@ def create_json(objects_collections, filename, output):
         json.dump(objects_collections, json_file, indent=2, sort_keys=True)
 
 
-def write_summary(datamarts_info):
+def write_summary(datamarts_info, started_time):
     with open("DatamartExtractorSummary.md", 'w') as out_file:
         text = "# DatamartsExtractorSummary \n" \
                "Creation date: " + datetime.today().strftime('%Y-%m-%d') + "\n \n" \
+                + started_time + \
                 "Creation time: " + datetime.today().strftime('%H:%M:%S') + "\n \n" \
                 "RegulonDB Version: 12.0 \n" \
                 "\n" \
@@ -64,6 +66,8 @@ if __name__ == '__main__':
     arguments = load_arguments_parser()
     multigenomic_api.connect(arguments.database, arguments.url)
 
+    started_time = "Started time: " + datetime.today().strftime('%H:%M:%S') + "\n \n"
+
     datamart_files = dict()
 
     datamart_files["geneDatamart"] = gene_datamarts.all_genes_datamarts()
@@ -74,6 +78,7 @@ if __name__ == '__main__':
     datamart_files["regulatoryNetworkDatamart"] = regulatory_network_datamart.all_regulatory_network_nodes()
     datamart_files["listPage"] = listPage_dm.get_all_list_page_docs()
     datamart_files["gensorUnitDatamart"] = gensorUnit_datamarts.all_gensor_unit_datamarts()
+    datamart_files["mcoTree"] = termTree_datamart.get_tree()
     datamart_files["downloadableFilesDatamart"] = downloadable_files_dm.get_all_downloadable_docs()
 
     datamartsData = ""
@@ -89,4 +94,4 @@ if __name__ == '__main__':
             collection_name: objects_to_json
         }
         create_json(objects_to_json, collection_name, "lib/data")
-    write_summary(datamartsData)
+    write_summary(datamartsData, started_time)
