@@ -89,6 +89,8 @@ def all_evidences_rows():
         "creationDate": f"{creation_date.strftime('%m-%d-%Y')}",
         "columnsDetails": "# Columns:\n# (1) Title of the evidence\n# (2) Matched evidences with their respective rule\n# (3) Object(s) were this evidence appears (Promoter,Transcription Units,Regulatory Interactions,Transcription Factors)\n# (4) Confidence Level of the evidence",
         "content": " \n".join(evidences_content),
-        "rdbVersion": "12.0"
+        "rdbVersion": "12.0",
+        "description": "Additive Evidence Catalog.",
+        "group": "EVIDENCE"
     }
     return evidence_doc

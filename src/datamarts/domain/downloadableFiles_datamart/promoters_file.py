@@ -156,6 +156,8 @@ def all_promoters_rows():
         "creationDate": f"{creation_date.strftime('%m-%d-%Y')}",
         "columnsDetails": "# Columns:\n# (1) pmId. Promoter identifier assigned by RegulonDB\n# (2) pmName. Promoter Name\n# (3) strand. DNA strand where the promoter is located\n# (4) posTSS. Genome map position of Transcription Start Site (+1)\n# (5) sigmaF. Sigma Factor that recognize the promoter\n# (6) pmSequence. Promoter Sequence (+1 upper case)\n# (7) firstGeneName. Name of the first gene of promoter\n# (8) distToFirstGene. distance to first gene of promoter\n# (9) pmEvidence. Evidence that supports the existence of the promoter\n# (10)addEvidence. Additive Evidence [CV(EvidenceCode1/EvidenceCodeN)|Confidence Level]\n# (11) confidenceLevel. Promoter confidence level (Values: Confirmed, Strong, Weak)",
         "content": " \n".join(promoters_content),
-        "rdbVersion": "12.0"
+        "rdbVersion": "12.0",
+        "description": "Promoters information and their first transcribed genes.",
+        "group": "OPERON STRUCTURE"
     }
     return promoters_doc

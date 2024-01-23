@@ -130,6 +130,8 @@ def all_terminators_rows():
         "creationDate": f"{creation_date.strftime('%m-%d-%Y')}",
         "columnsDetails": "# Columns:\n# (1) Terminator identifier assigned by RegulonDB\n# (2) Terminator left end position in the genome\n# (3) Terminator right end position in the genome\n# (4) DNA strand where the terminator is located\n# (5) Terminator sequence\n# (6) Transcription unit(s) related to the terminator   *see note1\n# (7) Terminator type\n# (8) Operon name\n# (9) References (PubMed ID)\n# (10) Evidence that supports the existence of the terminator \n# (11) Evidence confidence level (Confirmed, Strong, Weak)\n# note1: If there are more than one TU with the same name, it is because the promoter associated to the TU is different",
         "content": " \n".join(terminators_content),
-        "rdbVersion": "12.0"
+        "rdbVersion": "12.0",
+        "description": "Terminator where transcription ends and RNAP unbinds from DNA",
+        "group": "OPERON STRUCTURE"
     }
     return terminators_doc

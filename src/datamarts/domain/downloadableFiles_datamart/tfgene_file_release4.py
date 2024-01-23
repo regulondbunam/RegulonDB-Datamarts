@@ -265,6 +265,8 @@ def get_all_rows():
         "creationDate": f"{creation_date.strftime('%m-%d-%Y')}",
         "columnsDetails": "# Columns:\n# (1) regulatorId. Regulator identifier\n# (2) regulatorName. Regulator Name\n# (3) regulatorType. Gene(s) coding for the TF\n# (4) geneId. Id of the regulated gene\n# (5) geneName. Name of the regulated gene\n# (6) geneSynonyms. Regulated Gene synonyms\n# (7) regulatorSynonyms. Regulator synonyms\n# (8) function. Regulatory Function of the Regulator on the regulated Gene (+ activator, - repressor, -+ dual, ? unknown)\n# (9) confidenceLevel. RI confidence level based on its evidence (Values: Confirmed[C], Strong[S], Weak[W], Unknown[?])\n# (10)evCategory. Category of the RI evidences",
         "content": " \n".join(tfs_content),
-        "rdbVersion": "12.0"
+        "rdbVersion": "12.0",
+        "description": "Regulatory Network Interactions between Regulator and regulated genes (Internal File)",
+        "group": "REGULATORY NETWORK"
     }
     return tfs_doc

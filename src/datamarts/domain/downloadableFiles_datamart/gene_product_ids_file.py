@@ -127,7 +127,9 @@ def all_gene_rows():
         "creationDate": f"{creation_date.strftime('%m-%d-%Y')}",
         "columnsDetails": "# Columns:\n# (1) Gene identifier assigned by RegulonDB\n# (2) Gene name\n# (3) Gene left end position in the genome\n# (4) Gene right end position in the genome\n# (5) DNA strand where the gene is coded\n# (6) other gene synonyms\n# (7) Other database's id  related to gene\n# (8) Product identifier of the gene\n# (9) Product name of the gene\n# (10) Other products synonyms\n# (11) Other database's id  related to product",
         "content": " \n".join(genes_content),
-        "rdbVersion": "12.0"
+        "rdbVersion": "12.0",
+        "description": "Genes with information about their products, including synonyms and identifiers to other databases. Useful for database mapping and cross-referencing purposes.",
+        "group": "GENE"
     }
     return genes_doc
 

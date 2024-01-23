@@ -265,6 +265,8 @@ def all_utr_rows():
         "creationDate": f"{creation_date.strftime('%m-%d-%Y')}",
         "columnsDetails": "# Columns:\n# (1) Operon Name\n# (2) Transcription Unit Name (TU)\n# (3) Promoter Name\n# (4) Transcription start site (+1)\n# (5) DNA strand  of TU\n# (6) First Gene Name of TU [Gene Position left, Gene Position right]\n# (7) Last Gene Name of TU [Gene Position left, Gene Position right]\n# (8) Terminator Type [Terminator Position left, Terminator Position right]\n# (9) Coordinates of UTR [+1 OR Start of the first gene] to [End of the terminator OR End of the last gene]*\n# (10) Coordinates 5' UTR\n# (11) 5' UTR Sequence	\n# (12) Coordinates 3' UTR\n# (13) 3' UTR Sequence\n#\n# * When the first one is NULL the other field is used",
         "content": " \n".join(operons_content),
-        "rdbVersion": "12.0"
+        "rdbVersion": "12.0",
+        "description": "Untranslated Transcription unit Regions.",
+        "group": "OPERON STRUCTURE"
     }
     return operons_doc

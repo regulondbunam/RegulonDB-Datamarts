@@ -363,6 +363,8 @@ def all_tfs_rows():
         "creationDate": f"{creation_date.strftime('%m-%d-%Y')}",
         "columnsDetails": "# Columns:\n# (1) Transcription Factor (TF) identifier assigned by RegulonDB\n# (2) TF Name\n# (3) TF Synonyms List\n# (4) Gene Coding for the TF\n# (5) TF Active Conformations\n# (6) TF Inactive Conformations\n# (7) TF Active Conformations  Synonyms List\n# (8) TF Inactive Conformations  Synonyms List\n# (9) Effector Name related to  TF Active Conformations\n# (10) Effector Name related to  TF Inactive Conformations\n# (11) Effector Synonyms List related to TF Active Conformations TF \n# (12) Effector Synonyms List related to TF Inactive Conformations TF\n# (13) TF Symmetry\n# (14) Evidence that supports the TF conformation [Evidence code | Evidence type: C = Confirmed, S = Strong, W = Weak | Evidence name ]\n# (15) addEvidence. Additive Evidence [CV(EvidenceCode1/EvidenceCodeN)|Confidence Level]\n# (16) confidenceLevel. Confidence level (Values: Confirmed, Strong, Weak)\n# (17) TF conformation reference identifier (PMID)",
         "content": " \n".join(tfs_content),
-        "rdbVersion": "12.0"
+        "rdbVersion": "12.0",
+        "description": "Transcription factors and their conformations (subset of RegulatorSet).",
+        "group": "REGULATOR"
     }
     return tfs_doc

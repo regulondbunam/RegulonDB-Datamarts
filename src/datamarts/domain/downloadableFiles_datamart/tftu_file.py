@@ -197,6 +197,8 @@ def get_all_rows():
         "creationDate": f"{creation_date.strftime('%m-%d-%Y')}",
         "columnsDetails": "# Columns:\n# (1) regulatorId. Regulator identifier\n# (2) regulatorName. Regulator Name\n# (3) regulatorGeneName. Gene(s) coding for the TF\n# (4) regulatedId. Transcription Unit ID regulated by the TF (regulated Transcription Unit)\n# (5) regulatedName. Transcription Unit regulated by the TF (regulated Transcription Unit)\n# (6) function. Regulatory Function of the TF on the regulated Transcription Unit (+ activator, - repressor, +- dual, ? unknown)\n# (7) confidenceLevel. RI confidence level based on its evidence (Values: Confirmed[C], Strong[S], Weak[W], Unknown[?])",
         "content": " \n".join(tfs_content),
-        "rdbVersion": "12.0"
+        "rdbVersion": "12.0",
+        "description": "Regulatory Network Interactions between Regulator and regulated Transcription Units",
+        "group": "REGULATORY NETWORK"
     }
     return tfs_doc
