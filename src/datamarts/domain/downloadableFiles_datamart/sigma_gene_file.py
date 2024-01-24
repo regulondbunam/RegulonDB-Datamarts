@@ -138,7 +138,7 @@ def get_all_rows():
         "columnsDetails": "# Columns:\n(1) sigmaName. Sigma Name\n# (2) regulatedName. Gene regulated by the Sigma Factor (regulated Gene)\n# (3) function. Regulatory Function of the Sigma on the regulated Gene (+ activator, - repressor, -+ dual, ? unknown)\n# (4)promoterEvidences. Evidence that supports the regulation the sigma on the promoter and the promoter evidences\n# (5) confidenceLevel. RI confidence level based on its evidence (Values: Confirmed[C], Strong[S], Weak[W], Unknown[?])",
         "content": " \n".join(tfs_content),
         "rdbVersion": "12.0",
-        "description": "Regulatory Network Interactions between Sigma Factor and regulated genes",
+        "description": "Regulatory Network Interactions between Sigma Factors and their regulated genes",
         "group": "REGULATORY NETWORK"
     }
     return tfs_doc
