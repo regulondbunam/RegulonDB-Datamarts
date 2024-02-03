@@ -66,13 +66,14 @@ class Regulators:
 
         @regulator_synonyms.setter
         def regulator_synonyms(self, synonyms):
-            self._regulator_synonyms = None
+            self._regulator_synonyms = ""
             if len(synonyms) > 0:
-                self._regulator_synonyms = ""
                 for synonym in synonyms:
                     self._regulator_synonyms += f"{synonym};"
             if len(self._regulator_synonyms) > 0:
                 self._regulator_synonyms = self._regulator_synonyms[:-1]
+            else:
+                self._regulator_synonyms = None
 
         @property
         def genes(self):

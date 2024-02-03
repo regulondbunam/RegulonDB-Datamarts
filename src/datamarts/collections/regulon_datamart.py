@@ -17,12 +17,15 @@ class RegulonDatamarts:
     @property
     def objects(self):
         regulator_objects = multigenomic_api.regulators.get_all()
-        for regulator in regulator_objects[80:90]:
+        for regulator in regulator_objects:
             print(regulator.id, regulator.regulation_type)
-            if len(regulator.regulation_type) != 0:
-                if regulator.regulation_type[0] == "Transcription-Factor-Binding":
+            if regulator.regulation_type:
+                if regulator.regulation_type == "Transcription-Factor-Binding" or regulator.id == "RDBECOLITFC00039":
                     regulator = multigenomic_api.transcription_factors.find_by_id(regulator.id)
-                    regulator["regulation_type"] = ["Transcription-Factor-Binding"]
+                    if regulator.id == "RDBECOLITFC00039":
+                        regulator["regulation_type"] = "Allosteric-Regulation-of-RNAP"
+                    else:
+                        regulator["regulation_type"] = "Transcription-Factor-Binding"
                 regulon_datamart = RegulonDatamarts.RegulonDatamart(regulator)
                 yield regulon_datamart
         del regulator_objects
@@ -57,7 +60,7 @@ class RegulonDatamarts:
         def terms(self, regulator):
             self._terms = []
             terms = []
-            if regulator.regulation_type[0] != "Allosteric-Regulation-of-RNAP":
+            if regulator.regulation_type != "Allosteric-Regulation-of-RNAP" or regulator.id == "RDBECOLITFC00039":
                 terms = Terms(regulator).to_dict()
             self._terms = terms
 
@@ -79,7 +82,7 @@ class RegulonDatamarts:
             self._regulatory_interactions = []
             reg_complex = None
             product = None
-            if regulator.regulation_type[0] == "Transcription-Factor-Binding":
+            if regulator.regulation_type == "Transcription-Factor-Binding" or regulator.id == "RDBECOLITFC00039":
                 try:
                     reg_complex = multigenomic_api.regulatory_complexes.find_by_name(regulator.name)
                 except DoesNotExist:
@@ -157,20 +160,3 @@ def get_ri_objects(reg_ints, ri_list):
             ri_list.append(reg_int)
     return ri_list
 
-
-def get_all_regulators(reg_ints):
-    regulators = []
-    for ri in reg_ints:
-        if ri.regulator.type == "regulatoryContinuant":
-            regulator = ri.regulator
-            regulator["type"] = "compound"
-            if ri.regulator not in regulators:
-                regulators.append(ri.regulator)
-        if ri.regulator.type == "product":
-            product = multigenomic_api.products.find_by_id(ri.regulator.id)
-            if product.type == "small RNA":
-                regulator = ri.regulator
-                regulator["type"] = "sRNA"
-                if ri.regulator not in regulators:
-                    regulators.append(ri.regulator)
-    return regulators

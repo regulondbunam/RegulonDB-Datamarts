@@ -55,7 +55,7 @@ def write_summary(datamarts_info, started_time):
                "Creation date: " + datetime.today().strftime('%Y-%m-%d') + "\n \n" \
                 + started_time + \
                 "Creation time: " + datetime.today().strftime('%H:%M:%S') + "\n \n" \
-                "RegulonDB Version: 12.0 \n" \
+                "RegulonDB Version: 12.5 \n" \
                 "\n" \
                 "## RegulonDB Datamarts Summary \n" \
                 "" + datamarts_info
