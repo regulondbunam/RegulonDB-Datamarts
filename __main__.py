@@ -38,6 +38,22 @@ def load_arguments_parser():
         required=False
     )
 
+    parser.add_argument(
+        "-rdbv", "--rdbversion",
+        help="RegulonDB Version",
+        metavar="12.5",
+        default="12.5",
+        required=False
+    )
+
+    parser.add_argument(
+        "-c", "--citation",
+        help="RegulonDB citation for downloadable files",
+        metavar="# Heladia Salgado, Socorro Gama-Castro, et al., RegulonDB v12.5: a comprehensive resource of transcriptional regulation in E. coli K-12,\n# Nucleic Acids Research, 2023;, gkad1072, https://doi.org/10.1093/nar/gkad1072",
+        default="# Heladia Salgado, Socorro Gama-Castro, et al., RegulonDB v12.5: a comprehensive resource of transcriptional regulation in E. coli K-12,\n# Nucleic Acids Research, 2023;, gkad1072, https://doi.org/10.1093/nar/gkad1072",
+        required=False
+    )
+
     args = parser.parse_args()
 
     return args
@@ -55,7 +71,7 @@ def write_summary(datamarts_info, started_time):
                "Creation date: " + datetime.today().strftime('%Y-%m-%d') + "\n \n" \
                 + started_time + \
                 "Creation time: " + datetime.today().strftime('%H:%M:%S') + "\n \n" \
-                "RegulonDB Version: 12.5 \n" \
+                "RegulonDB Version: " + arguments.rdbversion + "\n" \
                 "\n" \
                 "## RegulonDB Datamarts Summary \n" \
                 "" + datamarts_info
@@ -79,7 +95,7 @@ if __name__ == '__main__':
     datamart_files["listPage"] = listPage_dm.get_all_list_page_docs()
     datamart_files["gensorUnitDatamart"] = gensorUnit_datamarts.all_gensor_unit_datamarts()
     datamart_files["mcoTree"] = termTree_datamart.get_tree()
-    datamart_files["downloadableFilesDatamart"] = downloadable_files_dm.get_all_downloadable_docs()
+    datamart_files["downloadableFilesDatamart"] = downloadable_files_dm.get_all_downloadable_docs(arguments.rdbversion, arguments.citation)
 
     datamartsData = ""
     for collection_name, objects in datamart_files.items():

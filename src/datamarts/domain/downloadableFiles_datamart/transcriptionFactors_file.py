@@ -341,7 +341,7 @@ def get_all_act_conf(tf):
     return conformations
 
 
-def all_tfs_rows():
+def all_tfs_rows(rdb_version, citation):
     trans_factors = TranscriptionFactor()
     tfs_content = ["1)tfId\t2)tfName\t3)tfSynonyms\t4)geneCodingForTF\t5)tfActiveConformations\t6)tfInactiveConformations\t7)tfActiveConformationsSynonyms\t8)tfInactiveConformationsSynonyms\t9)tfActiveConformationsEffector\t10)tfInactiveConformationsEffector\t11)tfActiveConformationsEffectorSynonyms\t12)tfInactiveConformationsEffectorSynonyms\t13)symmetry\t14)tfEvidences\t15)additiveEvidences\t16)confidenceLevel\t17)tfConformationPMID"]
     for tf in trans_factors.objects:
@@ -353,7 +353,7 @@ def all_tfs_rows():
         "title": "Complete Transcription Factor Set",
         "fileFormat": "rif-version 1",
         "license": "# RegulonDB is free for academic/noncommercial use\n# User is not entitled to change or erase data sets of the RegulonDB\n# database or to eliminate copyright notices from RegulonDB. Furthermore,\n# User is not entitled to expand RegulonDB or to integrate RegulonDB partly\n# or as a whole into other databank systems, without prior written consent\n# from CCG-UNAM.\n# Please check the license at https://regulondb.ccg.unam.mx/manual/aboutUs/terms-conditions",
-        "citation": "# Heladia Salgado, Socorro Gama-Castro, et al., RegulonDB v12.0: a comprehensive resource of transcriptional regulation in E. coli K-12,\n# Nucleic Acids Research, 2023;, gkad1072, https://doi.org/10.1093/nar/gkad1072",
+        "citation": citation,
         "contact": {
             "person": "RegulonDB Team",
             "webPage": None,
@@ -363,7 +363,7 @@ def all_tfs_rows():
         "creationDate": f"{creation_date.strftime('%m-%d-%Y')}",
         "columnsDetails": "# Columns:\n# (1) Transcription Factor (TF) identifier assigned by RegulonDB\n# (2) TF Name\n# (3) TF Synonyms List\n# (4) Gene Coding for the TF\n# (5) TF Active Conformations\n# (6) TF Inactive Conformations\n# (7) TF Active Conformations  Synonyms List\n# (8) TF Inactive Conformations  Synonyms List\n# (9) Effector Name related to  TF Active Conformations\n# (10) Effector Name related to  TF Inactive Conformations\n# (11) Effector Synonyms List related to TF Active Conformations TF \n# (12) Effector Synonyms List related to TF Inactive Conformations TF\n# (13) TF Symmetry\n# (14) Evidence that supports the TF conformation [Evidence code | Evidence type: C = Confirmed, S = Strong, W = Weak | Evidence name ]\n# (15) addEvidence. Additive Evidence [CV(EvidenceCode1/EvidenceCodeN)|Confidence Level]\n# (16) confidenceLevel. Confidence level (Values: Confirmed, Strong, Weak)\n# (17) TF conformation reference identifier (PMID)",
         "content": " \n".join(tfs_content),
-        "rdbVersion": "12.0",
+        "rdbVersion": rdb_version,
         "description": "Transcription factors and their conformations (subset of RegulatorSet).",
         "group": "REGULATOR"
     }

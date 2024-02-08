@@ -151,7 +151,7 @@ class GeneProduct:
                    f"\t{self.otherDBsIds}"
 
 
-def all_gene_rows():
+def all_gene_rows(rdb_version, citation):
     genes = GeneProduct()
     genes_content = [
         "1)geneId\t2)geneName\t3)bnumber\t4)leftEndPos\t5)rightEndPos\t6)strand\t7)productName\t8)geneEvidences\t9)genePMIDS\t10)confidenceLevel\t11)relatedBnumbers\t12)otherDbsIds"]
@@ -164,7 +164,7 @@ def all_gene_rows():
         "title": "Complete Gene Product Set",
         "fileFormat": "rif-version 1",
         "license": "# RegulonDB is free for academic/noncommercial use\n# User is not entitled to change or erase data sets of the RegulonDB\n# database or to eliminate copyright notices from RegulonDB. Furthermore,\n# User is not entitled to expand RegulonDB or to integrate RegulonDB partly\n# or as a whole into other databank systems, without prior written consent\n# from CCG-UNAM.\n# Please check the license at https://regulondb.ccg.unam.mx/manual/aboutUs/terms-conditions",
-        "citation": "# Heladia Salgado, Socorro Gama-Castro, et al., RegulonDB v12.0: a comprehensive resource of transcriptional regulation in E. coli K-12,\n# Nucleic Acids Research, 2023;, gkad1072, https://doi.org/10.1093/nar/gkad1072",
+        "citation": citation,
         "contact": {
             "person": "RegulonDB Team",
             "webPage": None,
@@ -174,7 +174,7 @@ def all_gene_rows():
         "creationDate": f"{creation_date.strftime('%m-%d-%Y')}",
         "columnsDetails": "# Columns:\n# (1) Gene identifier assigned by RegulonDB\n# (2) Gene name\n# (3) Blattner number (bnumber) of the gene\n# (4) Gene left end position in the genome\n# (5) Gene right end position in the genome\n# (6) DNA strand where the gene is coded\n# (7) Product name of the gene\n# (8) Evidence that supports the existence of the gene\n# (9) PMIDs list\n# (10) Evidence confidence level (Confirmed, Strong, Weak)\n# (11) All bnumber related to gene\n# (12) Other database's id  related to gene",
         "content": " \n".join(genes_content),
-        "rdbVersion": "12.0",
+        "rdbVersion": rdb_version,
         "description": "Collection of genes and information about their products.",
         "group": "GENE"
     }

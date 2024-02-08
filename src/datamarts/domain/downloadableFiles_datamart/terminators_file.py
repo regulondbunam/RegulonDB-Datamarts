@@ -108,7 +108,7 @@ class Terminator:
 
 
 
-def all_terminators_rows():
+def all_terminators_rows(rdb_version, citation):
     terminators = Terminator()
     terminators_content = ["1)terminatorId\t2)leftEndPos\t3)rightEndPos\t4)strand\t5)sequence\t6)relatedTus\t7)type\t8)operonName\t9)pmids\t10)evidences\t11)confidenceLevel"]
     for terminator in terminators.objects:
@@ -120,7 +120,7 @@ def all_terminators_rows():
         "title": "Complete Terminators Set",
         "fileFormat": "rif-version 1",
         "license": "# RegulonDB is free for academic/noncommercial use\n# User is not entitled to change or erase data sets of the RegulonDB\n# database or to eliminate copyright notices from RegulonDB. Furthermore,\n# User is not entitled to expand RegulonDB or to integrate RegulonDB partly\n# or as a whole into other databank systems, without prior written consent\n# from CCG-UNAM.\n# Please check the license at https://regulondb.ccg.unam.mx/manual/aboutUs/terms-conditions",
-        "citation": "Heladia Salgado, Socorro Gama-Castro, et al., RegulonDB v12.0: a comprehensive resource of transcriptional regulation in E. coli K-12, Nucleic Acids Research, 2023;, gkad1072, https://doi.org/10.1093/nar/gkad1072",
+        "citation": citation,
         "contact": {
             "person": "RegulonDB Team",
             "webPage": None,
@@ -130,7 +130,7 @@ def all_terminators_rows():
         "creationDate": f"{creation_date.strftime('%m-%d-%Y')}",
         "columnsDetails": "# Columns:\n# (1) Terminator identifier assigned by RegulonDB\n# (2) Terminator left end position in the genome\n# (3) Terminator right end position in the genome\n# (4) DNA strand where the terminator is located\n# (5) Terminator sequence\n# (6) Transcription unit(s) related to the terminator   *see note1\n# (7) Terminator type\n# (8) Operon name\n# (9) References (PubMed ID)\n# (10) Evidence that supports the existence of the terminator \n# (11) Evidence confidence level (Confirmed, Strong, Weak)\n# note1: If there are more than one TU with the same name, it is because the promoter associated to the TU is different",
         "content": " \n".join(terminators_content),
-        "rdbVersion": "12.0",
+        "rdbVersion": rdb_version,
         "description": "Terminator information",
         "group": "OPERON STRUCTURE"
     }

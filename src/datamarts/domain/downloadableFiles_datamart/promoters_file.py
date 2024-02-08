@@ -133,8 +133,7 @@ def get_first_gene_of_tu(transcription_unit, promoter):
     return first_gene
 
 
-
-def all_promoters_rows():
+def all_promoters_rows(rdb_version, citation):
     promoters = Promoters()
     promoters_content = ["1)pmId\t2)pmName\t3)strand\t4)posTSS\t5)sigmaF\t6)pmSequence\t7)firstGeneName\t8)distToFirstGene\t9)pmEvidence\t10)addEvidence\t11)confidenceLevel"]
     for promoter in promoters.objects:
@@ -146,7 +145,7 @@ def all_promoters_rows():
         "title": "Complete Promoters Set",
         "fileFormat": "rif-version 1",
         "license": "# RegulonDB is free for academic/noncommercial use\n# User is not entitled to change or erase data sets of the RegulonDB\n# database or to eliminate copyright notices from RegulonDB. Furthermore,\n# User is not entitled to expand RegulonDB or to integrate RegulonDB partly\n# or as a whole into other databank systems, without prior written consent\n# from CCG-UNAM.\n# Please check the license at https://regulondb.ccg.unam.mx/manual/aboutUs/terms-conditions",
-        "citation": "# Heladia Salgado, Socorro Gama-Castro, et al., RegulonDB v12.0: a comprehensive resource of transcriptional regulation in E. coli K-12,\n# Nucleic Acids Research, 2023;, gkad1072, https://doi.org/10.1093/nar/gkad1072",
+        "citation": citation,
         "contact": {
             "person": "RegulonDB Team",
             "webPage": None,
@@ -156,7 +155,7 @@ def all_promoters_rows():
         "creationDate": f"{creation_date.strftime('%m-%d-%Y')}",
         "columnsDetails": "# Columns:\n# (1) pmId. Promoter identifier assigned by RegulonDB\n# (2) pmName. Promoter Name\n# (3) strand. DNA strand where the promoter is located\n# (4) posTSS. Genome map position of Transcription Start Site (+1)\n# (5) sigmaF. Sigma Factor that recognize the promoter\n# (6) pmSequence. Promoter Sequence (+1 upper case)\n# (7) firstGeneName. Name of the first gene of promoter\n# (8) distToFirstGene. distance to first gene of promoter\n# (9) pmEvidence. Evidence that supports the existence of the promoter\n# (10)addEvidence. Additive Evidence [CV(EvidenceCode1/EvidenceCodeN)|Confidence Level]\n# (11) confidenceLevel. Promoter confidence level (Values: Confirmed, Strong, Weak)",
         "content": " \n".join(promoters_content),
-        "rdbVersion": "12.0",
+        "rdbVersion": rdb_version,
         "description": "Promoters information and their first transcribed genes.",
         "group": "OPERON STRUCTURE"
     }

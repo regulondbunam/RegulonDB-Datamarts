@@ -152,7 +152,7 @@ def order_genes(genes, strand):
         return sorted(dict_genes, key=lambda x: x['right_end_position'])
 
 
-def all_operons_rows():
+def all_operons_rows(rdb_version, citation):
     operons = Operon()
     operons_content = ["1)operonId\t2)operonName\t3)firstGeneLeftPos\t4)lastGeneRightPos\t5)strand\t6)numberOfGenes\t7)operonGenes\t8)operonEvidence\t9)confidenceLevel"]
     for operon in operons.objects:
@@ -164,7 +164,7 @@ def all_operons_rows():
         "title": "Complete Operons Set",
         "fileFormat": "rif-version 1",
         "license": "# RegulonDB is free for academic/noncommercial use\n# User is not entitled to change or erase data sets of the RegulonDB\n# database or to eliminate copyright notices from RegulonDB. Furthermore,\n# User is not entitled to expand RegulonDB or to integrate RegulonDB partly\n# or as a whole into other databank systems, without prior written consent\n# from CCG-UNAM.\n# Please check the license at https://regulondb.ccg.unam.mx/manual/aboutUs/terms-conditions",
-        "citation": "# Heladia Salgado, Socorro Gama-Castro, et al., RegulonDB v12.0: a comprehensive resource of transcriptional regulation in E. coli K-12,\n# Nucleic Acids Research, 2023;, gkad1072, https://doi.org/10.1093/nar/gkad1072",
+        "citation": citation,
         "contact": {
             "person": "RegulonDB Team",
             "webPage": None,
@@ -174,7 +174,7 @@ def all_operons_rows():
         "creationDate": f"{creation_date.strftime('%m-%d-%Y')}",
         "columnsDetails": "# Columns:\n# (1) Operon name\n# (2) First gene-position left\n# (3) Last gene-position right\n# (4) DNA strand where the operon is coded\n# (5) Number of genes contained in the operon\n# (6) Name or Blattner number of the gene(s) contained in the operon\n# (7) Evidence that support the existence of the operon's TUs\n# (8) Evidence confidence level (Confirmed, Strong, Weak)",
         "content": " \n".join(operons_content),
-        "rdbVersion": "12.0",
+        "rdbVersion": rdb_version,
         "description": "Operons and their genes.",
         "group": "OPERON STRUCTURE"
     }

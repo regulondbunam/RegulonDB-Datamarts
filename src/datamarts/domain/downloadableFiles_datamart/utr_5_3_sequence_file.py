@@ -242,7 +242,7 @@ def reverse_complement(sequence=None):
         return bases
 
 
-def all_utr_rows():
+def all_utr_rows(rdb_version, citation):
     operons = UTR_Sequence()
     operons_content = [
         "1)operonName\t2)tuName\t3)promoterName\t4)tss\t5)strand\t6)firstGene\t7)lastGene\t8)terminatorType\t9)utrCoordinates\t10)utrCoordinates5\t11)utrSequence5\t12)utrCoordinates3\t13)utrSequence3"]
@@ -255,7 +255,7 @@ def all_utr_rows():
         "title": "Complete UTR_5_3_sequence Set",
         "fileFormat": "rif-version 1",
         "license": "# RegulonDB is free for academic/noncommercial use\n# User is not entitled to change or erase data sets of the RegulonDB\n# database or to eliminate copyright notices from RegulonDB. Furthermore,\n# User is not entitled to expand RegulonDB or to integrate RegulonDB partly\n# or as a whole into other databank systems, without prior written consent\n# from CCG-UNAM.\n# Please check the license at https://regulondb.ccg.unam.mx/manual/aboutUs/terms-conditions",
-        "citation": "# Heladia Salgado, Socorro Gama-Castro, et al., RegulonDB v12.0: a comprehensive resource of transcriptional regulation in E. coli K-12,\n# Nucleic Acids Research, 2023;, gkad1072, https://doi.org/10.1093/nar/gkad1072",
+        "citation": citation,
         "contact": {
             "person": "RegulonDB Team",
             "webPage": None,
@@ -265,7 +265,7 @@ def all_utr_rows():
         "creationDate": f"{creation_date.strftime('%m-%d-%Y')}",
         "columnsDetails": "# Columns:\n# (1) Operon Name\n# (2) Transcription Unit Name (TU)\n# (3) Promoter Name\n# (4) Transcription start site (+1)\n# (5) DNA strand  of TU\n# (6) First Gene Name of TU [Gene Position left, Gene Position right]\n# (7) Last Gene Name of TU [Gene Position left, Gene Position right]\n# (8) Terminator Type [Terminator Position left, Terminator Position right]\n# (9) Coordinates of UTR [+1 OR Start of the first gene] to [End of the terminator OR End of the last gene]*\n# (10) Coordinates 5' UTR\n# (11) 5' UTR Sequence	\n# (12) Coordinates 3' UTR\n# (13) 3' UTR Sequence\n#\n# * When the first one is NULL the other field is used",
         "content": " \n".join(operons_content),
-        "rdbVersion": "12.0",
+        "rdbVersion": rdb_version,
         "description": "Untranslated Transcription Unit Regions.",
         "group": "OPERON STRUCTURE"
     }

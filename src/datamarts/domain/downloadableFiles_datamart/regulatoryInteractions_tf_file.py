@@ -333,7 +333,7 @@ class RegulatoryInteractions:
                    f"\t{self.ri_ev_category}"
 
 
-def all_ris_rows():
+def all_ris_rows(rdb_version, citation):
     ris = RegulatoryInteractions()
     ris_content = []
     ris_content.append("1)riId\t2)riType\t3)regulatorId\t4)regulatorName\t5)cnfName\t6)tfrsID\t7)tfrsLeft\t8)tfrsRight\t9)strand\t10)tfrsSeq\t11)riFunction\t12)promoterID\t13)promoterName\t14)tss\t15)sigmaF\t16)tfrsDistToPm\t17)firstGene\t18)tfrsDistTo1Gene\t19)targetTuOrGene\t20)confidenceLevel\t21)tfrsEvidence\t22)riEvidence\t23)addEvidence\t24)riEvTech\t25)riEvCategory")
@@ -347,7 +347,7 @@ def all_ris_rows():
         "title": "Complete TF RIs Set",
         "fileFormat": "rif-version 1",
         "license": "# RegulonDB is free for academic/noncommercial use\n# User is not entitled to change or erase data sets of the RegulonDB\n# database or to eliminate copyright notices from RegulonDB. Furthermore,\n# User is not entitled to expand RegulonDB or to integrate RegulonDB partly\n# or as a whole into other databank systems, without prior written consent\n# from CCG-UNAM.\n# Please check the license at https://regulondb.ccg.unam.mx/manual/aboutUs/terms-conditions",
-        "citation": "# Heladia Salgado, Socorro Gama-Castro, et al., RegulonDB v12.0: a comprehensive resource of transcriptional regulation in E. coli K-12,\n# Nucleic Acids Research, 2023;, gkad1072, https://doi.org/10.1093/nar/gkad1072",
+        "citation": citation,
         "contact": {
             "person": "RegulonDB Team",
             "webPage": None,
@@ -357,7 +357,7 @@ def all_ris_rows():
         "creationDate": f"{creation_date.strftime('%m-%d-%Y')}",
         "columnsDetails": "# Columns:\n# (1) riId. Regulatory interaction (RI) identifier assigned by RegulonDB\n# (2) riType. Regulatory interaction type [tf-promoter, tf-tu, tf-gene,srna-promoter, srna-tu, srna-gene, compound-promoter, compound-tu, compound-gene]\n# (3) tfId. Transcription Factor (TF) identifier assigned by RegulonDB\n# (4) regulatorName. Regulator name\n# (5) cnfName. regulator active conformation name\n# (6) tfrsId. regulator regulatory site (TFRS) identifier assigned by RegulonDB\n# (7) tfrsLeft. TFRS left end position in the genome\n# (8) tfrsRight. TFRS right end position in the genome\n# (9) strand. DNA strand where the TFRS is located\n# (10) tfrsSeq. TFRS sequence (upper case)\n# (11) riFunction. Gene expression effect caused by the TF bound to the TFRS\n# (12) promoterId. Promoter Identifier assigned by RegulonDB\n# (13) promoterName. Promoter name\n# (14) tss. Transcription start site (+1) position in the genome\n# (15) sigmaF. Sigma Factor that recognize the promoter\n# (16) DistToPm. Relative distance from the center position of TFRS to the Transcription Start Site\n# (17) firstGene. first transcribed gene name\n# (18) tfrsDistTo1Gene. Relative distance from center position of TFRS to the start of first gene\n# (19) targetTuOrGene. Transcription unit or gene (id:name) regulated by the TF\n# (20) confidenceLevel. RI confidence level (Values: Confirmed, Strong, Weak)\n# (21) tfrsEvidence. Evidence that supports the existence of the TFRS [EvidenceCode|EvidenceType(C:confirmed S:strong W:weak)]]\n# (22) riEvidence. Evidence that supports the RI function [EvidenceCode|EvidenceType(C:confirmed S:strong W:weak)]\n# (23) addEvidence. Additive Evidence [CV(EvidenceCode1/EvidenceCodeN)|Confidence Level]\n# (24) riEvTech. Evidence related to the type of technology used to determine the RI\n# (25) riEvCategory. Evidence  were categorized in classical, ht or non-experimental",
         "content": " \n".join(ris_content),
-        "rdbVersion": "12.0",
+        "rdbVersion": rdb_version,
         "description": "Regulatory interactions between a Transcription Factor and its regulated entity - promoter, gene, or Transcriptional Units (subset of RISet).",
         "group": "REGULATORY INTERACTION"
     }

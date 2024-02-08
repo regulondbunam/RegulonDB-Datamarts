@@ -104,7 +104,7 @@ class GeneProductIds:
                        f"\t{''}"
 
 
-def all_gene_rows():
+def all_gene_rows(rdb_version, citation):
     genes = GeneProductIds()
     genes_content = [
         "1)geneId\t2)geneName\t3)leftEndPos\t4)rightEndPos\t5)strand\t6)geneSynonyms\t7)otherDbsGeneIds\t8)productId\t9)productName\t10)productSynonyms\t11)otherDbsProductsIds"]
@@ -117,7 +117,7 @@ def all_gene_rows():
         "title": "Complete Gene Product Identifiers Set",
         "fileFormat": "rif-version 1",
         "license": "# RegulonDB is free for academic/noncommercial use\n# User is not entitled to change or erase data sets of the RegulonDB\n# database or to eliminate copyright notices from RegulonDB. Furthermore,\n# User is not entitled to expand RegulonDB or to integrate RegulonDB partly\n# or as a whole into other databank systems, without prior written consent\n# from CCG-UNAM.\n# Please check the license at https://regulondb.ccg.unam.mx/manual/aboutUs/terms-conditions",
-        "citation": "# Heladia Salgado, Socorro Gama-Castro, et al., RegulonDB v12.0: a comprehensive resource of transcriptional regulation in E. coli K-12,\n# Nucleic Acids Research, 2023;, gkad1072, https://doi.org/10.1093/nar/gkad1072",
+        "citation": citation,
         "contact": {
             "person": "RegulonDB Team",
             "webPage": None,
@@ -127,7 +127,7 @@ def all_gene_rows():
         "creationDate": f"{creation_date.strftime('%m-%d-%Y')}",
         "columnsDetails": "# Columns:\n# (1) Gene identifier assigned by RegulonDB\n# (2) Gene name\n# (3) Gene left end position in the genome\n# (4) Gene right end position in the genome\n# (5) DNA strand where the gene is coded\n# (6) other gene synonyms\n# (7) Other database's id  related to gene\n# (8) Product identifier of the gene\n# (9) Product name of the gene\n# (10) Other products synonyms\n# (11) Other database's id  related to product",
         "content": " \n".join(genes_content),
-        "rdbVersion": "12.0",
+        "rdbVersion": rdb_version,
         "description": "Genes with information about their products, including synonyms and identifiers to other databases. Useful for database mapping and cross-referencing purposes.",
         "group": "GENE"
     }
