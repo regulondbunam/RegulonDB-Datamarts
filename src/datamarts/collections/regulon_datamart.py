@@ -18,7 +18,7 @@ class RegulonDatamarts:
     def objects(self):
         regulator_objects = multigenomic_api.regulators.get_all()
         for regulator in regulator_objects:
-            print(regulator.id, regulator.regulation_type)
+            print(regulator.id)
             if regulator.regulation_type:
                 if regulator.regulation_type == "Transcription-Factor-Binding" or regulator.id == "RDBECOLITFC00039":
                     regulator = multigenomic_api.transcription_factors.find_by_id(regulator.id)

@@ -49,8 +49,8 @@ def load_arguments_parser():
     parser.add_argument(
         "-c", "--citation",
         help="RegulonDB citation for downloadable files",
-        metavar="# Heladia Salgado, Socorro Gama-Castro, et al., RegulonDB v12.5: a comprehensive resource of transcriptional regulation in E. coli K-12,\n# Nucleic Acids Research, 2023;, gkad1072, https://doi.org/10.1093/nar/gkad1072",
-        default="# Heladia Salgado, Socorro Gama-Castro, et al., RegulonDB v12.5: a comprehensive resource of transcriptional regulation in E. coli K-12,\n# Nucleic Acids Research, 2023;, gkad1072, https://doi.org/10.1093/nar/gkad1072",
+        metavar="# Heladia Salgado, Socorro Gama-Castro, et al., RegulonDB v12.0: a comprehensive resource of transcriptional regulation in E. coli K-12,\n# Nucleic Acids Research, 2023;, gkad1072, https://doi.org/10.1093/nar/gkad1072",
+        default="# Heladia Salgado, Socorro Gama-Castro, et al., RegulonDB v12.0: a comprehensive resource of transcriptional regulation in E. coli K-12,\n# Nucleic Acids Research, 2023;, gkad1072, https://doi.org/10.1093/nar/gkad1072",
         required=False
     )
 
