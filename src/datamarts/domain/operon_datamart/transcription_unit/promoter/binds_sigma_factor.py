@@ -3,7 +3,7 @@ from src.datamarts.domain.general.biological_base import BiologicalBase
 
 class BindsSigmaFactor(BiologicalBase):
     def __init__(self, binds_sigma_factor):
-        super().__init__(binds_sigma_factor.external_cross_references, binds_sigma_factor.citations, binds_sigma_factor.note)
+        super().__init__([], binds_sigma_factor.citations, "")
         self.binds_sigma_factor = binds_sigma_factor
 
     def to_dict(self):

@@ -36,9 +36,9 @@ class TranscriptionUnit(BiologicalBase):
             first_gene = get_first_gene_of_tu(transcription_unit, promoter)
             if promoter.transcription_start_site:
                 if promoter.strand == "forward":
-                    dist = abs(first_gene["leftEndPosition"] - promoter.transcription_start_site.left_end_position)
+                    dist = first_gene["leftEndPosition"] - promoter.transcription_start_site.left_end_position
                 if promoter.strand == "reverse":
-                    dist = abs(first_gene["rightEndPosition"] - promoter.transcription_start_site.right_end_position)
+                    dist = first_gene["rightEndPosition"] - promoter.transcription_start_site.right_end_position
                 self._first_gene = {
                     "distanceToPromoter": dist,
                     "_id": first_gene["id"],
