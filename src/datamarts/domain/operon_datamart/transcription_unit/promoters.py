@@ -23,8 +23,7 @@ class Promoters(BiologicalBase):
     def binds_sigma_factor(self, promoter):
         self._binds_sigma_factor = {}
         if promoter.binds_sigma_factor:
-            sigma_factor = multigenomic_api.sigma_factors.find_by_id(promoter.binds_sigma_factor.sigma_factors_id)
-            binds_sigma_factor = BindsSigmaFactor(sigma_factor)
+            binds_sigma_factor = BindsSigmaFactor(promoter.binds_sigma_factor)
             self._binds_sigma_factor = binds_sigma_factor.to_dict()
 
     @property
