@@ -18,6 +18,7 @@ from src.datamarts.domain.downloadableFiles_datamart import gene_product_ids_fil
 from src.datamarts.domain.downloadableFiles_datamart import sigma_gene_file
 from src.datamarts.domain.downloadableFiles_datamart import sigma_tu_file
 from src.datamarts.domain.downloadableFiles_datamart import utr_5_3_sequence_file
+from src.datamarts.domain.downloadableFiles_datamart import all_pmids_in_objects
 
 
 def get_all_downloadable_docs(rdb_version, citation):
@@ -102,5 +103,9 @@ def get_all_downloadable_docs(rdb_version, citation):
     print("UTR Sequences")
     utr_seq = utr_5_3_sequence_file.all_utr_rows(rdb_version, citation)
     downloadable_files_dm.append(utr_seq)
+    # PMIDS
+    print("PMIDS")
+    pmids = all_pmids_in_objects.all_pmids_rows(rdb_version, citation)
+    downloadable_files_dm.append(pmids)
 
     return downloadable_files_dm
