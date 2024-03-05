@@ -1,5 +1,7 @@
 import multigenomic_api
 from datetime import datetime
+import re
+from . import common_functions
 
 
 class Promoters:
@@ -21,6 +23,7 @@ class Promoters:
             self.prom_evidences = promoter.citations
             self.additive_evidences = promoter.additive_evidences_ids
             self.sigma_factor = promoter.binds_sigma_factor
+            self.pmids = promoter
 
         @property
         def tss(self):
@@ -96,6 +99,14 @@ class Promoters:
                 additive_evidence_dict = multigenomic_api.additive_evidences.find_by_id(additive_evs_id)
                 self._additive_evidences += f"[{additive_evidence_dict.code}:{additive_evidence_dict.confidence_level}]"
 
+        @property
+        def pmids(self):
+            return self._pmids
+
+        @pmids.setter
+        def pmids(self, promoter):
+            self._pmids = common_functions.get_pmids(promoter)
+
         def to_row(self):
             return f"{self.promoter.id}" \
                    f"\t{self.promoter.name}" \
@@ -107,7 +118,8 @@ class Promoters:
                    f"\t{self.first_gene['distanceToPromoter']}" \
                    f"\t{self.prom_evidences}" \
                    f"\t{self.additive_evidences}" \
-                   f"\t{self.promoter.confidence_level}"
+                   f"\t{self.promoter.confidence_level}" \
+                   f"\t{self.pmids}"
 
 
 def get_first_gene_of_tu(transcription_unit, promoter):
@@ -135,7 +147,7 @@ def get_first_gene_of_tu(transcription_unit, promoter):
 
 def all_promoters_rows(rdb_version, citation):
     promoters = Promoters()
-    promoters_content = ["1)pmId\t2)pmName\t3)strand\t4)posTSS\t5)sigmaF\t6)pmSequence\t7)firstGeneName\t8)distToFirstGene\t9)pmEvidence\t10)addEvidence\t11)confidenceLevel"]
+    promoters_content = ["1)pmId\t2)pmName\t3)strand\t4)posTSS\t5)sigmaF\t6)pmSequence\t7)firstGeneName\t8)distToFirstGene\t9)pmEvidence\t10)addEvidence\t11)confidenceLevel\t12)pmids"]
     for promoter in promoters.objects:
         promoters_content.append(promoter.to_row())
     creation_date = datetime.now()
@@ -153,7 +165,7 @@ def all_promoters_rows(rdb_version, citation):
         },
         "version": "1.0",
         "creationDate": f"{creation_date.strftime('%m-%d-%Y')}",
-        "columnsDetails": "# Columns:\n# (1) pmId. Promoter identifier assigned by RegulonDB\n# (2) pmName. Promoter Name\n# (3) strand. DNA strand where the promoter is located\n# (4) posTSS. Genome map position of Transcription Start Site (+1)\n# (5) sigmaF. Sigma Factor that recognize the promoter\n# (6) pmSequence. Promoter Sequence (+1 upper case)\n# (7) firstGeneName. Name of the first gene of promoter\n# (8) distToFirstGene. distance to first gene of promoter\n# (9) pmEvidence. Evidence that supports the existence of the promoter\n# (10)addEvidence. Additive Evidence [CV(EvidenceCode1/EvidenceCodeN)|Confidence Level]\n# (11) confidenceLevel. Promoter confidence level (Values: Confirmed, Strong, Weak)",
+        "columnsDetails": "# Columns:\n# (1) pmId. Promoter identifier assigned by RegulonDB\n# (2) pmName. Promoter Name\n# (3) strand. DNA strand where the promoter is located\n# (4) posTSS. Genome map position of Transcription Start Site (+1)\n# (5) sigmaF. Sigma Factor that recognize the promoter\n# (6) pmSequence. Promoter Sequence (+1 upper case)\n# (7) firstGeneName. Name of the first gene of promoter\n# (8) distToFirstGene. distance to first gene of promoter\n# (9) pmEvidence. Evidence that supports the existence of the promoter\n# (10)addEvidence. Additive Evidence [CV(EvidenceCode1/EvidenceCodeN)|Confidence Level]\n# (11) confidenceLevel. Promoter confidence level (Values: Confirmed, Strong, Weak)\n# (12) pmids associated to object",
         "content": " \n".join(promoters_content),
         "rdbVersion": rdb_version,
         "description": "Promoters information and their first transcribed genes.",
