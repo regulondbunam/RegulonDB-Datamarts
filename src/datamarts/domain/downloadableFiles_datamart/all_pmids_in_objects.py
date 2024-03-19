@@ -32,6 +32,8 @@ def get_item_rows(collection, type):
         try:
             if doc.abbreviated_name:
                 obj_name = doc.abbreviated_name
+            else:
+                obj_name = doc.name
         except:
             obj_name = doc.name
             pass
@@ -54,8 +56,10 @@ def get_ri_rows(collection):
         regulator = find_reg_by_id(doc.regulator.id)
         obj_name = ""
         try:
-            if doc.abbreviated_name:
-                obj_name = doc.abbreviated_name
+            if regulator.abbreviated_name:
+                obj_name = regulator.abbreviated_name
+            else:
+                obj_name = regulator.name
         except:
             obj_name = doc.name
             pass
@@ -113,6 +117,9 @@ def all_pmids_rows(rdb_version, citation):
 
     biological_objects = multigenomic_api.transcription_units.get_all()
     item_list.extend(get_item_rows(biological_objects, "tu"))
+
+    biological_objects = multigenomic_api.regulatory_complexes.get_all()
+    item_list.extend(get_item_rows(biological_objects, "regulatoryComplex"))
 
     creation_date = datetime.now()
 
