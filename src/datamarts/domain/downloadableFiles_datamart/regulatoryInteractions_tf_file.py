@@ -9,8 +9,9 @@ class RegulatoryInteractions:
         ri_objects = multigenomic_api.regulatory_interactions.get_all()
         for ri_object in ri_objects:
             # print(ri_object.id)
-            ri_row = RegulatoryInteractions.RIDatamart(ri_object)
-            yield ri_row
+            if ri_object.regulator.id != "RDBECOLIPDC00432" and ri_object.regulator.id != "RDBECOLIRCC00094":
+                ri_row = RegulatoryInteractions.RIDatamart(ri_object)
+                yield ri_row
         del ri_objects
 
     class RIDatamart:
@@ -31,6 +32,8 @@ class RegulatoryInteractions:
             self.additive_evidences = ri.additive_evidences_ids
             self.ri_ev_tech = ri
             self.ri_ev_category = ri
+            self.reg_site_pmids = self.regulatory_site
+            self.ri_pmids = ri.citations
 
         @property
         def type(self):
@@ -225,10 +228,10 @@ class RegulatoryInteractions:
                     if citation.evidences_id:
                         if citation.evidences_id:
                             citation_dict = multigenomic_api.evidences.find_by_id(citation.evidences_id)
-                            citation_item = f"[{citation_dict.code}:{citation_dict.type or '?'}]"
+                            citation_item = f"{citation_dict.code}:{citation_dict.type or '?'}"
                             if citation_item not in self._reg_site_evidences:
                                 self._reg_site_evidences.append(citation_item)
-            self._reg_site_evidences = "".join(self._reg_site_evidences)
+            self._reg_site_evidences = ";".join(self._reg_site_evidences)
 
         @property
         def ri_evidences(self):
@@ -240,10 +243,10 @@ class RegulatoryInteractions:
             for citation in citations:
                 if citation.evidences_id:
                     citation_dict = multigenomic_api.evidences.find_by_id(citation.evidences_id)
-                    citation_item = f"[{citation_dict.code}:{citation_dict.type or '?'}]"
+                    citation_item = f"{citation_dict.code}:{citation_dict.type or '?'}"
                     if citation_item not in self._ri_evidences:
                         self._ri_evidences.append(citation_item)
-            self._ri_evidences = "".join(self._ri_evidences)
+            self._ri_evidences = ";".join(self._ri_evidences)
 
         @property
         def additive_evidences(self):
@@ -251,10 +254,12 @@ class RegulatoryInteractions:
 
         @additive_evidences.setter
         def additive_evidences(self, additive_evs_ids):
-            self._additive_evidences = ""
+            self._additive_evidences = []
             for additive_evs_id in additive_evs_ids:
                 additive_evidence_dict = multigenomic_api.additive_evidences.find_by_id(additive_evs_id)
-                self._additive_evidences += f"[{additive_evidence_dict.code}:{additive_evidence_dict.confidence_level}]"
+                self._additive_evidences.append(
+                    f"{additive_evidence_dict.code}:{additive_evidence_dict.confidence_level}")
+            self._additive_evidences = ";".join(self._additive_evidences)
 
         @property
         def ri_ev_tech(self):
@@ -300,6 +305,35 @@ class RegulatoryInteractions:
             if len(ev_categories) > 0:
                 self._ri_ev_category = "|".join(ev_categories)
 
+        @property
+        def reg_site_pmids(self):
+            return self._reg_site_pmids
+
+        @reg_site_pmids.setter
+        def reg_site_pmids(self, reg_site):
+            self._reg_site_pmids = []
+            if len(reg_site["citations"]) > 0:
+                for citation in reg_site.citations:
+                    if citation.publications_id:
+                        publication_dict = multigenomic_api.publications.find_by_id(citation.publications_id)
+                        if publication_dict.pmid and publication_dict.pmid not in self._reg_site_pmids:
+                            self._reg_site_pmids.append(publication_dict.pmid)
+            self._reg_site_pmids = ";".join(self._reg_site_pmids)
+
+        @property
+        def ri_pmids(self):
+            return self._ri_pmids
+
+        @ri_pmids.setter
+        def ri_pmids(self, citations):
+            self._ri_pmids = []
+            for citation in citations:
+                if citation.publications_id:
+                    publication_dict = multigenomic_api.publications.find_by_id(citation.publications_id)
+                    if publication_dict.pmid and publication_dict.pmid not in self._ri_pmids:
+                        self._ri_pmids.append(publication_dict.pmid)
+            self._ri_pmids = ";".join(self._ri_pmids)
+
         def to_row(self):
             regulated_genes = get_regulated_genes(self.ri.regulated_entity)
             first_gene = get_first_gene(self.ri, regulated_genes)
@@ -327,13 +361,14 @@ class RegulatoryInteractions:
                    f"\t{self.ri_evidences}" \
                    f"\t{self.additive_evidences}" \
                    f"\t{self.ri_ev_tech}" \
-                   f"\t{self.ri_ev_category}"
+                   f"\t{self.ri_ev_category}" \
+                   f"\t{self.reg_site_pmids}" \
+                   f"\t{self.ri_pmids}"
 
 
-def all_ris_rows():
+def all_ris_rows(rdb_version, citation):
     ris = RegulatoryInteractions()
-    ris_content = []
-    ris_content.append("1)riId\t2)riType\t3)regulatorId\t4)regulatorName\t5)cnfName\t6)tfrsID\t7)tfrsLeft\t8)tfrsRight\t9)strand\t10)tfrsSeq\t11)riFunction\t12)promoterID\t13)promoterName\t14)tss\t15)sigmaF\t16)tfrsDistToPm\t17)firstGene\t18)tfrsDistTo1Gene\t19)targetTuOrGene\t20)confidenceLevel\t21)tfrsEvidence\t22)riEvidence\t23)addEvidence\t24)riEvTech\t25)riEvCategory")
+    ris_content = ["1)riId\t2)riType\t3)regulatorId\t4)regulatorName\t5)cnfName\t6)tfrsID\t7)tfrsLeft\t8)tfrsRight\t9)strand\t10)tfrsSeq\t11)riFunction\t12)promoterID\t13)promoterName\t14)tss\t15)sigmaF\t16)tfrsDistToPm\t17)firstGene\t18)tfrsDistTo1Gene\t19)targetTuOrGene\t20)confidenceLevel\t21)tfrsEvidence\t22)riEvidence\t23)addEvidence\t24)riEvTech\t25)riEvCategory\t26)tfrsPMIDS\t27)riPMIDS"]
     for ri in ris.objects:
         if ri.type == "tf-gene" or ri.type == "tf-promoter" or ri.type == "tf-tu":
             ris_content.append(ri.to_row())
@@ -343,8 +378,8 @@ def all_ris_rows():
         "fileName": "TF-RISet",
         "title": "Complete TF RIs Set",
         "fileFormat": "rif-version 1",
-        "license": "RegulonDB is free for academic/noncommercial use\n\nUser is not entitled to change or erase data sets of the RegulonDB\ndatabase or to eliminate copyright notices from RegulonDB. Furthermore,\nUser is not entitled to expand RegulonDB or to integrate RegulonDB partly\nor as a whole into other databank systems, without prior written consent\nfrom CCG-UNAM.\n\nPlease check the license at https://regulondb.ccg.unam.mx/manual/aboutUs/terms-conditions",
-        "citation": "Salgado H., Gama-Castro S. et al (2023). RegulonDB 12.0: A Comprehensive resource of transcriptional regulation in E. coli K-12",
+        "license": "# RegulonDB is free for academic/noncommercial use\n# User is not entitled to change or erase data sets of the RegulonDB\n# database or to eliminate copyright notices from RegulonDB. Furthermore,\n# User is not entitled to expand RegulonDB or to integrate RegulonDB partly\n# or as a whole into other databank systems, without prior written consent\n# from CCG-UNAM.\n# Please check the license at https://regulondb.ccg.unam.mx/manual/aboutUs/terms-conditions",
+        "citation": citation,
         "contact": {
             "person": "RegulonDB Team",
             "webPage": None,
@@ -352,9 +387,11 @@ def all_ris_rows():
         },
         "version": "1.0",
         "creationDate": f"{creation_date.strftime('%m-%d-%Y')}",
-        "columnsDetails": "# Columns:\n# (1) riId. Regulatory interaction (RI) identifier assigned by RegulonDB\n# (2) riType. Regulatory interaction type [tf-promoter, tf-tu, tf-gene,srna-promoter, srna-tu, srna-gene, compound-promoter, compound-tu, compound-gene]\n# (3) tfId. Transcription Factor (TF) identifier assigned by RegulonDB\n# (4) regulatorName. Regulator name\n# (5) cnfName. regulator active conformation name\n# (6) tfrsId. regulator regulatory site (TFRS) identifier assigned by RegulonDB\n# (7) tfrsLeft. TFRS left end position in the genome\n# (8) tfrsRight. TFRS right end position in the genome\n# (9) strand. DNA strand where the TFRS is located\n# (10) tfrsSeq. TFRS sequence (upper case)\n# (11) riFunction. Gene expression effect caused by the TF bound to the TFRS\n# (12) promoterId. Promoter Identifier assigned by RegulonDB\n# (13) promoterName. Promoter name\n# (14) tss. Transcription start site (+1) position in the genome\n# (15) sigmaF. Sigma Factor that recognize the promoter\n# (16) DistToPm. Relative distance from the center position of TFRS to the Transcription Start Site\n# (17) firstGene. first transcribed gene name\n# (18) tfrsDistTo1Gene. Relative distance from center position of TFRS to the start of first gene\n# (19) targetTuOrGene. Transcription unit or gene (id:name) regulated by the TF\n# (20) confidenceLevel. RI confidence level (Values: Confirmed, Strong, Weak)\n# (21) tfrsEvidence. Evidence that supports the existence of the TFRS [EvidenceCode|EvidenceType(C:confirmed S:strong W:weak)]]\n# (22) riEvidence. Evidence that supports the RI function [EvidenceCode|EvidenceType(C:confirmed S:strong W:weak)]\n# (23) addEvidence. Additive Evidence [CV(EvidenceCode1/EvidenceCodeN)|Confidence Level]\n# (24) riEvTech. Evidence related to the type of technology used to determine the RI\n# (25) riEvCategory. Evidence  were categorized in classical, ht or non-experimental",
+        "columnsDetails": "# Columns:\n# (1) riId. Regulatory interaction (RI) identifier assigned by RegulonDB\n# (2) riType. Regulatory interaction type [tf-promoter, tf-tu, tf-gene,srna-promoter, srna-tu, srna-gene, compound-promoter, compound-tu, compound-gene]\n# (3) tfId. Transcription Factor (TF) identifier assigned by RegulonDB\n# (4) regulatorName. Regulator name\n# (5) cnfName. regulator active conformation name\n# (6) tfrsId. regulator regulatory site (TFRS) identifier assigned by RegulonDB\n# (7) tfrsLeft. TFRS left end position in the genome\n# (8) tfrsRight. TFRS right end position in the genome\n# (9) strand. DNA strand where the TFRS is located\n# (10) tfrsSeq. TFRS sequence (upper case)\n# (11) riFunction. Gene expression effect caused by the TF bound to the TFRS\n# (12) promoterId. Promoter Identifier assigned by RegulonDB\n# (13) promoterName. Promoter name\n# (14) tss. Transcription start site (+1) position in the genome\n# (15) sigmaF. Sigma Factor that recognize the promoter\n# (16) DistToPm. Relative distance from the center position of TFRS to the Transcription Start Site\n# (17) firstGene. first transcribed gene name\n# (18) tfrsDistTo1Gene. Relative distance from center position of TFRS to the start of first gene\n# (19) targetTuOrGene. Transcription unit or gene (id:name) regulated by the TF\n# (20) confidenceLevel. RI confidence level (Values: Confirmed, Strong, Weak)\n# (21) tfrsEvidence. Evidence that supports the existence of the TFRS [EvidenceCode|EvidenceType(C:confirmed S:strong W:weak)]]\n# (22) riEvidence. Evidence that supports the RI function [EvidenceCode|EvidenceType(C:confirmed S:strong W:weak)]\n# (23) addEvidence. Additive Evidence [CV(EvidenceCode1/EvidenceCodeN)|Confidence Level]\n# (24) riEvTech. Evidence related to the type of technology used to determine the RI\n# (25) riEvCategory. Evidence  were categorized in classical, ht or non-experimental\n# (26) tfrsPMIDS. PMIDS of the TFRS\n# (27) riPMIDS. PMIDS of the regulatory interaction",
         "content": " \n".join(ris_content),
-        "rdbVersion": "12.0"
+        "rdbVersion": rdb_version,
+        "description": "Regulatory interactions between a Transcription Factor and its regulated entity - promoter, gene, or Transcriptional Units (subset of RISet).",
+        "group": "REGULATORY INTERACTION"
     }
     return ri_doc
 
@@ -470,4 +507,3 @@ def reverse_complement(sequence=None):
         for k, v in alt_map.items():
             bases = bases.replace(v, k)
         return bases
-

@@ -79,6 +79,7 @@ class RegulatoryInteractions(BiologicalBase):
     def regulated_genes(self, regulated_entity):
         self._regulated_genes = []
         transcription_units = []
+        strand = None
         if regulated_entity.type == "gene":
             self._regulated_genes.append({
                         "_id": regulated_entity.id,
@@ -86,19 +87,34 @@ class RegulatoryInteractions(BiologicalBase):
                     })
         elif regulated_entity.type == "promoter":
             transcription_units = multigenomic_api.transcription_units.find_by_promoter_id(regulated_entity.id)
+            promoter = multigenomic_api.promoters.find_by_id(regulated_entity.id)
+            strand = promoter.strand
         elif regulated_entity.type == "transcriptionUnit":
             trans_unit = multigenomic_api.transcription_units.find_by_id(regulated_entity.id)
             transcription_units.append(trans_unit)
+            operon = multigenomic_api.operons.find_by_id(trans_unit.operons_id)
+            strand = operon.strand
         if transcription_units:
             for tu in transcription_units:
                 for gene_id in tu.genes_ids:
+                    min_left_pos = None
+                    max_right_pos = None
                     gene = multigenomic_api.genes.find_by_id(gene_id)
+                    if gene.fragments:
+                        min_left_pos = min(gene.fragments, key=lambda x: x.left_end_position)
+                        max_right_pos = max(gene.fragments, key=lambda x: x.right_end_position)
                     gene_object = {
                         "_id": gene.id,
                         "name": gene.name,
+                        "leftEndPosition": gene.left_end_position or min_left_pos.left_end_position,
+                        "rightEndPosition": gene.right_end_position or max_right_pos.right_end_position
                     }
                     if gene_object not in self._regulated_genes:
                         self._regulated_genes.append(gene_object)
+            if strand == "forward":
+                self._regulated_genes = sorted(self._regulated_genes, key=lambda x: x["leftEndPosition"])
+            else:
+                self._regulated_genes = sorted(self._regulated_genes, key=lambda x: x["rightEndPosition"])
 
     @property
     def regulatory_binding_sites(self):

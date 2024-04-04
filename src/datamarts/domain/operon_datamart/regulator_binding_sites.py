@@ -31,44 +31,28 @@ class RegulatoryBindingSites(BiologicalBase):
 
     @staticmethod
     def fill_tf_binding_sites_dict(ris):
-        transcription_factor_binding_sites = []
+        ri_groups = {}
         for ri in ris:
-            repressor_ris = []
-            activator_ris = []
+            # Getting the regulator data
+            regulator = get_abbr_regulator_name(ri.regulator)
+            # Creating a unique key for the id and name combination
+            key = (regulator["name"], regulator["_id"], ri["function"])
+            # If key doesn't exist in dict, its initilazed as dict with empty ri list
+            if key not in ri_groups:
+                ri_groups[key] = {
+                    "regulator": regulator,
+                    "function": ri["function"],
+                    "mechanism": ri.mechanism,
+                    "regulatoryInteractions": []
+                }
+            # Adding the RI item to the list in the corresponding key
             reg_sites_dict = {}
-            mechanism = ri.mechanism
             if ri.regulatory_sites_id:
                 reg_site = multigenomic_api.regulatory_sites.find_by_id(ri.regulatory_sites_id)
                 reg_sites_dict = RegulatorySites(reg_site).to_dict()
             reg_int = RegulatoryInteractions(ri, reg_sites_dict).to_dict()
-            if ri.function == "repressor":
-                repressor_ris.append(reg_int)
-            elif ri.function == "activator":
-                activator_ris.append(reg_int)
-            regulator = get_abbr_regulator_name(ri.regulator)
-            if len(repressor_ris) != 0:
-                transcription_factor_binding_sites.append({
-                    "regulator": {
-                        "_id": regulator["id"],
-                        "name": regulator["name"],
-                        "function": "repressor"
-                    },
-                    "regulatoryInteractions": repressor_ris,
-                    "function": "repressor",
-                    "mechanism": mechanism
-                })
-            if len(activator_ris) != 0:
-                transcription_factor_binding_sites.append({
-                    "regulator": {
-                        "_id": regulator["id"],
-                        "name": regulator["name"],
-                        "function": "activator"
-                    },
-                    "regulatoryInteractions": activator_ris,
-                    "function": "activator",
-                    "mechanism": mechanism
-                })
-        return transcription_factor_binding_sites
+            ri_groups[key]["regulatoryInteractions"].append(reg_int)
+        return list(ri_groups.values())
 
 
 def get_abbr_regulator_name(regulator):
@@ -90,7 +74,7 @@ def get_abbr_regulator_name(regulator):
         reg_id = tf.id
         reg_name = tf.abbreviated_name
     return {
-        "id": reg_id,
+        "_id": reg_id,
         "name": reg_name
     }
 

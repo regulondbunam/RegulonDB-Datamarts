@@ -177,7 +177,7 @@ class Regulates(BiologicalBase):
 def get_all_transcription_units(regulator):
     all_transcription_units = []
     conformations_ids = []
-    if regulator.regulator_type == "transcriptionFactor":
+    if regulator.regulation_type == "Transcription-Factor-Binding" or regulator.id == "RDBECOLITFC00039":
         reg_complex = None
         try:
             reg_complex = multigenomic_api.regulatory_complexes.find_by_name(regulator.name)
@@ -212,7 +212,7 @@ def get_all_transcription_units(regulator):
 def get_all_regulated_genes(regulator):
     conformations_ids = []
     all_reg_genes = []
-    if regulator.regulator_type == "transcriptionFactor":
+    if regulator.regulation_type == "Transcription-Factor-Binding" or regulator.id == "RDBECOLITFC00039":
         reg_complex = None
         try:
             reg_complex = multigenomic_api.regulatory_complexes.find_by_name(regulator.name)
@@ -280,13 +280,14 @@ def gene_ontology_extrac(products):
 class Term(BiologicalBase):
 
     def __init__(self, term):
-        super().__init__([], [], [])
+        super().__init__([], term.citations, [])
         self.term = term
 
     def to_dict(self):
         term = {
             '_id': self.term.terms_id,
-            'name': self.term.terms_name
+            'name': self.term.terms_name,
+            'citations': self.citations
         }
         return term
 

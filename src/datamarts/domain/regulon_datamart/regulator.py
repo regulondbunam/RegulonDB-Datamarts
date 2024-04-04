@@ -20,7 +20,7 @@ class Regulator(BiologicalBase):
         note = self.formatted_note
         if not note:
             note = self.get_longest_note()
-        if self.regulator.regulator_type == "transcriptionFactor":
+        if self.regulator.regulation_type == "Transcription-Factor-Binding" or self.regulator.id == "RDBECOLITFC00039":
             regulator = {
                 "_id": self.regulator.id,
                 "citations": self.citations,
@@ -42,11 +42,11 @@ class Regulator(BiologicalBase):
                 "family": self.regulator.family,
                 "additiveEvidences": additive_evs.to_dict(),
                 "confidenceLevel": additive_evs.get_confidence_level(),
-                "type": self.regulator.regulator_type
+                "type": self.regulator.regulation_type
             }
         else:
             abbreviated_name = None
-            if self.regulator.regulator_type == "sRNA":
+            if self.regulator.regulation_type == "RNA-Mediated-Translation-Regulation":
                 abbreviated_name = self.regulator.abbreviated_name
             regulator = {
                 "_id": self.regulator.id,
@@ -60,7 +60,7 @@ class Regulator(BiologicalBase):
                 "note": self.formatted_note,
                 "additiveEvidences": additive_evs.to_dict(),
                 "confidenceLevel": additive_evs.get_confidence_level(),
-                "type": self.regulator.regulator_type
+                "type": self.regulator.regulation_type
             }
         return regulator
 
@@ -73,7 +73,7 @@ class Regulator(BiologicalBase):
         self._conformations = []
         reg_complex = None
         product = None
-        if regulator.regulator_type == "transcriptionFactor":
+        if regulator.regulation_type == "Transcription-Factor-Binding" or regulator.id == "RDBECOLITFC00039":
             try:
                 reg_complex = multigenomic_api.regulatory_complexes.find_by_name(regulator.name)
             except DoesNotExist:
@@ -101,12 +101,12 @@ class Regulator(BiologicalBase):
     @genes.setter
     def genes(self, regulator):
         self._genes = []
-        if regulator.regulator_type == "transcriptionFactor":
+        if regulator.regulation_type == "Transcription-Factor-Binding" or regulator.id == "RDBECOLITFC00039":
             for product_id in regulator.products_ids:
                 prod = multigenomic_api.products.find_by_id(product_id)
                 gene = self.get_gene_properties(prod.genes_id)
                 self.genes.append(gene.copy())
-        elif regulator.regulator_type == "sRNA":
+        elif regulator.regulation_type == "RNA-Mediated-Translation-Regulation":
             prod = multigenomic_api.products.find_by_id(regulator.id)
             gene = self.get_gene_properties(prod.genes_id)
             self.genes.append(gene.copy())
@@ -118,7 +118,7 @@ class Regulator(BiologicalBase):
     @operons.setter
     def operons(self, regulator):
         self._operons = []
-        if regulator.regulator_type == "transcriptionFactor":
+        if regulator.regulation_type == "Transcription-Factor-Binding" or regulator.id == "RDBECOLITFC00039":
             for product_id in regulator.products_ids:
                 prod = multigenomic_api.products.find_by_id(product_id)
                 transcription_units = multigenomic_api.transcription_units.find_by_gene_id(prod.genes_id)
@@ -149,7 +149,7 @@ class Regulator(BiologicalBase):
     @products.setter
     def products(self, regulator):
         self._products = []
-        if regulator.regulator_type == "transcriptionFactor":
+        if regulator.regulation_type == "Transcription-Factor-Binding":
             for product_id in regulator.products_ids:
                 prod = multigenomic_api.products.find_by_id(product_id)
                 prod_dict = {

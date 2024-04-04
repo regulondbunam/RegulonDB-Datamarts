@@ -1,29 +1,31 @@
 # DatamartsExtractorSummary 
-Creation date: 2023-10-17
+Creation date: 2024-03-19
  
-Creation time: 01:09:55
+Started time: 11:59:05
  
-RegulonDB Version: 12.0 
+Creation time: 11:59:06
+ 
+RegulonDB Version: 12.5
 
 ## RegulonDB Datamarts Summary 
 
  ### geneDatamart: 
- 4746 Total Objects Generated
+ 4748 Total Objects Generated
  ### operonDatamart: 
- 2595 Total Objects Generated
+ 2590 Total Objects Generated
  ### regulonDatamart: 
- 284 Total Objects Generated
+ 287 Total Objects Generated
  ### sigmulonDatamart: 
  7 Total Objects Generated
- ### srnaDatamart: 
- 119 Total Objects Generated
  ### dnaFeatures: 
- 14764 Total Objects Generated
+ 14882 Total Objects Generated
  ### regulatoryNetworkDatamart: 
- 5030 Total Objects Generated
+ 5035 Total Objects Generated
  ### listPage: 
  7632 Total Objects Generated
  ### gensorUnitDatamart: 
  238 Total Objects Generated
+ ### mcoTree: 
+ 5969 Total Objects Generated
  ### downloadableFilesDatamart: 
- 14 Total Objects Generated
+ 21 Total Objects Generated

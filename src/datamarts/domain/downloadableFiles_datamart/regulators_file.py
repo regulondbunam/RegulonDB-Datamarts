@@ -66,13 +66,14 @@ class Regulators:
 
         @regulator_synonyms.setter
         def regulator_synonyms(self, synonyms):
-            self._regulator_synonyms = None
+            self._regulator_synonyms = ""
             if len(synonyms) > 0:
-                self._regulator_synonyms = ""
                 for synonym in synonyms:
                     self._regulator_synonyms += f"{synonym};"
             if len(self._regulator_synonyms) > 0:
                 self._regulator_synonyms = self._regulator_synonyms[:-1]
+            else:
+                self._regulator_synonyms = None
 
         @property
         def genes(self):
@@ -400,7 +401,7 @@ def get_all_act_conf(regulator):
     return conformations
 
 
-def all_regulators_rows():
+def all_regulators_rows(rdb_version, citation):
     regulators = Regulators()
     regulators_content = ["1)regulatorId\t2)regulatorName\t3)regulatorSynonyms\t4)regulatorType\t5)geneCodingForRegulator\t6)regulatorActiveConformations\t7)regulatorInactiveConformations\t8)regulatorActiveConformationsSynonyms\t9)regulatorInactiveConformationsSynonyms\t10)regulatorActiveConformationsEffector\t11)regulatorInactiveConformationsEffector\t12)regulatorActiveConformationsEffectorSynonyms\t13)regulatorInactiveConformationsEffectorSynonyms\t14)symmetry\t15)regulatorEvidences\t16)additiveEvidences\t17)confidenceLevel\t18)regulatorConformationPMID"]
     for regulator in regulators.objects:
@@ -411,8 +412,8 @@ def all_regulators_rows():
         "fileName": "RegulatorSet",
         "title": "Complete Regulators Set",
         "fileFormat": "rif-version 1",
-        "license": "RegulonDB is free for academic/noncommercial use\n\nUser is not entitled to change or erase data sets of the RegulonDB\ndatabase or to eliminate copyright notices from RegulonDB. Furthermore,\nUser is not entitled to expand RegulonDB or to integrate RegulonDB partly\nor as a whole into other databank systems, without prior written consent\nfrom CCG-UNAM.\n\nPlease check the license at https://regulondb.ccg.unam.mx/manual/aboutUs/terms-conditions",
-        "citation": "Salgado H., Gama-Castro S. et al (2023). RegulonDB 12.0: A Comprehensive resource of transcriptional regulation in E. coli K-12",
+        "license": "# RegulonDB is free for academic/noncommercial use\n# User is not entitled to change or erase data sets of the RegulonDB\n# database or to eliminate copyright notices from RegulonDB. Furthermore,\n# User is not entitled to expand RegulonDB or to integrate RegulonDB partly\n# or as a whole into other databank systems, without prior written consent\n# from CCG-UNAM.\n# Please check the license at https://regulondb.ccg.unam.mx/manual/aboutUs/terms-conditions",
+        "citation": citation,
         "contact": {
             "person": "RegulonDB Team",
             "webPage": None,
@@ -420,8 +421,10 @@ def all_regulators_rows():
         },
         "version": "1.0",
         "creationDate": f"{creation_date.strftime('%m-%d-%Y')}",
-        "columnsDetails": "Columns:\n(1) Regulator identifier assigned by RegulonDB\n(2) Regulator Name\n(3) Regulator Synonyms List\n(4) Regulator Synonyms List\n(5) Gene Coding for the Regulator\n(6) Regulator Active Conformations\n(7) Regulator Inactive Conformations\n(8) Regulator Active Conformations  Synonyms List\n(9) Regulator Inactive Conformations  Synonyms List\n(10) Effector Name related to  Regulator Active Conformations\n(11) Effector Name related to  Regulator Inactive Conformations\n(12) Effector Synonyms List related to Regulator Active Conformations Regulator \n(13) Effector Synonyms List related to Regulator Inactive Conformations Regulator\n(14) Regulator Symmetry\n(15) Evidence that supports the Regulator conformation [Evidence code | Evidence type: C = Confirmed, S = Strong, W = Weak | Evidence name ]\n(16) addEvidence. Additive Evidence [CV(EvidenceCode1/EvidenceCodeN)|Confidence Level]\n(17) confidenceLevel. Confidence level (Values: Confirmed, Strong, Weak)\n(18) Regulator conformation reference identifier (PMID)",
+        "columnsDetails": "# Columns:\n# (1) Regulator identifier assigned by RegulonDB\n# (2) Regulator Name\n# (3) Regulator Synonyms List\n# (4) Regulator Synonyms List\n# (5) Gene Coding for the Regulator\n# (6) Regulator Active Conformations\n# (7) Regulator Inactive Conformations\n# (8) Regulator Active Conformations Synonyms List\n# (9) Regulator Inactive Conformations Synonyms List\n# (10) Effector Name related to  Regulator Active Conformations\n# (11) Effector Name related to  Regulator Inactive Conformations\n# (12) Effector Synonyms List related to Regulator Active Conformations Regulator \n# (13) Effector Synonyms List related to Regulator Inactive Conformations Regulator\n# (14) Regulator Symmetry\n# (15) Evidence that supports the Regulator conformation [Evidence code | Evidence type: C = Confirmed, S = Strong, W = Weak | Evidence name ]\n# (16) addEvidence. Additive Evidence [CV(EvidenceCode1/EvidenceCodeN)|Confidence Level]\n# (17) confidenceLevel. Confidence level (Values: Confirmed, Strong, Weak)\n# (18) Regulator conformation reference identifier (PMID)",
         "content": " \n".join(regulators_content),
-        "rdbVersion": "12.0"
+        "rdbVersion": rdb_version,
+        "description": "Regulators and their conformations (Transcription factors, small RNAs, and ppGpp).",
+        "group": "REGULATOR"
     }
     return regulators_doc

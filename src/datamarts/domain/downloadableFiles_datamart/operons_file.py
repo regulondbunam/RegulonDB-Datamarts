@@ -1,6 +1,5 @@
 import multigenomic_api
 from datetime import datetime
-from src.datamarts.domain.general.additiveEvidences import AdditiveEvidences
 
 
 class Operon:
@@ -19,8 +18,7 @@ class Operon:
             operon_genes = get_genes(operon.id)
             self.operon = operon
             self.genes = operon_genes
-            self.first_gene = operon_genes
-            self.last_gene = operon_genes
+            self.genes_positions = operon_genes
             self.tus_evidences = operon.id
             self.evidences = self.tus_evidences
             self.confidence_level = self.tus_evidences
@@ -31,57 +29,31 @@ class Operon:
 
         @genes.setter
         def genes(self, genes):
-            self._genes = ""
+            self._genes = []
+            genes = order_genes(genes, self.operon.strand)
+            if self.operon.strand == "reverse":
+                genes = reversed(genes)
             for gene in genes:
-                self._genes += f"{gene.name};"
+                self._genes.append(gene['name'])
             if len(self._genes) > 0:
-                self._genes = self._genes[:-1]
+                self._genes = ";".join(self._genes)
 
         @property
-        def first_gene(self):
-            return self._first_gene
+        def genes_positions(self):
+            return self._genes_positions
 
-        @first_gene.setter
-        def first_gene(self, genes):
-            self._first_gene = {
-                "leftEndPosition": "",
-            }
-            if len(genes) == 1:
-                self._first_gene = genes[0]
-            elif len(genes) > 1:
-                self._first_gene = genes[0]
-                strand = genes[0].strand
-                if strand == "forward":
-                    for gene in genes:
-                        if gene.left_end_position < self._first_gene.left_end_position:
-                            self._first_gene = gene
-                elif strand == "reverse":
-                    for gene in genes:
-                        if gene.right_end_position > self._first_gene.right_end_position:
-                            self._first_gene = gene
-
-        @property
-        def last_gene(self):
-            return self._last_gene
-
-        @last_gene.setter
-        def last_gene(self, genes):
-            self._last_gene = {
-                "rightEndPosition": "",
-            }
-            if len(genes) == 1:
-                self._last_gene = genes[0]
-            elif len(genes) > 1:
-                self._last_gene = genes[0]
-                strand = genes[0].strand
-                if strand == "forward":
-                    for gene in genes:
-                        if gene.left_end_position > self._last_gene.left_end_position:
-                            self._last_gene = gene
-                elif strand == "reverse":
-                    for gene in genes:
-                        if gene.right_end_position < self._last_gene.right_end_position:
-                            self._last_gene = gene
+        @genes_positions.setter
+        def genes_positions(self, genes):
+            self._genes_positions = []
+            for gene in genes:
+                if gene.fragments:
+                    for fragment in gene.fragments:
+                        self._genes_positions.append(fragment.left_end_position)
+                        self._genes_positions.append(fragment.right_end_position)
+                else:
+                    self._genes_positions.append(gene.left_end_position)
+                    self._genes_positions.append(gene.right_end_position)
+            self._genes_positions = sorted(self._genes_positions)
 
         @property
         def tus_evidences(self):
@@ -138,8 +110,8 @@ class Operon:
         def to_row(self):
             return f"{self.operon.id}" \
                    f"\t{self.operon.name}" \
-                   f"\t{self.first_gene['left_end_position']}" \
-                   f"\t{self.last_gene['right_end_position']}" \
+                   f"\t{self.genes_positions[0]}" \
+                   f"\t{self.genes_positions[-1]}" \
                    f"\t{self.operon.strand}" \
                    f"\t{len(self.genes.split(';'))}" \
                    f"\t{self.genes}" \
@@ -157,27 +129,30 @@ def get_genes(operon_id):
                 gene = multigenomic_api.genes.find_by_id(gene_id)
                 if gene not in genes:
                     genes.append(gene)
-    genes = find_fragments(genes)
     return genes
 
 
-def find_fragments(genes):
+def order_genes(genes, strand):
+    dict_genes = []
     for gene in genes:
         if gene.fragments:
-            first_fragment = gene.fragments[0]
-            for fragment in gene.fragments:
-                if first_fragment.left_end_position < fragment.left_end_position:
-                    first_fragment = fragment
-            last_fragment = gene.fragments[0]
-            for fragment in gene.fragments:
-                if last_fragment.right_end_position < fragment.right_end_position:
-                    last_fragment = fragment
-            gene.left_end_position = first_fragment.left_end_position
-            gene.right_end_position = last_fragment.right_end_position
-    return genes
+            min_left_pos = min(gene.fragments, key=lambda x: x.left_end_position)
+            max_right_pos = max(gene.fragments, key=lambda x: x.right_end_position)
+            gene.left_end_position = min_left_pos.left_end_position
+            gene.right_end_position = max_right_pos.right_end_position
+        dict_genes.append({
+            "id": gene.id,
+            "name": gene.name,
+            "left_end_position": gene.left_end_position,
+            "right_end_position": gene.right_end_position
+        })
+    if strand == "forward":
+        return sorted(dict_genes, key=lambda x: x['left_end_position'])
+    elif strand == "reverse":
+        return sorted(dict_genes, key=lambda x: x['right_end_position'])
 
 
-def all_operons_rows():
+def all_operons_rows(rdb_version, citation):
     operons = Operon()
     operons_content = ["1)operonId\t2)operonName\t3)firstGeneLeftPos\t4)lastGeneRightPos\t5)strand\t6)numberOfGenes\t7)operonGenes\t8)operonEvidence\t9)confidenceLevel"]
     for operon in operons.objects:
@@ -188,8 +163,8 @@ def all_operons_rows():
         "fileName": "OperonSet",
         "title": "Complete Operons Set",
         "fileFormat": "rif-version 1",
-        "license": "RegulonDB is free for academic/noncommercial use\n\nUser is not entitled to change or erase data sets of the RegulonDB\ndatabase or to eliminate copyright notices from RegulonDB. Furthermore,\nUser is not entitled to expand RegulonDB or to integrate RegulonDB partly\nor as a whole into other databank systems, without prior written consent\nfrom CCG-UNAM.\n\nPlease check the license at https://regulondb.ccg.unam.mx/manual/aboutUs/terms-conditions",
-        "citation": "Salgado H., Gama-Castro S. et al (2023). RegulonDB 12.0: A Comprehensive resource of transcriptional regulation in E. coli K-12",
+        "license": "# RegulonDB is free for academic/noncommercial use\n# User is not entitled to change or erase data sets of the RegulonDB\n# database or to eliminate copyright notices from RegulonDB. Furthermore,\n# User is not entitled to expand RegulonDB or to integrate RegulonDB partly\n# or as a whole into other databank systems, without prior written consent\n# from CCG-UNAM.\n# Please check the license at https://regulondb.ccg.unam.mx/manual/aboutUs/terms-conditions",
+        "citation": citation,
         "contact": {
             "person": "RegulonDB Team",
             "webPage": None,
@@ -197,8 +172,10 @@ def all_operons_rows():
         },
         "version": "1.0",
         "creationDate": f"{creation_date.strftime('%m-%d-%Y')}",
-        "columnsDetails": "Columns:\n(1) Operon name\n(2) First gene-position left\n(3) Last gene-position right\n(4) DNA strand where the operon is coded\n(5) Number of genes contained in the operon\n(6) Name or Blattner number of the gene(s) contained in the operon\n(7) Evidence that support the existence of the operon's TUs\n(8) Evidence confidence level (Confirmed, Strong, Weak)",
+        "columnsDetails": "# Columns:\n# (1) Operon ID\n(2) Operon name\n# (3) First gene-position left\n# (4) Last gene-position right\n# (5) DNA strand where the operon is coded\n# (6) Number of genes contained in the operon\n# (7) Name or Blattner number of the gene(s) contained in the operon\n# (8) Evidence that support the existence of the operon's TUs\n# (9) Evidence confidence level (Confirmed, Strong, Weak)",
         "content": " \n".join(operons_content),
-        "rdbVersion": "12.0"
+        "rdbVersion": rdb_version,
+        "description": "Operons and their genes.",
+        "group": "OPERON STRUCTURE"
     }
     return operons_doc

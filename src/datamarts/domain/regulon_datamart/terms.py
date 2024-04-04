@@ -8,9 +8,9 @@ class Terms:
     def __init__(self, regulator):
         super().__init__()
         regulated_genes = []
-        if regulator.regulator_type == "transcriptionFactor":
+        if regulator.regulation_type == "Transcription-Factor-Binding" or regulator.id == "RDBECOLITFC00039":
             regulated_genes = get_genes(regulator)
-        elif regulator.regulator_type == "sRNA":
+        elif regulator.regulation_type == "RNA-Mediated-Translation-Regulation":
             regulated_genes = get_genes(regulator)
         regulator["regulated_genes"] = regulated_genes
         self.gene_ontology = regulator
@@ -55,7 +55,7 @@ class Terms:
             'cellularComponent': [],
             'molecularFunction': []
         }
-        if regulator.regulator_type == "transcriptionFactor":
+        if regulator.regulation_type == "Transcription-Factor-Binding" or regulator.id == "RDBECOLITFC00039":
             products_ids = regulator.products_ids
             regulated_genes = regulator.regulated_genes
         else:
@@ -88,7 +88,7 @@ class Terms:
 class Term(BiologicalBase):
 
     def __init__(self, term, regulated_genes):
-        super().__init__([], [], [])
+        super().__init__([], term.citations, [])
         self.regulated_genes = regulated_genes
         self.term = term
 
@@ -98,7 +98,8 @@ class Term(BiologicalBase):
         term = {
             '_id': self.term.terms_id,
             'name': self.term.terms_name,
-            'genes': gene_object(genes)
+            'genes': gene_object(genes),
+            'citations': self.citations
         }
         return term
 
@@ -127,7 +128,7 @@ def get_genes(regulator):
     reg_complex = None
     genes = []
     reg_ints = []
-    if regulator.regulator_type == "transcriptionFactor":
+    if regulator.regulation_type == "Transcription-Factor-Binding" or regulator.id == "RDBECOLITFC00039":
         for active_conformation in regulator.active_conformations:
             reg_ints.extend(multigenomic_api.regulatory_interactions.find_by_regulator_id(active_conformation.id))
         try:

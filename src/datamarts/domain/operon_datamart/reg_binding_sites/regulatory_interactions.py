@@ -18,6 +18,7 @@ class RegulatoryInteractions(BiologicalBase):
             "note": self.formatted_note,
             "mechanism": self.regulatory_interactions.mechanism,
             "regulatorySite": self.regulatory_sites,
-            "additiveEvidences": additive_evs.to_dict()
+            "additiveEvidences": additive_evs.to_dict(),
+            "confidenceLevel": self.regulatory_interactions.confidence_level
         }
         return reg_int_dict
