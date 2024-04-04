@@ -280,13 +280,14 @@ def gene_ontology_extrac(products):
 class Term(BiologicalBase):
 
     def __init__(self, term):
-        super().__init__([], [], [])
+        super().__init__([], term.citations, [])
         self.term = term
 
     def to_dict(self):
         term = {
             '_id': self.term.terms_id,
-            'name': self.term.terms_name
+            'name': self.term.terms_name,
+            'citations': self.citations
         }
         return term
 
