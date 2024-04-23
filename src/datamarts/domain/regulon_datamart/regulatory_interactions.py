@@ -114,7 +114,7 @@ class RegulatoryInteractions(BiologicalBase):
             if strand == "forward":
                 self._regulated_genes = sorted(self._regulated_genes, key=lambda x: x["leftEndPosition"])
             else:
-                self._regulated_genes = sorted(self._regulated_genes, key=lambda x: x["rightEndPosition"])
+                self._regulated_genes = sorted(self._regulated_genes, key=lambda x: x["rightEndPosition"], reverse=True)
 
     @property
     def regulatory_binding_sites(self):
