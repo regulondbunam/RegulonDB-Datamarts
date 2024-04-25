@@ -8,6 +8,7 @@ class Regulation:
         self.regulators = self.operon
         self.promoters = self.operon
         self.regulatory_interactions = self.operon
+        self.sigma_factors = []
 
     @property
     def operon(self):
@@ -17,6 +18,15 @@ class Regulation:
     def operon(self, operon_gene):
         operon = Operon(operon_gene)
         self._operon = operon
+
+    @property
+    def sigma_factors(self):
+        return self._sigma_factors
+
+    @sigma_factors.setter
+    def sigma_factors(self, array):
+        operon = self.operon
+        self._sigma_factors = operon.get_sigma_factor_count()
 
     @property
     def regulators(self):
@@ -49,7 +59,8 @@ class Regulation:
             "statistics": {
                 "regulators": len(self.regulators),
                 "promoters": len(self.promoters),
-                "regulatoryInteractions": len(self.regulatory_interactions)
+                "regulatoryInteractions": len(self.regulatory_interactions),
+                "sigmaFactors": self.sigma_factors
             }
         }
         return regulation
@@ -62,6 +73,7 @@ class Operon:
         gene_id = operon_gene[1]
         self.promoters = []
         self.regulators = []
+        self.sigma_factors = []
         self.operon = operon
         self.transcription_units = multigenomic_api.transcription_units.find_by_operon_id(operon.id)
         self.arrangement = [self.transcription_units, gene_id]
@@ -113,6 +125,15 @@ class Operon:
                 '_id': promoter.id,
                 'name': promoter.name
             }
+            if promoter.binds_sigma_factor:
+                sigma_factor = multigenomic_api.sigma_factors.find_by_id(promoter.binds_sigma_factor.sigma_factors_id)
+                sigma_object = {
+                    "_id": sigma_factor.id,
+                    "name": sigma_factor.name
+                }
+                new_promoter["sigmaFactor"] = sigma_object
+                if sigma_object not in self.sigma_factors:
+                    self.sigma_factors.append(sigma_object)
             promoters.append(new_promoter.copy())
 
             if new_promoter not in self.promoters:
@@ -164,6 +185,9 @@ class Operon:
             "arrangement": self.arrangement
         }
         return operon
+
+    def get_sigma_factor_count(self):
+        return len(self.sigma_factors)
 
 
 def identify_dual(regulators, item):
