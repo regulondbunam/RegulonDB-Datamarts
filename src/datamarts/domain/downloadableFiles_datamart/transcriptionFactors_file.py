@@ -21,6 +21,7 @@ class TranscriptionFactor:
             self.tf = tf
             self.tf_synonyms = tf.synonyms
             self.genes = tf.products_ids
+            self.gene_bnumbers = tf.products_ids
             self.active_conf = active_conformations
             self.inactive_conf = tf.inactive_conformations
             self.active_conf_syn = active_conformations
@@ -59,6 +60,20 @@ class TranscriptionFactor:
                 self._genes += f"{gene.name};"
             if len(self._genes) > 0:
                 self._genes = self._genes[:-1]
+
+        @property
+        def gene_bnumbers(self):
+            return self._gene_bnumbers
+
+        @gene_bnumbers.setter
+        def gene_bnumbers(self, products_ids):
+            self._gene_bnumbers = ""
+            for product_id in products_ids:
+                product = multigenomic_api.products.find_by_id(product_id)
+                gene = multigenomic_api.genes.find_by_id(product.genes_id)
+                self._gene_bnumbers += f"{gene.bnumber};"
+            if len(self._gene_bnumbers) > 0:
+                self._gene_bnumbers = self._gene_bnumbers[:-1]
 
         @property
         def active_conf(self):
@@ -262,6 +277,7 @@ class TranscriptionFactor:
                    f"\t{self.tf.abbreviated_name}" \
                    f"\t{self.tf_synonyms}" \
                    f"\t{self.genes}" \
+                   f"\t{self.gene_bnumbers}" \
                    f"\t{self.active_conf}" \
                    f"\t{self.inactive_conf}" \
                    f"\t{self.active_conf_syn}" \
@@ -343,7 +359,7 @@ def get_all_act_conf(tf):
 
 def all_tfs_rows(rdb_version, citation):
     trans_factors = TranscriptionFactor()
-    tfs_content = ["1)tfId\t2)tfName\t3)tfSynonyms\t4)geneCodingForTF\t5)tfActiveConformations\t6)tfInactiveConformations\t7)tfActiveConformationsSynonyms\t8)tfInactiveConformationsSynonyms\t9)tfActiveConformationsEffector\t10)tfInactiveConformationsEffector\t11)tfActiveConformationsEffectorSynonyms\t12)tfInactiveConformationsEffectorSynonyms\t13)symmetry\t14)tfEvidences\t15)additiveEvidences\t16)confidenceLevel\t17)tfConformationPMID"]
+    tfs_content = ["1)tfId\t2)tfName\t3)tfSynonyms\t4)geneCodingForTF\t5)geneBnumberCodingForTF\t6)tfActiveConformations\t7)tfInactiveConformations\t8)tfActiveConformationsSynonyms\t9)tfInactiveConformationsSynonyms\t10)tfActiveConformationsEffector\t11)tfInactiveConformationsEffector\t12)tfActiveConformationsEffectorSynonyms\t13)tfInactiveConformationsEffectorSynonyms\t14)symmetry\t15)tfEvidences\t16)additiveEvidences\t17)confidenceLevel\t18)tfConformationPMID"]
     for tf in trans_factors.objects:
         tfs_content.append(tf.to_row())
     creation_date = datetime.now()
@@ -361,7 +377,7 @@ def all_tfs_rows(rdb_version, citation):
         },
         "version": "1.0",
         "creationDate": f"{creation_date.strftime('%m-%d-%Y')}",
-        "columnsDetails": "# Columns:\n# (1) Transcription Factor (TF) identifier assigned by RegulonDB\n# (2) TF Name\n# (3) TF Synonyms List\n# (4) Gene Coding for the TF\n# (5) TF Active Conformations\n# (6) TF Inactive Conformations\n# (7) TF Active Conformations  Synonyms List\n# (8) TF Inactive Conformations  Synonyms List\n# (9) Effector Name related to  TF Active Conformations\n# (10) Effector Name related to  TF Inactive Conformations\n# (11) Effector Synonyms List related to TF Active Conformations TF \n# (12) Effector Synonyms List related to TF Inactive Conformations TF\n# (13) TF Symmetry\n# (14) Evidence that supports the TF conformation [Evidence code | Evidence type: C = Confirmed, S = Strong, W = Weak | Evidence name ]\n# (15) addEvidence. Additive Evidence [CV(EvidenceCode1/EvidenceCodeN)|Confidence Level]\n# (16) confidenceLevel. Confidence level (Values: Confirmed, Strong, Weak)\n# (17) TF conformation reference identifier (PMID)",
+        "columnsDetails": "# Columns:\n# (1) Transcription Factor (TF) identifier assigned by RegulonDB\n# (2) TF Name\n# (3) TF Synonyms List\n# (4) Gene Coding for the TF\n# (5) Gene Bnumbers Coding for the TF\n# (6) TF Active Conformations\n# (7) TF Inactive Conformations\n# (8) TF Active Conformations  Synonyms List\n# (9) TF Inactive Conformations  Synonyms List\n# (10) Effector Name related to  TF Active Conformations\n# (11) Effector Name related to  TF Inactive Conformations\n# (12) Effector Synonyms List related to TF Active Conformations TF \n# (13) Effector Synonyms List related to TF Inactive Conformations TF\n# (14) TF Symmetry\n# (15) Evidence that supports the TF conformation [Evidence code | Evidence type: C = Confirmed, S = Strong, W = Weak | Evidence name ]\n# (16) addEvidence. Additive Evidence [CV(EvidenceCode1/EvidenceCodeN)|Confidence Level]\n# (17) confidenceLevel. Confidence level (Values: Confirmed, Strong, Weak)\n# (18) TF conformation reference identifier (PMID)",
         "content": " \n".join(tfs_content),
         "rdbVersion": rdb_version,
         "description": "Transcription factors and their conformations (subset of RegulatorSet).",
