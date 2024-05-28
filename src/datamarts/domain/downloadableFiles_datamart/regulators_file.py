@@ -35,6 +35,7 @@ class Regulators:
             self.regulator = regulator
             self.regulator_synonyms = regulator.synonyms
             self.genes = regulator
+            self.gene_bnumbers = regulator
             self.active_conf = active_conformations
             self.inactive_conf = regulator
             self.active_conf_syn = active_conformations
@@ -92,6 +93,24 @@ class Regulators:
                 self._genes += f"{gene.name};"
             if len(self._genes) > 0:
                 self._genes = self._genes[:-1]
+
+        @property
+        def gene_bnumbers(self):
+            return self._gene_bnumbers
+
+        @gene_bnumbers.setter
+        def gene_bnumbers(self, regulator):
+            self._gene_bnumbers = ""
+            if regulator.regulator_type == "transcriptionFactor":
+                for product_id in regulator.products_ids:
+                    product = multigenomic_api.products.find_by_id(product_id)
+                    gene = multigenomic_api.genes.find_by_id(product.genes_id)
+                    self._gene_bnumbers += f"{gene.bnumber};"
+            if regulator.regulator_type == "srna":
+                gene = multigenomic_api.genes.find_by_id(regulator.genes_id)
+                self._gene_bnumbers += f"{gene.bnumber};"
+            if len(self._gene_bnumbers) > 0:
+                self._gene_bnumbers = self._gene_bnumbers[:-1]
 
         @property
         def active_conf(self):
@@ -303,6 +322,7 @@ class Regulators:
                    f"\t{self.regulator_synonyms}" \
                    f"\t{self.regulator.regulator_type}" \
                    f"\t{self.genes}" \
+                   f"\t{self.gene_bnumbers}" \
                    f"\t{self.active_conf}" \
                    f"\t{self.inactive_conf}" \
                    f"\t{self.active_conf_syn}" \
@@ -403,7 +423,7 @@ def get_all_act_conf(regulator):
 
 def all_regulators_rows(rdb_version, citation):
     regulators = Regulators()
-    regulators_content = ["1)regulatorId\t2)regulatorName\t3)regulatorSynonyms\t4)regulatorType\t5)geneCodingForRegulator\t6)regulatorActiveConformations\t7)regulatorInactiveConformations\t8)regulatorActiveConformationsSynonyms\t9)regulatorInactiveConformationsSynonyms\t10)regulatorActiveConformationsEffector\t11)regulatorInactiveConformationsEffector\t12)regulatorActiveConformationsEffectorSynonyms\t13)regulatorInactiveConformationsEffectorSynonyms\t14)symmetry\t15)regulatorEvidences\t16)additiveEvidences\t17)confidenceLevel\t18)regulatorConformationPMID"]
+    regulators_content = ["1)regulatorId\t2)regulatorName\t3)regulatorSynonyms\t4)regulatorType\t5)geneCodingForRegulator\t6)geneBnumberCodingForRegulator\t7)regulatorActiveConformations\t8)regulatorInactiveConformations\t9)regulatorActiveConformationsSynonyms\t10)regulatorInactiveConformationsSynonyms\t11)regulatorActiveConformationsEffector\t12)regulatorInactiveConformationsEffector\t13)regulatorActiveConformationsEffectorSynonyms\t14)regulatorInactiveConformationsEffectorSynonyms\t15)symmetry\t16)regulatorEvidences\t17)additiveEvidences\t18)confidenceLevel\t19)regulatorConformationPMID"]
     for regulator in regulators.objects:
         regulators_content.append(regulator.to_row())
     creation_date = datetime.now()
@@ -421,7 +441,7 @@ def all_regulators_rows(rdb_version, citation):
         },
         "version": "1.0",
         "creationDate": f"{creation_date.strftime('%m-%d-%Y')}",
-        "columnsDetails": "# Columns:\n# (1) Regulator identifier assigned by RegulonDB\n# (2) Regulator Name\n# (3) Regulator Synonyms List\n# (4) Regulator Synonyms List\n# (5) Gene Coding for the Regulator\n# (6) Regulator Active Conformations\n# (7) Regulator Inactive Conformations\n# (8) Regulator Active Conformations Synonyms List\n# (9) Regulator Inactive Conformations Synonyms List\n# (10) Effector Name related to  Regulator Active Conformations\n# (11) Effector Name related to  Regulator Inactive Conformations\n# (12) Effector Synonyms List related to Regulator Active Conformations Regulator \n# (13) Effector Synonyms List related to Regulator Inactive Conformations Regulator\n# (14) Regulator Symmetry\n# (15) Evidence that supports the Regulator conformation [Evidence code | Evidence type: C = Confirmed, S = Strong, W = Weak | Evidence name ]\n# (16) addEvidence. Additive Evidence [CV(EvidenceCode1/EvidenceCodeN)|Confidence Level]\n# (17) confidenceLevel. Confidence level (Values: Confirmed, Strong, Weak)\n# (18) Regulator conformation reference identifier (PMID)",
+        "columnsDetails": "# Columns:\n# (1) Regulator identifier assigned by RegulonDB\n# (2) Regulator Name\n# (3) Regulator Synonyms List\n# (4) Regulator Synonyms List\n# (5) Gene Coding for the Regulator\n# (6) Gene Bnumber Coding for the Regulator\n# (7) Regulator Active Conformations\n# (8) Regulator Inactive Conformations\n# (9) Regulator Active Conformations Synonyms List\n# (10) Regulator Inactive Conformations Synonyms List\n# (11) Effector Name related to  Regulator Active Conformations\n# (12) Effector Name related to  Regulator Inactive Conformations\n# (13) Effector Synonyms List related to Regulator Active Conformations Regulator \n# (14) Effector Synonyms List related to Regulator Inactive Conformations Regulator\n# (15) Regulator Symmetry\n# (16) Evidence that supports the Regulator conformation [Evidence code | Evidence type: C = Confirmed, S = Strong, W = Weak | Evidence name ]\n# (17) addEvidence. Additive Evidence [CV(EvidenceCode1/EvidenceCodeN)|Confidence Level]\n# (18) confidenceLevel. Confidence level (Values: Confirmed, Strong, Weak)\n# (19) Regulator conformation reference identifier (PMID)",
         "content": " \n".join(regulators_content),
         "rdbVersion": rdb_version,
         "description": "Regulators and their conformations (Transcription factors, small RNAs, and ppGpp).",
