@@ -152,7 +152,7 @@ def all_tus_rows(rdb_version, citation):
                           "(11) tfsNames. transcription Factors names that regulates the transcription Unit\n#",
         "content": " \n".join(tus_content),
         "rdbVersion": rdb_version,
-        "description": "Transcription units with information of operon, promoter and terminator.",
+        "description": "Transcription units with information of operon, promoter and transcription factors.",
         "group": "OPERON STRUCTURE"
     }
     return tus_doc
