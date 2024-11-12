@@ -108,7 +108,7 @@ class TranscriptionUnit:
 
 def all_tus_rows(rdb_version, citation):
     trans_units = TranscriptionUnit()
-    tus_content = ["1)tuId	2)tuName	3)operonName	4)tuGenes	5)pmName	6)tuEvidence	7)addEvidence	8)confidenceLevel   9)pmids"]
+    tus_content = ["1)tuId\n2)tuName\n3)operonName\n4)tuGenes\n5)pmName\n6)tuEvidence\n7)addEvidence\n8)confidenceLevel\t9)pmids"]
     for tu in trans_units.objects:
         tus_content.append(tu.to_row())
     creation_date = datetime.now()
