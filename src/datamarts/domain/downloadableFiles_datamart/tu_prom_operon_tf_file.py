@@ -22,6 +22,7 @@ class TranscriptionUnit:
             self.promoter = tu.promoters_id
             self.tfIds = tu
             self.tf = tu
+            self.terminator_ids = tu.terminators_ids
             self.sigma = self.promoter
 
         @property
@@ -92,6 +93,16 @@ class TranscriptionUnit:
             self._tf = ",".join(self._tf)
 
         @property
+        def terminator_ids(self):
+            return self._terminator_ids
+
+        @terminator_ids.setter
+        def terminator_ids(self, terminators_ids):
+            self._terminator_ids = ""
+            if len(terminators_ids) > 0:
+                self._terminator_ids = ",".join(terminators_ids)
+
+        @property
         def sigma(self):
             return self._sigma
 
@@ -113,6 +124,7 @@ class TranscriptionUnit:
                    f"\t{self.genes_names}" \
                    f"\t{self.promoter["id"]}" \
                    f"\t{self.promoter["name"]}" \
+                   f"\t{self.terminator_ids}" \
                    f"\t{self.sigma}" \
                    f"\t{self.tfIds}" \
                    f"\t{self.tf}"
@@ -120,7 +132,7 @@ class TranscriptionUnit:
 
 def all_tus_rows(rdb_version, citation):
     trans_units = TranscriptionUnit()
-    tus_content = ["1)tuId\t2)tuName\t3)operonId\t4)operonName\t5)tuGenesIds\t6)tuGenesNames\t7)promoterId\t8)promoterName\t9)sigmaFactor\t10)tfsIds\t11)tfsNames"]
+    tus_content = ["1)tuId\t2)tuName\t3)operonId\t4)operonName\t5)tuGenesIds\t6)tuGenesNames\t7)promoterId\t8)promoterName\t9)terminatorIds\t10)sigmaFactor\t11)tfsIds\t12)tfsNames"]
     for tu in trans_units.objects:
         tus_content.append(tu.to_row())
     creation_date = datetime.now()
@@ -147,12 +159,13 @@ def all_tus_rows(rdb_version, citation):
                           "(6) tuGenesNames. Names of the gene(s) contained in the transcription unit\n# "
                           "(7) promoterId. Promoter Id\n# "
                           "(8) promoterName. Promoter Name\n# "
-                          "(9) sigmaFactor. Sigma Factor associated to \n#"
-                          "(10) tfsIds. transcription Factors ids that regulates the transcription Unit\n#"
-                          "(11) tfsNames. transcription Factors names that regulates the transcription Unit\n#",
+                          "(9) terminatorIds. Ids of the terminators associated to transcription unit\n#"
+                          "(10) sigmaFactor. Sigma Factor associated to \n#"
+                          "(11) tfsIds. transcription Factors ids that regulates the transcription Unit\n#"
+                          "(12) tfsNames. transcription Factors names that regulates the transcription Unit\n#",
         "content": " \n".join(tus_content),
         "rdbVersion": rdb_version,
-        "description": "Transcription units with information of operon, promoter and terminator.",
+        "description": "Transcription units with information of operon, promoter, terminator and tfs.",
         "group": "OPERON STRUCTURE"
     }
     return tus_doc
