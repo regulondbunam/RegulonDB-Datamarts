@@ -34,7 +34,7 @@ def load_arguments_parser():
         "-u", "--url",
         help="URL to establish a connection between the process and MongoDB",
         metavar="mongodb://user:pass@localhost:27017/regulondbmultigenomic",
-        default="mongodb://andresloal:15091052@localhost:27017/regulondbmultigenomic",
+        default="mongodb://user:pass@localhost:27017/regulondbmultigenomic",
         required=False
     )
 

@@ -9,7 +9,6 @@ class TranscriptionUnit:
     def objects(self):
         tu_objects = multigenomic_api.transcription_units.get_all()
         for tu_object in tu_objects:
-            # print(tu_object.id)
             ri_row = TranscriptionUnit.TUDatamart(tu_object)
             yield ri_row
         del tu_objects
@@ -24,6 +23,11 @@ class TranscriptionUnit:
             self.tf = tu
             self.terminator_ids = tu.terminators_ids
             self.sigma = self.promoter
+            self.genes_bnumber = tu.genes_ids
+            self.first_gene_pos = tu
+            self.last_gene_pos = tu
+            self.terminator_pos = tu.terminators_ids
+            self.dbxref = tu.external_cross_references[0].object_id
 
         @property
         def operon(self):
@@ -43,10 +47,12 @@ class TranscriptionUnit:
         @genes_names.setter
         def genes_names(self, genes_ids):
             self._genes_names = ""
+            genes = []
             if len(genes_ids) > 0:
                 for gene_id in genes_ids:
                     gene = multigenomic_api.genes.find_by_id(gene_id)
-                    self._genes_names += f"{gene.name};"
+                    genes.append(gene.name)
+                self._genes_names = ";".join(genes)
 
         @property
         def promoter(self):
@@ -115,6 +121,73 @@ class TranscriptionUnit:
                         sigma = multigenomic_api.sigma_factors.find_by_id(promoter.binds_sigma_factor.sigma_factors_id)
                         self._sigma = sigma.abbreviated_name
 
+        @property
+        def genes_bnumber(self):
+            return self._genes_bnumber
+
+        @genes_bnumber.setter
+        def genes_bnumber(self, genes_ids):
+            self._genes_bnumber = ""
+            genes = []
+            if len(genes_ids) > 0:
+                for gene_id in genes_ids:
+                    gene = multigenomic_api.genes.find_by_id(gene_id)
+                    if gene.bnumber:
+                        genes.append(gene.bnumber)
+                self._genes_bnumber = ";".join(genes)
+
+        @property
+        def first_gene_pos(self):
+            return self._first_gene_pos
+
+        @first_gene_pos.setter
+        def first_gene_pos(self, tu):
+            self._first_gene_pos = ""
+            if tu.operons_id:
+                operon = multigenomic_api.operons.find_by_id(tu.operons_id)
+                first_gene = get_gene_of_tu(tu.genes_ids, operon.strand, "first")
+                if operon.strand == "forward":
+                    self._first_gene_pos = first_gene.get("left_end_position")
+                elif operon.strand == "reverse":
+                    self._first_gene_pos = first_gene.get("right_end_position")
+
+        @property
+        def last_gene_pos(self):
+            return self._last_gene_pos
+
+        @last_gene_pos.setter
+        def last_gene_pos(self, tu):
+            self._last_gene_pos = ""
+            if tu.operons_id:
+                operon = multigenomic_api.operons.find_by_id(tu.operons_id)
+                first_gene = get_gene_of_tu(tu.genes_ids, operon.strand, "last")
+                if operon.strand == "forward":
+                    self._last_gene_pos = first_gene.get("right_end_position")
+                elif operon.strand == "reverse":
+                    self._last_gene_pos = first_gene.get("left_end_position")
+
+        @property
+        def terminator_pos(self):
+            return self._terminator_pos
+
+        @terminator_pos.setter
+        def terminator_pos(self, terminator_ids):
+            self._terminator_pos = ""
+            positions = []
+            for terminator_id in terminator_ids:
+                terminator = multigenomic_api.terminators.find_by_id(terminator_id)
+                positions.append(f"{terminator.transcriptionTerminationSite.left_end_position}-{terminator.transcriptionTerminationSite.right_end_position}")
+            self._terminator_pos = ";".join(positions)
+
+
+        @property
+        def dbxref(self):
+            return self._dbxref
+
+        @dbxref.setter
+        def dbxref(self, ecocyc_id):
+            self._dbxref = f"Ecocyc:{ecocyc_id}"
+
         def to_row(self):
             return f"{self.tu.id}" \
                    f"\t{self.tu.name}" \
@@ -127,12 +200,18 @@ class TranscriptionUnit:
                    f"\t{self.terminator_ids}" \
                    f"\t{self.sigma}" \
                    f"\t{self.tfIds}" \
-                   f"\t{self.tf}"
+                   f"\t{self.tf}" \
+                   f"\t{self.genes_bnumber}" \
+                   f"\t{self.first_gene_pos}" \
+                   f"\t{self.last_gene_pos}" \
+                   f"\t{self.terminator_pos}" \
+                   f"\t{self.dbxref}"
+
 
 
 def all_tus_rows(rdb_version, citation):
     trans_units = TranscriptionUnit()
-    tus_content = ["1)tuId\t2)tuName\t3)operonId\t4)operonName\t5)tuGenesIds\t6)tuGenesNames\t7)promoterId\t8)promoterName\t9)terminatorIds\t10)sigmaFactor\t11)tfsIds\t12)tfsNames"]
+    tus_content = ["1)tuId\t2)tuName\t3)operonId\t4)operonName\t5)tuGenesIds\t6)tuGenesNames\t7)promoterId\t8)promoterName\t9)terminatorIds\t10)sigmaFactor\t11)tfsIds\t12)tfsNames\t13)tuGenesBnumber\t14)firstGenePos\t15lastGenePos\t16terminatorPositions\t17)DBXRef"]
     for tu in trans_units.objects:
         tus_content.append(tu.to_row())
     creation_date = datetime.now()
@@ -162,10 +241,49 @@ def all_tus_rows(rdb_version, citation):
                           "(9) terminatorIds. Ids of the terminators associated to transcription unit\n#"
                           "(10) sigmaFactor. Sigma Factor associated to \n#"
                           "(11) tfsIds. transcription Factors ids that regulates the transcription Unit\n#"
-                          "(12) tfsNames. transcription Factors names that regulates the transcription Unit\n#",
+                          "(12) tfsNames. transcription Factors names that regulates the transcription Unit\n#"
+                          "(13) tuGenesBnumber. bnumbers of the tu genes\n#"
+                          "(14) firstGenePos. start position of the first tu gene\n#"
+                          "(15) lastGenePos. end position of the first tu gene\n#"
+                          "(16) terminatorPositions. positions of the terminator\n#"
+                          "(17) DBXRef. id of the TU in Ecocyc\n#",
         "content": " \n".join(tus_content),
         "rdbVersion": rdb_version,
         "description": "Transcription units with information of operon, promoter, terminator and tfs.",
         "group": "OPERON STRUCTURE"
     }
     return tus_doc
+
+
+def get_gene_of_tu(genes, strand, position):
+    dict_genes = []
+    selected_gene = None
+
+    for gene in genes:
+        gene_object = multigenomic_api.genes.find_by_id(gene)
+        if gene_object.fragments:
+            min_left_pos = min(gene_object.fragments, key=lambda x: x.left_end_position)
+            max_right_pos = max(gene_object.fragments, key=lambda x: x.right_end_position)
+            gene_object.left_end_position = min_left_pos.left_end_position
+            gene_object.right_end_position = max_right_pos.right_end_position
+        dict_genes.append({
+            "id": gene_object.id,
+            "name": gene_object.name,
+            "left_end_position": gene_object.left_end_position,
+            "right_end_position": gene_object.right_end_position
+        })
+
+    if len(dict_genes) > 0:
+        if strand == "forward":
+            if position == "first":
+                selected_gene = min(dict_genes, key=lambda x: x["left_end_position"])
+            elif position == "last":
+                selected_gene = max(dict_genes, key=lambda x: x["right_end_position"])
+        elif strand == "reverse":
+            if position == "first":
+                selected_gene = max(dict_genes, key=lambda x: x["right_end_position"])
+            elif position == "last":
+                selected_gene = min(dict_genes, key=lambda x: x["left_end_position"])
+
+    return selected_gene
+
