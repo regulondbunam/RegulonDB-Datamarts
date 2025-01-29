@@ -41,16 +41,16 @@ def load_arguments_parser():
     parser.add_argument(
         "-rdbv", "--rdbversion",
         help="RegulonDB Version",
-        metavar="13",
-        default="13",
+        metavar="13.5",
+        default="13.5",
         required=False
     )
 
     parser.add_argument(
         "-c", "--citation",
         help="RegulonDB citation for downloadable files",
-        metavar="# Heladia Salgado, Socorro Gama-Castro, et al., RegulonDB v12.0: a comprehensive resource of transcriptional regulation in E. coli K-12,\n# Nucleic Acids Research, 2023;, gkad1072, https://doi.org/10.1093/nar/gkad1072\n# RegulonDB Release: 13.0",
-        default="# Heladia Salgado, Socorro Gama-Castro, et al., RegulonDB v12.0: a comprehensive resource of transcriptional regulation in E. coli K-12,\n# Nucleic Acids Research, 2023;, gkad1072, https://doi.org/10.1093/nar/gkad1072\n# RegulonDB Release: 13.0",
+        metavar="# Heladia Salgado, Socorro Gama-Castro, et al., RegulonDB v12.0: a comprehensive resource of transcriptional regulation in E. coli K-12,\n# Nucleic Acids Research, 2023;, gkad1072, https://doi.org/10.1093/nar/gkad1072\n# RegulonDB Release: 13.5",
+        default="# Heladia Salgado, Socorro Gama-Castro, et al., RegulonDB v12.0: a comprehensive resource of transcriptional regulation in E. coli K-12,\n# Nucleic Acids Research, 2023;, gkad1072, https://doi.org/10.1093/nar/gkad1072\n# RegulonDB Release: 13.5",
         required=False
     )
 

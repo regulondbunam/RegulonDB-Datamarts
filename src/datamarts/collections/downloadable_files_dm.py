@@ -106,7 +106,7 @@ def get_all_downloadable_docs(rdb_version, citation):
     downloadable_files_dm.append(utr_seq)
     # PMIDS
     print("PMIDS")
-    pmids = all_pmids_in_objects.all_pmids_rows(rdb_version, citation)
+    pmids = all_pmids_in_objects.generate_pmids_doc(rdb_version, citation)
     downloadable_files_dm.append(pmids)
     # Tu-Prom-Operon-TF
     print("Tu-Prom-Operon-TF")

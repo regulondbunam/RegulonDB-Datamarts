@@ -19,6 +19,7 @@ class TranscriptionUnit:
             self.operon = tu.operons_id
             self.genes_names = tu.genes_ids
             self.promoter = tu.promoters_id
+            self.promoter_pos = tu.promoters_id
             self.tfIds = tu
             self.tf = tu
             self.terminator_ids = tu.terminators_ids
@@ -67,6 +68,18 @@ class TranscriptionUnit:
             else:
                 self.promoter["id"] = ""
                 self.promoter["name"] = ""
+
+        @property
+        def promoter_pos(self):
+            return self._promoter_pos
+
+        @promoter_pos.setter
+        def promoter_pos(self, promoter_id):
+            self._promoter_pos = ""
+            if promoter_id:
+                promoter = multigenomic_api.promoters.find_by_id(promoter_id)
+                if promoter.transcription_start_site:
+                    self._promoter_pos = promoter.transcription_start_site.left_end_position
 
         @property
         def tfIds(self):
@@ -197,6 +210,7 @@ class TranscriptionUnit:
                    f"\t{self.genes_names}" \
                    f"\t{self.promoter["id"]}" \
                    f"\t{self.promoter["name"]}" \
+                   f"\t{self.promoter_pos}" \
                    f"\t{self.terminator_ids}" \
                    f"\t{self.sigma}" \
                    f"\t{self.tfIds}" \
@@ -211,7 +225,7 @@ class TranscriptionUnit:
 
 def all_tus_rows(rdb_version, citation):
     trans_units = TranscriptionUnit()
-    tus_content = ["1)tuId\t2)tuName\t3)operonId\t4)operonName\t5)tuGenesIds\t6)tuGenesNames\t7)promoterId\t8)promoterName\t9)terminatorIds\t10)sigmaFactor\t11)tfsIds\t12)tfsNames\t13)tuGenesBnumber\t14)firstGenePos\t15lastGenePos\t16terminatorPositions\t17)DBXRef"]
+    tus_content = ["1)tuId\t2)tuName\t3)operonId\t4)operonName\t5)tuGenesIds\t6)tuGenesNames\t7)promoterId\t8)promoterName\t9)promoterPos\t10)terminatorIds\t11)sigmaFactor\t12)tfsIds\t13)tfsNames\t14)tuGenesBnumber\t15)firstGenePos\t16)lastGenePos\t17)terminatorPositions\t18)DBXRef"]
     for tu in trans_units.objects:
         tus_content.append(tu.to_row())
     creation_date = datetime.now()
@@ -238,15 +252,16 @@ def all_tus_rows(rdb_version, citation):
                           "(6) tuGenesNames. Names of the gene(s) contained in the transcription unit\n# "
                           "(7) promoterId. Promoter Id\n# "
                           "(8) promoterName. Promoter Name\n# "
-                          "(9) terminatorIds. Ids of the terminators associated to transcription unit\n#"
-                          "(10) sigmaFactor. Sigma Factor associated to \n#"
-                          "(11) tfsIds. transcription Factors ids that regulates the transcription Unit\n#"
-                          "(12) tfsNames. transcription Factors names that regulates the transcription Unit\n#"
-                          "(13) tuGenesBnumber. bnumbers of the tu genes\n#"
-                          "(14) firstGenePos. start position of the first tu gene\n#"
-                          "(15) lastGenePos. end position of the first tu gene\n#"
-                          "(16) terminatorPositions. positions of the terminator\n#"
-                          "(17) DBXRef. id of the TU in Ecocyc\n#",
+                          "(9) promoterPos. Transcription start site of promoter"
+                          "(10) terminatorIds. Ids of the terminators associated to transcription unit\n#"
+                          "(11) sigmaFactor. Sigma Factor associated to \n#"
+                          "(12) tfsIds. transcription Factors ids that regulates the transcription Unit\n#"
+                          "(13) tfsNames. transcription Factors names that regulates the transcription Unit\n#"
+                          "(14) tuGenesBnumber. bnumbers of the tu genes\n#"
+                          "(15) firstGenePos. start position of the first tu gene\n#"
+                          "(16) lastGenePos. end position of the first tu gene\n#"
+                          "(17) terminatorPositions. positions of the terminator\n#"
+                          "(18) DBXRef. id of the TU in Ecocyc\n#",
         "content": " \n".join(tus_content),
         "rdbVersion": rdb_version,
         "description": "Transcription units with information of operon, promoter, terminator and tfs.",
