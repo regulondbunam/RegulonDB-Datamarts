@@ -206,10 +206,10 @@ class TranscriptionUnit:
                    f"\t{self.tu.name}" \
                    f"\t{self.operon.id}" \
                    f"\t{self.operon.name}" \
-                   f"\t{",".join(self.tu.genes_ids)}" \
+                   f"\t{','.join(self.tu.genes_ids)}" \
                    f"\t{self.genes_names}" \
-                   f"\t{self.promoter["id"]}" \
-                   f"\t{self.promoter["name"]}" \
+                   f"\t{self.promoter['id']}" \
+                   f"\t{self.promoter['name']}" \
                    f"\t{self.promoter_pos}" \
                    f"\t{self.terminator_ids}" \
                    f"\t{self.sigma}" \
