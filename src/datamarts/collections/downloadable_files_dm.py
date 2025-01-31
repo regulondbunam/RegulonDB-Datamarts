@@ -19,6 +19,7 @@ from src.datamarts.domain.downloadableFiles_datamart import sigma_gene_file
 from src.datamarts.domain.downloadableFiles_datamart import sigma_tu_file
 from src.datamarts.domain.downloadableFiles_datamart import utr_5_3_sequence_file
 from src.datamarts.domain.downloadableFiles_datamart import all_pmids_in_objects
+from src.datamarts.domain.downloadableFiles_datamart import tu_prom_operon_tf_file
 
 
 def get_all_downloadable_docs(rdb_version, citation):
@@ -105,7 +106,11 @@ def get_all_downloadable_docs(rdb_version, citation):
     downloadable_files_dm.append(utr_seq)
     # PMIDS
     print("PMIDS")
-    pmids = all_pmids_in_objects.all_pmids_rows(rdb_version, citation)
+    pmids = all_pmids_in_objects.generate_pmids_doc(rdb_version, citation)
     downloadable_files_dm.append(pmids)
+    # Tu-Prom-Operon-TF
+    print("Tu-Prom-Operon-TF")
+    tu_prom_ope = tu_prom_operon_tf_file.all_tus_rows(rdb_version, citation)
+    downloadable_files_dm.append(tu_prom_ope)
 
     return downloadable_files_dm

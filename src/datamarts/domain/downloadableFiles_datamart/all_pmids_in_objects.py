@@ -1,146 +1,157 @@
 import pymongo
-import csv
 import re
-import multigenomic_api
 from datetime import datetime
 
 
-def find_reg_by_id(regulator_id):
+def find_doc_by_id(collection_name, doc_id):
+    """Generic function to find a document by ID."""
     client = pymongo.MongoClient("mongodb://andresloal:15091052@localhost:27017/")
     db = client["regulondbmultigenomic"]
-    collection = db["regulators"]
-    regulator = collection.find_one({"conformations._id": regulator_id})
-    return regulator
+    collection = db[collection_name]
+    return collection.find_one({"_id": doc_id})
 
 
-def get_pubs_of_note(note, items, doc_id, obj_name, type):
-    citations_pattern = re.compile("(\[[0-9]+\])")
-    pmids_search = re.findall(citations_pattern, note)
-    pmids_search = list(set(pmids_search))
-    for pmid in pmids_search:
-        pmid = pmid[1:-1]
-        cadena = f"{doc_id}\t{obj_name}\t{type}\t{pmid}\tnote"
-        if cadena not in items:
-            items.append(cadena)
-    return items
-
-
-def get_item_rows(collection, type):
+def extract_citations(doc, obj_name, obj_type):
+    """Extract citations from a document."""
     items = []
-    for doc in collection:
-        obj_name = ""
-        try:
-            if doc.abbreviated_name:
-                obj_name = doc.abbreviated_name
-            else:
-                obj_name = doc.name
-        except:
-            obj_name = doc.name
-            pass
-        for citation in doc.citations:
-            if citation.publications_id:
-                publication = multigenomic_api.publications.find_by_id(citation.publications_id)
-                if publication:
-                    if publication.pmid:
-                        cadena = f"{doc.id}\t{obj_name}\t{type}\t{publication.pmid}\t"
-                        if cadena not in items:
-                            items.append(cadena)
-        if doc.note:
-            items = get_pubs_of_note(doc.note, items, doc.id, obj_name, type)
+    pub_to_evidences = {}
+
+    for citation in doc.get("citations", []):
+        pub_pmid = ""
+        ev_code = ""
+
+        if "publications_id" in citation:
+            publication = find_doc_by_id("publications", citation["publications_id"])
+            if publication and "pmid" in publication:
+                pub_pmid = publication["pmid"]
+
+        if "evidences_id" in citation:
+            evidence = find_doc_by_id("evidences", citation["evidences_id"])
+            if evidence and "code" in evidence:
+                ev_code = evidence["code"]
+
+        if pub_pmid:
+            if pub_pmid not in pub_to_evidences:
+                pub_to_evidences[pub_pmid] = []
+            if ev_code:
+                pub_to_evidences[pub_pmid].append(ev_code)
+
+    for pub_pmid, ev_codes in pub_to_evidences.items():
+        ev_codes_str = ",".join(ev_codes)
+        items.append(f"{pub_pmid}\t{obj_type}\t{doc['_id']}\t{obj_name}\t\t{ev_codes_str}")
+
     return items
 
 
-def get_ri_rows(collection):
+def extract_notes(doc, obj_name, obj_type):
+    """Extract PMIDs from notes."""
     items = []
-    for doc in collection:
-        regulator = find_reg_by_id(doc.regulator.id)
-        obj_name = ""
-        try:
-            if regulator.abbreviated_name:
-                obj_name = regulator.abbreviated_name
-            else:
-                obj_name = regulator.name
-        except:
-            obj_name = doc.name
-            pass
-        for citation in doc.citations:
-            if citation.publications_id:
-                publication = multigenomic_api.publications.find_by_id(citation.publications_id)
-                if publication:
-                    if publication.pmid:
-                        cadena = f"{doc.id}\t{obj_name}\tri\t{publication.pmid}\t"
-                        if cadena not in items:
-                            items.append(cadena)
-        if doc.note:
-            items = get_pubs_of_note(doc.note, items, doc.id, obj_name, "ri")
-        if doc.regulatory_sites_id:
-            site = multigenomic_api.regulatory_sites.find_by_id(doc.regulatory_sites_id)
-            for citation in site.citations:
-                if citation.publications_id:
-                    publication = multigenomic_api.publications.find_by_id(citation.publications_id)
-                    if publication:
-                        if publication.pmid:
-                            cadena = f"{site.id}\t{obj_name}\treg_site\t{publication.pmid}\t"
-                            if cadena not in items:
-                                items.append(cadena)
-            if site.note:
-                items = get_pubs_of_note(site.note, items, site.id, obj_name, "reg_site")
+    citations_pattern = re.compile(r"\[[0-9]+\]")
+    pmids = set(re.findall(citations_pattern, doc.get("note", "")))
+
+    for pmid in pmids:
+        pmid = pmid.strip("[]")
+        items.append(f"{pmid}\t{obj_type}\t{doc['_id']}\t{obj_name}\tnote")
+
     return items
 
 
-def all_pmids_rows(rdb_version, citation):
-    item_list = ["object_id\tobject_name\tobject_type\tpmid\torigin"]
+def process_collection(collection_name, obj_type):
+    """Process a MongoDB collection and extract relevant rows."""
+    client = pymongo.MongoClient("mongodb://andresloal:15091052@localhost:27017/")
+    db = client["regulondbmultigenomic"]
+    collection = db[collection_name]
 
-    biological_objects = multigenomic_api.promoters.get_all()
-    item_list.extend(get_item_rows(biological_objects, "promoter"))
+    items = []
+    for doc in collection.find():
+        obj_name = doc.get("abbreviatedName", doc.get("name", ""))
+        items.extend(extract_citations(doc, obj_name, obj_type))
+        items.extend(extract_notes(doc, obj_name, obj_type))
 
-    biological_objects = multigenomic_api.genes.get_all()
-    item_list.extend(get_item_rows(biological_objects, "gene"))
+    return items
 
-    biological_objects = multigenomic_api.products.get_all()
-    item_list.extend(get_item_rows(biological_objects, "product"))
 
-    biological_objects = multigenomic_api.regulators.get_all()
-    item_list.extend(get_item_rows(biological_objects, "regulator"))
+def process_regulatory_interactions():
+    """Process regulatory interactions with special handling for regulatory sites."""
+    client = pymongo.MongoClient("mongodb://andresloal:15091052@localhost:27017/")
+    db = client["regulondbmultigenomic"]
+    collection = db["regulatoryInteractions"]
 
-    biological_objects = multigenomic_api.regulatory_continuants.get_all()
-    item_list.extend(get_item_rows(biological_objects, "regulatoryContinuant"))
+    items = []
+    for doc in collection.find():
+        regulator = find_doc_by_id("regulators", doc["regulator"]["_id"])
+        obj_name = regulator.get("abbreviatedName", regulator.get("name", "")) if regulator else doc["regulator"]["name"]
 
-    biological_objects = multigenomic_api.regulatory_interactions.get_all()
-    item_list.extend(get_ri_rows(biological_objects))
+        items.extend(extract_citations(doc, obj_name, "ri"))
+        items.extend(extract_notes(doc, obj_name, "ri"))
 
-    biological_objects = multigenomic_api.sigma_factors.get_all()
-    item_list.extend(get_item_rows(biological_objects, "sigmaFactor"))
+        if "regulatorySites_id" in doc:
+            site = find_doc_by_id("regulatorySites", doc["regulatorySites_id"])
+            if site:
+                items.extend(extract_citations(site, obj_name, "reg_site"))
+                items.extend(extract_notes(site, obj_name, "reg_site"))
 
-    biological_objects = multigenomic_api.terminators.get_all()
-    item_list.extend(get_item_rows(biological_objects, "terminator"))
+    return items
 
-    biological_objects = multigenomic_api.transcription_units.get_all()
-    item_list.extend(get_item_rows(biological_objects, "tu"))
 
-    biological_objects = multigenomic_api.regulatory_complexes.get_all()
-    item_list.extend(get_item_rows(biological_objects, "regulatoryComplex"))
+def generate_pmids_doc(rdb_version, citation):
+    """Generate a document containing all extracted PMIDs."""
+    item_list = ["pmid\tobject_type\tobject_id\tobject_name\torigin\tev_code"]
+
+    collections = [
+        ("promoters", "promoter"),
+        ("genes", "gene"),
+        ("products", "product"),
+        ("regulators", "regulator"),
+        ("regulatoryComplexes", "regulatoryComplex"),
+        ("regulatoryContinuants", "regulatoryContinuant"),
+        ("sigmaFactors", "sigmaFactor"),
+        ("terminators", "terminator"),
+        ("transcriptionUnits", "tu"),
+    ]
+
+    for collection_name, obj_type in collections:
+        item_list.extend(process_collection(collection_name, obj_type))
+
+    item_list.extend(process_regulatory_interactions())
 
     creation_date = datetime.now()
 
     pmids_doc = {
-            "_id": "RDBECOLIDLF00021",
-            "fileName": "allObjectPmids_internal",
-            "title": "Complete Object PMIDs Set",
-            "fileFormat": "rif-version 1",
-            "license": "# RegulonDB is free for academic/noncommercial use\n# User is not entitled to change or erase data sets of the RegulonDB\n# database or to eliminate copyright notices from RegulonDB. Furthermore,\n# User is not entitled to expand RegulonDB or to integrate RegulonDB partly\n# or as a whole into other databank systems, without prior written consent\n# from CCG-UNAM.\n# Please check the license at https://regulondb.ccg.unam.mx/manual/aboutUs/terms-conditions",
-            "citation": citation,
-            "contact": {
-                "person": "RegulonDB Team",
-                "webPage": None,
-                "email": "regulondb@ccg.unam.mx"
-            },
-            "version": "1.0",
-            "creationDate": f"{creation_date.strftime('%m-%d-%Y')}",
-            "columnsDetails": "# Columns:\n# (1) Id of the object\n# (2) Name of the Object\n# (3) Type of the biological object\n# (4) PMID\n# (5) If the pmid was in the note, this indicates the origin",
-            "content": " \n".join(item_list),
-            "rdbVersion": rdb_version,
-            "description": "Collection of all objets with its pmids.",
-            "group": "EVIDENCE"
-        }
+        "_id": "RDBECOLIDLF00021",
+        "fileName": "allObjectPmids_internal",
+        "title": "Complete Object PMIDs Set",
+        "fileFormat": "rif-version 1",
+        "license": (
+            "# RegulonDB is free for academic/noncommercial use\n"
+            "# User is not entitled to change or erase data sets of the RegulonDB\n"
+            "# database or to eliminate copyright notices from RegulonDB. Furthermore,\n"
+            "# User is not entitled to expand RegulonDB or to integrate RegulonDB partly\n"
+            "# or as a whole into other databank systems, without prior written consent\n"
+            "# from CCG-UNAM.\n"
+            "# Please check the license at https://regulondb.ccg.unam.mx/manual/aboutUs/terms-conditions"
+        ),
+        "citation": citation,
+        "contact": {
+            "person": "RegulonDB Team",
+            "webPage": None,
+            "email": "regulondb@ccg.unam.mx",
+        },
+        "version": "1.0",
+        "creationDate": creation_date.strftime("%m-%d-%Y"),
+        "columnsDetails": (
+            "# Columns:\n"
+            "# (1) PMID\n"
+            "# (2) Type of the biological object\n"
+            "# (3) Id of the object\n"
+            "# (4) Name of the object\n"
+            "# (5) Origin\n"
+            "# (6) Evidence codes"
+        ),
+        "content": " \n".join(item_list),
+        "rdbVersion": rdb_version,
+        "description": "Collection of all objects with their PMIDs.",
+        "group": "EVIDENCE",
+    }
+
     return pmids_doc

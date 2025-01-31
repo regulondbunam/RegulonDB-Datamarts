@@ -8,7 +8,7 @@ class TermsDatamart:
 
     @property
     def objects(self):
-        terms_objects = multigenomic_api.terms.get_go_terms()
+        terms_objects = multigenomic_api.terms.get_all()
         for term in terms_objects:
             print(term.id)
             ri_row = TermsDatamart.TermFamilyBranch(term)
@@ -20,7 +20,6 @@ class TermsDatamart:
             self.term = term
             self.subclass_of = term.sub_class_of
             self.subclasses = term.super_class_of
-            self.ontology_id = term.external_cross_references
 
         @property
         def subclass_of(self):
@@ -38,25 +37,19 @@ class TermsDatamart:
         def subclasses(self, subclasses):
             self._subclasses = subclasses
 
-        @property
-        def ontology_id(self):
-            return self._ontology_id
-
-        @ontology_id.setter
-        def ontology_id(self, ext_cross_refs):
-            self._ontology_id = ""
-            for ref in self.term.external_cross_references:
-                if re.match(r'GO:[0-9]*',ref.object_id):
-                    self._ontology_id = ref.object_id
-
         def to_row(self):
+            description = None
+            if self.term.ontologies_id == "RDBONTOLGON00001":
+                description = self.term.definition.text
+            elif self.term.ontologies_id == "RDBONTOLMCO00001":
+                description = self.term.description
             term_dict = {
                 "_id": self.term.id,
                 "name": self.term.name,
                 "subclasses": self.subclasses,
                 "subclassOf": self.subclass_of,
-                "description": self.term.definition.text,
-                "ontologyId": self.ontology_id,
+                "description": description,
+                "ontologyId": self.term.ontologies_id,
                 "genes": get_members_list(self.term.members)
             }
             return term_dict
