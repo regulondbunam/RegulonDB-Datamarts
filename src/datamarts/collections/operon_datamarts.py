@@ -61,6 +61,7 @@ class OperonDatamarts:
             for transcription_unit in transcription_units:
                 transcription_unit = TranscriptionUnit(transcription_unit)
                 self._transcription_units.append(transcription_unit.to_dict().copy())
+            self._transcription_units.sort(key=lambda x: x.get("promoter", {}).get("name", "").lower())
 
         def to_dict(self):
             operon_datamart = {
