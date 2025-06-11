@@ -15,7 +15,8 @@ from src.datamarts.collections import \
     listPage_dm, \
     gensorUnit_datamarts, \
     downloadable_files_dm, \
-    termTree_datamart
+    termTree_datamart, \
+    evidence_datamart
 
 
 def load_arguments_parser():
@@ -34,15 +35,15 @@ def load_arguments_parser():
         "-u", "--url",
         help="URL to establish a connection between the process and MongoDB",
         metavar="mongodb://user:pass@localhost:27017/regulondbmultigenomic",
-        default="mongodb://user:pass@localhost:27017/regulondbmultigenomic",
+        default="mongodb://andresloal:15091052@localhost:27017/regulondbmultigenomic",
         required=False
     )
 
     parser.add_argument(
         "-rdbv", "--rdbversion",
         help="RegulonDB Version",
-        metavar="13.5",
-        default="13.5",
+        metavar="14.0",
+        default="14.0",
         required=False
     )
 
@@ -96,6 +97,7 @@ if __name__ == '__main__':
     datamart_files["gensorUnitDatamart"] = gensorUnit_datamarts.all_gensor_unit_datamarts()
     datamart_files["mcoTree"] = termTree_datamart.get_tree()
     datamart_files["downloadableFilesDatamart"] = downloadable_files_dm.get_all_downloadable_docs(arguments.rdbversion, arguments.citation)
+    datamart_files["evidencesDatamart"] = evidence_datamart.all_evidences_datamarts()
 
     datamartsData = ""
     for collection_name, objects in datamart_files.items():
