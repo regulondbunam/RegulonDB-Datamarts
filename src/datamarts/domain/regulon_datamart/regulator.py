@@ -24,7 +24,7 @@ class Regulator(BiologicalBase):
             regulator = {
                 "_id": self.regulator.id,
                 "citations": self.citations,
-                "abbreviatedName": self.regulator.abbreviated_name,
+                "abbreviatedName": self.regulator.abbreviated_name or self.regulator.name,
                 "name": self.regulator.name,
                 "synonyms": self.regulator.synonyms,
                 "note": note,
@@ -55,7 +55,7 @@ class Regulator(BiologicalBase):
                 "encodedBy": {
                     "genes": self.genes
                 },
-                "abbreviatedName": abbreviated_name,
+                "abbreviatedName": abbreviated_name or self.regulator.name,
                 "synonyms": self.regulator.synonyms,
                 "note": self.formatted_note,
                 "additiveEvidences": additive_evs.to_dict(),

@@ -105,7 +105,7 @@ class Regulates(BiologicalBase):
                 for tu in transcription_units:
                     if tu.promoters_id:
                         promoter = multigenomic_api.promoters.find_by_id(tu.promoters_id)
-                        first_gene = get_first_gene_of_tu(tu.genes_ids, promoter)
+                        first_gene = get_first_gene_of_tu(tu.genes_ids, promoter.strand)
                         tu_object = {
                             "_id": tu.id,
                             "name": tu.name,
@@ -115,6 +115,16 @@ class Regulates(BiologicalBase):
                                 "_id": promoter.id,
                                 "name": promoter.name
                             }
+                        }
+                        self._transcription_units = insert_element_on(tu_object, self._transcription_units)
+                    else:
+                        operon = multigenomic_api.operons.find_by_id(tu.operons_id)
+                        first_gene = get_first_gene_of_tu(tu.genes_ids, operon.strand)
+                        tu_object = {
+                            "_id": tu.id,
+                            "name": tu.name,
+                            "firstGene": first_gene,
+                            "function": tu_object["function"]
                         }
                         self._transcription_units = insert_element_on(tu_object, self._transcription_units)
 
@@ -134,7 +144,7 @@ class Regulates(BiologicalBase):
                 for tu in transcription_units:
                     if tu.promoters_id:
                         promoter = multigenomic_api.promoters.find_by_id(tu.promoters_id)
-                        first_gene = get_first_gene_of_tu(genes_ids, promoter)
+                        first_gene = get_first_gene_of_tu(genes_ids, promoter.strand)
                         operon = multigenomic_api.operons.find_by_id(tu.operons_id)
                         operon_object = {
                             "_id": operon.id,
@@ -292,15 +302,15 @@ class Term(BiologicalBase):
         return term
 
 
-def get_first_gene_of_tu(genes_ids, promoter):
+def get_first_gene_of_tu(genes_ids, strand):
     first_gene = multigenomic_api.genes.find_by_id(genes_ids[0])
-    if promoter.strand == "reverse":
+    if strand == "reverse":
         first_gene.left_end_position = first_gene.right_end_position
     first_gene.left_end_position = first_gene.left_end_position or first_gene.fragments[0].left_end_position
 
     for gene in genes_ids:
         current_gene = multigenomic_api.genes.find_by_id(gene)
-        if promoter.strand == "forward":
+        if strand == "forward":
             if current_gene.left_end_position:
                 if current_gene.left_end_position < first_gene.left_end_position:
                     first_gene = current_gene
@@ -310,7 +320,7 @@ def get_first_gene_of_tu(genes_ids, promoter):
                         first_gene = current_gene
                         first_gene.left_end_position = fragment.left_end_position
 
-        elif promoter.strand == "reverse":
+        elif strand == "reverse":
             if current_gene.left_end_position:
                 if current_gene.right_end_position > first_gene.left_end_position:
                     first_gene = current_gene

@@ -50,7 +50,11 @@ class TermsDatamart:
                 "subclassOf": self.subclass_of,
                 "description": description,
                 "ontologyId": self.term.ontologies_id,
-                "genes": get_members_list(self.term.members)
+                "iri": self.term.iri,
+                "oboId": self.term.obo_id,
+                "genes": get_members_list(self.term.members),
+                "synonyms": self.term.synonyms,
+                "hasRelatedSynonyms": self.term.has_related_synonyms,
             }
             return term_dict
 
