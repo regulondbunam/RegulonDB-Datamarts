@@ -24,30 +24,29 @@ class GeneOntology:
             'cellularComponent': [],
             'molecularFunction': []
         }
-        products_ids = regulator.products_ids
         regulated_genes = regulator.regulated_genes
-        for product_id in products_ids:
-            product = multigenomic_api.products.find_by_id(product_id)
-            terms = product.terms
-            if terms:
-                for term in terms.biological_process:
-                    term = Term(term, regulated_genes)
-                    term_dict = term.to_dict()
-                    if term_dict not in self._gene_ontology['biologicalProcess']:
-                        self._gene_ontology['biologicalProcess'].append(term_dict)
+        for reg_gene in regulated_genes:
+            products = multigenomic_api.products.find_by_gene_id(reg_gene)
+            for product in products:
+                terms = product.terms
+                if terms:
+                    if terms:
+                        self._add_terms(terms.biological_process, "biologicalProcess", regulated_genes)
+                        self._add_terms(terms.cellular_component, "cellularComponent", regulated_genes)
+                        self._add_terms(terms.molecular_function, "molecularFunction", regulated_genes)
 
-                for term in terms.cellular_component:
-                    term = Term(term, regulated_genes)
-                    term_dict = term.to_dict()
-                    if term_dict not in self._gene_ontology['cellularComponent']:
-                        self._gene_ontology['cellularComponent'].append(term_dict)
-
-                for term in terms.molecular_function:
-                    term = Term(term, regulated_genes)
-                    term_dict = term.to_dict()
-                    if term_dict not in self._gene_ontology['molecularFunction']:
-                        self._gene_ontology['molecularFunction'].append(term_dict)
-
+    def _add_terms(self, term_list, ontology_key, regulated_genes):
+        for term in term_list:
+            term_obj = Term(term, regulated_genes)
+            term_dict = term_obj.to_dict()
+            existing = next(
+                (t for t in self._gene_ontology[ontology_key] if t['_id'] == term_dict['_id']),
+                None
+            )
+            if existing is None:
+                self._gene_ontology[ontology_key].append(term_dict)
+            else:
+                existing['genes'] += 1
 
 class Term(BiologicalBase):
 
@@ -57,33 +56,12 @@ class Term(BiologicalBase):
         self.term = term
 
     def to_dict(self):
-        product_term_members = get_members_from_term(self.term.terms_id)
-        genes = intersection_genes(self.regulated_genes, product_term_members)
         term = {
             '_id': self.term.terms_id,
             'name': self.term.terms_name,
-            'genes': gene_object(genes)
+            'genes': 1
         }
         return term
-
-
-def get_members_from_term(term_id):
-    term_doc = multigenomic_api.terms.find_by_id(term_id)
-    if term_doc.members.genes:
-        return term_doc.members.genes
-    else:
-        products = term_doc.members.products
-        return get_genes_of_products(products)
-
-
-def get_genes_of_products(products):
-    genes = []
-    for product in products:
-        product_dict = multigenomic_api.products.find_by_id(product)
-        if product_dict.genes_id not in genes:
-            genes.append(product_dict.genes_id)
-    return genes
-
 
 def get_genes(tf):
     all_transcription_units = []
@@ -110,19 +88,3 @@ def get_genes(tf):
             if gene.id not in genes:
                 genes.append(gene.id)
     return genes
-
-
-def intersection_genes(regulated_genes, gene_members):
-    intersected_genes = [value for value in regulated_genes if value in gene_members]
-    return intersected_genes
-
-
-def gene_object(genes):
-    gene_list = []
-    for gene_id in genes:
-        gene = multigenomic_api.genes.find_by_id(gene_id)
-        gene_list.append({
-            "_id": gene.id,
-            "name": gene.name
-        })
-    return gene_list
