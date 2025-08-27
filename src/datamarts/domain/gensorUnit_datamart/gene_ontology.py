@@ -31,35 +31,45 @@ class GeneOntology:
                 terms = product.terms
                 if terms:
                     if terms:
-                        self._add_terms(terms.biological_process, "biologicalProcess", regulated_genes)
-                        self._add_terms(terms.cellular_component, "cellularComponent", regulated_genes)
-                        self._add_terms(terms.molecular_function, "molecularFunction", regulated_genes)
+                        self._add_terms(terms.biological_process, "biologicalProcess", reg_gene)
+                        self._add_terms(terms.cellular_component, "cellularComponent", reg_gene)
+                        self._add_terms(terms.molecular_function, "molecularFunction", reg_gene)
 
-    def _add_terms(self, term_list, ontology_key, regulated_genes):
+    def _add_terms(self, term_list, ontology_key, regulated_gene):
+        gene = multigenomic_api.genes.find_by_id(regulated_gene)
+
         for term in term_list:
-            term_obj = Term(term, regulated_genes)
+            term_obj = Term(term, gene.name)
             term_dict = term_obj.to_dict()
+
             existing = next(
                 (t for t in self._gene_ontology[ontology_key] if t['_id'] == term_dict['_id']),
                 None
             )
+
             if existing is None:
                 self._gene_ontology[ontology_key].append(term_dict)
             else:
-                existing['genes'] += 1
+                if gene.name not in existing['genes']:
+                    existing['genes'].append(gene.name)
+
+        self._gene_ontology[ontology_key].sort(
+            key=lambda t: len(t['genes']),
+            reverse=True
+        )
 
 class Term(BiologicalBase):
 
-    def __init__(self, term, regulated_genes):
+    def __init__(self, term, gene_name):
         super().__init__([], term.citations, [])
-        self.regulated_genes = regulated_genes
+        self.gene = gene_name
         self.term = term
 
     def to_dict(self):
         term = {
             '_id': self.term.terms_id,
             'name': self.term.terms_name,
-            'genes': 1
+            'genes': [self.gene]
         }
         return term
 
