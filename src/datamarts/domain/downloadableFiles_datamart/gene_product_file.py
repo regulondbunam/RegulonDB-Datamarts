@@ -32,11 +32,18 @@ class GeneProduct:
 
         @product.setter
         def product(self, gene_id):
-            self._product = ""
+            self._product = {
+                "ids": "",
+                "names": ""
+            }
+            ids = []
+            names = []
             products = multigenomic_api.products.find_by_gene_id(gene_id)
             for product in products:
-                self._product += f"{product.name};"
-            self._product = self._product[:-1]
+                ids.append(product.id)
+                names.append(product.name)
+            self._product["ids"] = ";".join(ids)
+            self._product["names"] = ";".join(names)
 
         @property
         def gene_lep(self):
@@ -143,7 +150,8 @@ class GeneProduct:
                    f"\t{self.gene_lep}" \
                    f"\t{self.gene_rep}" \
                    f"\t{self.gene.strand}" \
-                   f"\t{self.product}" \
+                   f"\t{self.product["ids"]}" \
+                   f"\t{self.product["names"]}" \
                    f"\t{self.gene_evidences}" \
                    f"\t{self.gene_pmids}" \
                    f"\t{self.gene.confidence_level}" \
@@ -154,7 +162,7 @@ class GeneProduct:
 def all_gene_rows(rdb_version, citation):
     genes = GeneProduct()
     genes_content = [
-        "1)geneId\t2)geneName\t3)bnumber\t4)leftEndPos\t5)rightEndPos\t6)strand\t7)productName\t8)geneEvidences\t9)genePMIDS\t10)confidenceLevel\t11)relatedBnumbers\t12)otherDbsIds"]
+        "1)geneId\t2)geneName\t3)bnumber\t4)leftEndPos\t5)rightEndPos\t6)strand\t7)productId\t8)productName\t9)geneEvidences\t10)genePMIDS\t11)confidenceLevel\t12)relatedBnumbers\t13)otherDbsIds"]
     for gene in genes.objects:
         genes_content.append(gene.to_row())
     creation_date = datetime.now()
@@ -172,7 +180,20 @@ def all_gene_rows(rdb_version, citation):
         },
         "version": "1.0",
         "creationDate": f"{creation_date.strftime('%m-%d-%Y')}",
-        "columnsDetails": "# Columns:\n# (1) Gene identifier assigned by RegulonDB\n# (2) Gene name\n# (3) Blattner number (bnumber) of the gene\n# (4) Gene left end position in the genome\n# (5) Gene right end position in the genome\n# (6) DNA strand where the gene is coded\n# (7) Product name of the gene\n# (8) Evidence that supports the existence of the gene\n# (9) PMIDs list\n# (10) Evidence confidence level (Confirmed, Strong, Weak)\n# (11) All bnumber related to gene\n# (12) Other database's id  related to gene",
+        "columnsDetails": "# Columns:\n"
+                          "# (1) Gene identifier assigned by RegulonDB\n"
+                          "# (2) Gene name\n"
+                          "# (3) Blattner number (bnumber) of the gene\n"
+                          "# (4) Gene left end position in the genome\n"
+                          "# (5) Gene right end position in the genome\n"
+                          "# (6) DNA strand where the gene is coded\n"
+                          "# (7) Product Id of the gene\n"
+                          "# (8) Product name of the gene\n"
+                          "# (9) Evidence that supports the existence of the gene\n"
+                          "# (10) PMIDs list\n"
+                          "# (11) Evidence confidence level (Confirmed, Strong, Weak)\n"
+                          "# (12) All bnumber related to gene\n"
+                          "# (13) Other database's id  related to gene",
         "content": " \n".join(genes_content),
         "rdbVersion": rdb_version,
         "description": "Collection of genes and information about their products.",
