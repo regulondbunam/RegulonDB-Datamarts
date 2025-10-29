@@ -75,7 +75,7 @@ class GeneProduct:
                                                f"\t{self.gene_rep}" 
                                                f"\t{self.gene.bnumber}" 
                                                f"\t{product.abbreviated_name}" 
-                                               f"\t{",".join(regulators_name)}" 
+                                               f"\t{','.join(regulators_name)}" 
                                                f"\t{product_size}" 
                                                f"\t{motif.id}" 
                                                f"\t{motif.left_end_position}" 
