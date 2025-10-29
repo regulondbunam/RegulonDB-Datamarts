@@ -150,8 +150,8 @@ class GeneProduct:
                    f"\t{self.gene_lep}" \
                    f"\t{self.gene_rep}" \
                    f"\t{self.gene.strand}" \
-                   f"\t{self.product["ids"]}" \
-                   f"\t{self.product["names"]}" \
+                   f"\t{self.product['ids']}" \
+                   f"\t{self.product['names']}" \
                    f"\t{self.gene_evidences}" \
                    f"\t{self.gene_pmids}" \
                    f"\t{self.gene.confidence_level}" \
