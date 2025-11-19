@@ -3,6 +3,7 @@ import json
 from src.datamarts.domain.gensorUnit_datamart.gene_ontology import GeneOntology
 
 from src.datamarts.domain.general.remove_items import remove_empty_items
+from src.datamarts.domain.general.print_progress import print_progress
 
 
 def load_gus():
@@ -16,10 +17,9 @@ class GensorUnitsDatamarts:
     @property
     def objects(self):
         gensor_units = load_gus()
-        for gu in gensor_units:
-            print(gu["_id"])
-            gu_dm = GensorUnitsDatamarts.GensorUnitDatamart(gu)
-            yield gu_dm
+        for n, gu in enumerate(gensor_units, start=0):
+            print_progress(n + 1, len(gensor_units), "Gensor Units")
+            yield GensorUnitsDatamarts.GensorUnitDatamart(gu)
         del gensor_units
 
     class GensorUnitDatamart:

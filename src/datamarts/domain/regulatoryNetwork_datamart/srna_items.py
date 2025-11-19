@@ -8,7 +8,6 @@ class RegulatoryNetworkSRNA:
     def objects(self):
         srna_objects = get_all_regulators(multigenomic_api.regulatory_interactions.get_all())
         for srna in srna_objects:
-            print(srna.id)
             srna_dict = multigenomic_api.products.find_by_id(srna.id)
             reg_network_node = RegulatoryNetworkSRNA.NodeItem(srna_dict)
             yield reg_network_node

@@ -9,7 +9,6 @@ class ListSigmaFactorDM:
     def objects(self):
         sigma_factor_objects = multigenomic_api.sigma_factors.get_all()
         for sigma_factor in sigma_factor_objects:
-            print(sigma_factor.id)
             sigma_factor_datamart = ListSigmaFactorDM.ListSigmaFactor(sigma_factor)
             yield sigma_factor_datamart
         del sigma_factor_objects

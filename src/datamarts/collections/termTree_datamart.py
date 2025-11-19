@@ -2,6 +2,7 @@ import multigenomic_api
 from datetime import datetime
 import re
 from src.datamarts.domain.general.remove_items import remove_empty_items
+from src.datamarts.domain.general.print_progress import print_progress
 
 
 class TermsDatamart:
@@ -9,10 +10,9 @@ class TermsDatamart:
     @property
     def objects(self):
         terms_objects = multigenomic_api.terms.get_all()
-        for term in terms_objects:
-            print(term.id)
-            ri_row = TermsDatamart.TermFamilyBranch(term)
-            yield ri_row
+        for n, term in enumerate(terms_objects, start=0):
+            print_progress(n + 1, len(terms_objects), "Term Tree")
+            yield TermsDatamart.TermFamilyBranch(term)
         del terms_objects
 
     class TermFamilyBranch:

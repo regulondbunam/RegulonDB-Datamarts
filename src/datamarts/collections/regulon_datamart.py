@@ -10,6 +10,7 @@ from src.datamarts.domain.regulon_datamart.regulatory_interactions import Regula
 from src.datamarts.domain.regulon_datamart.summary import Summary
 
 from src.datamarts.domain.general.remove_items import remove_empty_items
+from src.datamarts.domain.general.print_progress import print_progress
 
 
 class RegulonDatamarts:
@@ -17,8 +18,8 @@ class RegulonDatamarts:
     @property
     def objects(self):
         regulator_objects = multigenomic_api.regulators.get_all()
-        for regulator in regulator_objects:
-            print(regulator.id)
+        for n, regulator in enumerate(regulator_objects, start=0):
+            print_progress(n + 1, len(regulator_objects), "Regulon")
             if regulator.regulation_type:
                 if regulator.regulation_type == "Transcription-Factor-Binding" or regulator.id == "RDBECOLITFC00039":
                     regulator = multigenomic_api.transcription_factors.find_by_id(regulator.id)

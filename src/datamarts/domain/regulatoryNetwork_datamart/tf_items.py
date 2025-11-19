@@ -10,7 +10,6 @@ class RegulatoryNetworkTF:
     def objects(self):
         tf_objects = multigenomic_api.transcription_factors.get_all()
         for tf in tf_objects:
-            print(tf.id)
             reg_network_node = RegulatoryNetworkTF.NodeItem(tf)
             yield reg_network_node
         del tf_objects

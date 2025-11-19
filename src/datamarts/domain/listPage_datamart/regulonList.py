@@ -9,12 +9,10 @@ class ListRegulonDM:
         regulator_objects = get_all_regulators(multigenomic_api.regulatory_interactions.get_all())
         tf_objects = multigenomic_api.transcription_factors.get_all()
         for tf_obj in tf_objects:
-            print(tf_obj.id)
             tf_obj["regulator_type"] = "transcriptionFactor"
             regulon_datamart = ListRegulonDM.ListRegulon(tf_obj)
             yield regulon_datamart
         for reg_obj in regulator_objects:
-            print(reg_obj.id)
             regulator = reg_obj
             if reg_obj.type == "srna":
                 regulator = multigenomic_api.products.find_by_id(reg_obj.id)

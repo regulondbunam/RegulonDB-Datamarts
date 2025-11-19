@@ -1,9 +1,11 @@
 import multigenomic_api
+import sys
 from src.datamarts.domain.gene_datamart.gene import Gene
 from src.datamarts.domain.gene_datamart.product import Product
 from src.datamarts.domain.gene_datamart.regulation import Regulation
 from src.datamarts.domain.general.biological_base import BiologicalBase
 from src.datamarts.domain.general.remove_items import remove_empty_items
+from src.datamarts.domain.general.print_progress import print_progress
 
 
 class GeneDatamarts:
@@ -11,10 +13,9 @@ class GeneDatamarts:
     @property
     def objects(self):
         gene_objects = multigenomic_api.genes.get_all()
-        for gene_object in gene_objects:
-            print(gene_object.id)
-            gene_datamart = GeneDatamarts.GeneDatamart(gene_object)
-            yield gene_datamart
+        for n, gene_object in enumerate(gene_objects, start=0):
+            print_progress(n + 1, len(gene_objects), "Genes")
+            yield GeneDatamarts.GeneDatamart(gene_object)
         del gene_objects
 
     class GeneDatamart:
