@@ -68,9 +68,9 @@ def create_json(objects_collections, filename, output):
 def write_summary(datamarts_info, started_time):
     with open("DatamartExtractorSummary.md", 'w') as out_file:
         text = "# DatamartsExtractorSummary \n" \
-               "Creation date: " + datetime.today().strftime('%Y-%m-%d') + "\n \n" \
+               "Creation data: " + datetime.today().strftime('%Y-%m-%d') + "\n \n" \
                 + started_time + \
-                "Creation time: " + datetime.today().strftime('%H:%M:%S') + "\n \n" \
+                "Finished time: " + datetime.today().strftime('%H:%M:%S') + "\n \n" \
                 "RegulonDB Version: " + arguments.rdbversion + "\n" \
                 "\n" \
                 "## RegulonDB Datamarts Summary \n" \
@@ -83,6 +83,7 @@ if __name__ == '__main__':
     multigenomic_api.connect(arguments.database, arguments.url)
 
     started_time = "Started time: " + datetime.today().strftime('%H:%M:%S') + "\n \n"
+    print("Started time: " + datetime.today().strftime('%H:%M:%S'))
 
     datamart_files = dict()
 
@@ -95,8 +96,9 @@ if __name__ == '__main__':
     datamart_files["listPage"] = listPage_dm.get_all_list_page_docs()
     datamart_files["gensorUnitDatamart"] = gensorUnit_datamarts.all_gensor_unit_datamarts()
     datamart_files["mcoTree"] = termTree_datamart.get_tree()
-    datamart_files["downloadableFilesDatamart"] = downloadable_files_dm.get_all_downloadable_docs(arguments.rdbversion, arguments.citation)
+    datamart_files["downloadableFilesDatamart"] = downloadable_files_dm.get_all_downloadable_docs(arguments.rdbversion, arguments.citation, arguments.url)
     datamart_files["evidencesDatamart"] = evidence_datamart.all_evidences_datamarts()
+    print("Finished time: " + datetime.today().strftime('%H:%M:%S'))
 
     datamartsData = ""
     for collection_name, objects in datamart_files.items():
