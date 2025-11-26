@@ -1,0 +1,72 @@
+{
+	"downloadableFilesDatamart": {
+		"validator": {
+			"$jsonSchema": {
+				"type": "object",
+				"required": [
+					"_id"
+				],
+				"properties": {
+					"_id": {
+						"type": ["string", "null"],
+						"pattern": "^RDB[A-Z0-9_]{5}[A-Z]{3}[0-9A-Z]{5}$"
+					},
+                    "citation": {
+                        "type": ["string", "null"]
+                    },
+                    "columnsDetails": {
+                        "type": ["string", "null"]
+                    },
+                    "content": {
+                        "type": ["string", "null"]
+                    },
+                    "contact": {
+                        "type": "object",
+                        "properties": {
+                            "email": {
+                                "type": ["string", "null"]
+                            },
+                            "person": {
+                                "type": ["string", "null"]
+                            },
+                            "webPage": {
+                                "type": ["string", "null"]
+                            }
+                        },
+                        "additionalProperties": false
+                    },
+                    "creationDate": {
+                        "type": ["string", "null"]
+                    },
+                    "description": {
+                        "type": ["string", "null"]
+                    },
+                    "fileFormat": {
+                        "type": ["string", "null"]
+                    },
+                    "fileName": {
+                        "type": ["string", "null"]
+                    },
+                    "group": {
+                        "type": ["string", "null"]
+                    },
+                    "license": {
+                        "type": ["string", "null"]
+                    },
+                    "rdbVersion": {
+                        "type": ["string", "null"]
+                    },
+                    "title": {
+                        "type": ["string", "null"]
+                    },
+                    "version": {
+                        "type": ["string", "null"]
+                    }
+                },
+				"additionalProperties": false
+			}
+		},
+		"validationLevel": "strict",
+		"validationAction": "error"
+	}
+}

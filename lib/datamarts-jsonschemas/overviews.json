@@ -1,0 +1,79 @@
+{
+    "overviews": {
+          "validator": {
+              "$jsonSchema": {
+                  "bsonType": "object",
+                  "required": [
+                      "_id"
+                  ],
+                  "properties": {
+                    "_id":{
+                        "type": ["string"],
+                        "pattern": "^RDB[A-Z0-9_]{5}[A-Z]{3}[0-9A-Z]{5}$"
+                    },
+                    "queryName": {
+                        "type": ["string", "null"]
+                    },
+                    "objectType": {
+                        "type": ["string", "null"]
+                    },
+                    "graph": {
+                        "type": "object",
+                        "properties": {
+                            "title": {
+                                "type": ["string", "null"]
+                            },
+                            "description": {
+                                "type": ["string", "null"]
+                            },
+                            "labelX": {
+                                "type": ["string", "null"]
+                            },
+                            "labelY": {
+                                "type": ["string", "null"]
+                            },
+                            "footGraph": {
+                                "type": ["string", "null"]
+                            },
+                            "graphType": {
+                                "type": ["string", "null"]
+                            }
+                        },
+                        "additionalProperties": false
+                    },
+                    "data": {
+                        "type": "object",
+                        "properties": {
+                            "xAxis": {
+                                "type": ["number", "null"]
+                            },
+                            "yAxis": {
+                                "type": ["number", "null"]
+                            },
+                            "objectsRelated": {
+                                "type": "array",
+                                "uniqueItems": true,
+                                "items": {
+                                    "type": "object",
+                                    "properties": {
+                                        "_id": {
+                                            "type": ["string", "null"]
+                                        },
+                                        "name": {
+                                            "type": ["string", "null"]
+                                        }
+                                    },
+                                    "additionalProperties": false
+                                }
+                            }
+                        },
+                        "additionalProperties": false
+                    }
+                  },
+                  "additionalProperties": false
+              }
+          },
+          "validationLevel": "strict",
+          "validationAction": "error"
+      }
+}

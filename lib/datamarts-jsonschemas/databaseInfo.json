@@ -1,0 +1,64 @@
+{
+    "databaseInfo": {
+        "validator": {
+            "$jsonSchema": {
+                "type": "object",
+                "required": [
+                    "regulonDBVersion",
+                    "releaseDate"
+                ],
+                "properties": {
+                    "_id":{
+                        "bsonType": "objectId"
+                    },
+                    "regulonDBVersion": {
+                        "type": "string"
+                    },
+                    "ecocycVersion": {
+                        "type": "string"
+                    },
+                    "lcVersion": {
+                        "type": "string"
+                    },
+                    "note": {
+                        "type": "string"
+                    },
+                    "schemaVersion": {
+                        "type": "string"
+                    },
+                    "genomeVersion": {
+                        "type": "string"
+                    },
+                    "localData": {
+                        "type": "array",
+                        "uniqueItems": true,
+                        "items": {
+                            "type": "object",
+                            "properties": {
+                                "type": {
+                                    "type": "string"
+                                },
+                                "sourceName": {
+                                    "type": "string"
+                                },
+                                "version": {
+                                    "type": "string"
+                                },
+                                "note": {
+                                    "type": "string"
+                                },
+                                "responsible": {
+                                    "type": "string"
+                                }
+                            },
+                            "additionalProperties": false
+                        }
+                    }
+                },
+                "additionalProperties": false
+            }
+        },
+        "validationLevel": "strict",
+        "validationAction": "error"
+    }
+}

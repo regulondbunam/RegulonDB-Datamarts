@@ -23,12 +23,12 @@ def create_collection_with_file(file):
     commands = validator[collection_name]
     db.drop_collection(collection_name)
     try:
-        print("Creating collection with name \"" + collection_name + "\"")
+        print("Creating " + collection_name + " collection")
         db.create_collection(collection_name, **commands)
     except pymongo.errors.OperationFailure as e:
         print(e.code)
         print(e.details)
-        print("Collection with name \"" + collection_name + "\" already exists")
+        print(collection_name + " collection already exists")
 
 
 def insert_docs(doc_file):
@@ -47,7 +47,7 @@ if __name__ == "__main__":
     args = arguments.load_arguments()
     db = connect_db(args.url, args.database)
 
-    print("principal de create_collection.py")
+    print("Starting creation of collection and adding documents")
 
     for filename in os.listdir(args.schemas):
         f = os.path.join(args.schemas, filename)

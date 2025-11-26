@@ -1,0 +1,77 @@
+{
+    "phrases": {
+          "validator": {
+              "$jsonSchema": {
+                  "bsonType": "object",
+                  "required": [
+                      "_id"
+                  ],
+                  "properties": {
+                    "_id":{
+                        "type": ["string"],
+                        "pattern": "^RDB[A-Z0-9_]{5}[A-Z]{3}[0-9A-Z]{5}$"
+                    },
+                    "sourceId": {
+                        "type": ["string", "null"]
+                    },
+                    "objectType": {
+                        "type": ["string", "null"]
+                    }, 
+                    "name": {
+                        "type": ["string", "null"]
+                    },
+                    "propertyPhrases": {
+                        "type": "array",
+                        "uniqueItems": true,
+                        "items": {
+                            "type": "object",
+                            "properties": {
+                                "position": {
+                                    "type": ["number", "null"]
+                                },
+                                "associatedPhrase": {
+                                    "type": "array",
+                                    "uniqueItems": true,
+                                    "items": {
+                                        "type": "object",
+                                        "properties": {
+                                            "phraseID": {
+                                                "type": ["string", "null"]
+                                            },
+                                            "pmid": {
+                                                "type": ["string", "null"]
+                                            },
+                                            "phrase": {
+                                                "type": ["string", "null"]
+                                            }
+                                        },
+                                        "additionalProperties": false
+                                    }
+                                },
+                                "associatedProperty":{
+                                    "type": "array",
+                                    "uniqueItems": true,
+                                    "items": {
+                                        "type": "object",
+                                        "properties": {
+                                            "name": {
+                                                "type": ["string", "null"]
+                                            },
+                                            "value": {
+                                                "type": ["string", "null"]
+                                            }
+                                        }
+                                    }
+                                }
+                            }, 
+                            "additionalProperties": false
+                        }
+                    }
+                  },
+                  "additionalProperties": false
+              }
+          },
+          "validationLevel": "strict",
+          "validationAction": "error"
+      }
+}
