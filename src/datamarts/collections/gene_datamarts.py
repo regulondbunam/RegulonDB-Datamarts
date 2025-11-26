@@ -1,5 +1,4 @@
 import multigenomic_api
-import sys
 from src.datamarts.domain.gene_datamart.gene import Gene
 from src.datamarts.domain.gene_datamart.product import Product
 from src.datamarts.domain.gene_datamart.regulation import Regulation

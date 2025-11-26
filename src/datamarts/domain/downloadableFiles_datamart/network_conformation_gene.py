@@ -188,7 +188,7 @@ def get_all_rows(rdb_version, citation):
     tfs_content = find_dual_items(find_existent_items_without_function(tfs_content))
     creation_date = datetime.now()
     tfs_doc = {
-        "_id": "NetworkConformationGene",
+        "_id": "RDBECOLIDLF00024",
         "fileName": "NetworkRegulatorGene",
         "title": "Complete Regulator-Gene Network Set",
         "fileFormat": "rif-version 1",
