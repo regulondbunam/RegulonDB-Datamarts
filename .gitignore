@@ -35,6 +35,7 @@ Temporary Items
 
 lib/data/*
 lib/jsonschemas/*
+!lib/data/.gitkeep
 __pycache__/
 
 ### Django ###

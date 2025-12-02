@@ -39,6 +39,15 @@ def load_arguments():
         required=False
     )
 
+    parser.add_argument(
+        "-if", "--indexes_file",
+        type=str,
+        help="indexes file defined for collections",
+        metavar="./src/datamarts_uploader/rdbdatamarts_indexes.json",
+        default="./src/datamarts_uploader/rdbdatamarts_indexes.json",
+        required=False
+    )
+
     arguments = parser.parse_args()
     return arguments
 
