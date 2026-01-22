@@ -8,7 +8,6 @@ class RegulatoryNetworkGene:
     def objects(self):
         genes = multigenomic_api.genes.get_all()
         for gene in genes:
-            print(gene.id)
             reg_network_node = RegulatoryNetworkGene.NodeItem(gene)
             yield reg_network_node
         del genes

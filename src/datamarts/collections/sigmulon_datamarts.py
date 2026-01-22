@@ -6,6 +6,7 @@ from src.datamarts.domain.sigmulon_datamart.transcribed_promoters import Transcr
 from src.datamarts.domain.sigmulon_datamart.statistics import Statistics
 
 from src.datamarts.domain.general.remove_items import remove_empty_items
+from src.datamarts.domain.general.print_progress import print_progress
 
 
 class SigmulonDatamarts:
@@ -13,9 +14,9 @@ class SigmulonDatamarts:
     @property
     def objects(self):
         sigma_factor_objects = multigenomic_api.sigma_factors.get_all()
-        for sigma_factor in sigma_factor_objects:
-            print(sigma_factor.id)
-            sigma_factor_datamart = SigmulonDatamarts.SigmulonDatamart(sigma_factor)
+        for n, sigma_factor_object in enumerate(sigma_factor_objects, start=0):
+            print_progress(n + 1, len(sigma_factor_objects), "Sigmulon")
+            sigma_factor_datamart = SigmulonDatamarts.SigmulonDatamart(sigma_factor_object)
             yield sigma_factor_datamart
         del sigma_factor_objects
 

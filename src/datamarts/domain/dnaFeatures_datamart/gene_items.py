@@ -12,7 +12,6 @@ class GeneDnaFeatures(object):
         # Gene Objects
         gene_objects = multigenomic_api.genes.get_all()
         for gene in gene_objects:
-            print(gene.id)
             if gene.left_end_position:
                 dtt_datamart = GeneDnaFeatures.DTTDatamart(gene, self.dict_colors, False)
                 yield dtt_datamart

@@ -1,9 +1,9 @@
 # DatamartsExtractorSummary 
-Creation date: 2025-06-02
+Creation data: 2025-11-18
  
-Started time: 13:09:22
+Started time: 18:09:09
  
-Creation time: 16:02:03
+Finished time: 19:45:57
  
 RegulonDB Version: 14.0
 
@@ -28,6 +28,6 @@ RegulonDB Version: 14.0
  ### mcoTree: 
  5890 Total Objects Generated
  ### downloadableFilesDatamart: 
- 22 Total Objects Generated
+ 24 Total Objects Generated
  ### evidencesDatamart: 
  95 Total Objects Generated

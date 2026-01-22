@@ -10,6 +10,7 @@ from src.datamarts.domain.general.remove_items import remove_empty_items
 
 
 def all_dtt_datamarts():
+    print("Extracting DTT Objects")
     dict_colors = assign_colors_to_gene_multifun_type()
     gene_items = GeneDnaFeatures(dict_colors)
     promoter_items = PromoterDnaFeatures(dict_colors)

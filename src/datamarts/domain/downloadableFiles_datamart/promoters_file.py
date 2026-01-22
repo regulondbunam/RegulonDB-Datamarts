@@ -137,10 +137,10 @@ class Promoters:
                    f"\t{self.promoter.sequence}" \
                    f"\t{self.first_gene['name']}" \
                    f"\t{self.first_gene['distanceToPromoter']}" \
-                   f"\t{self.boxes["boxminus10pos"]}" \
-                   f"\t{self.boxes["boxminus10seq"]}" \
-                   f"\t{self.boxes["boxminus35pos"]}" \
-                   f"\t{self.boxes["boxminus35seq"]}" \
+                   f"\t{self.boxes['boxminus10pos']}" \
+                   f"\t{self.boxes['boxminus10seq']}" \
+                   f"\t{self.boxes['boxminus35pos']}" \
+                   f"\t{self.boxes['boxminus35seq']}" \
                    f"\t{self.prom_evidences}" \
                    f"\t{self.additive_evidences}" \
                    f"\t{self.promoter.confidence_level}" \

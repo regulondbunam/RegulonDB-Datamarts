@@ -49,7 +49,6 @@ class TerminatorDNAFeatures:
             self._strand = ""
             trans_units = multigenomic_api.transcription_units.find_by_terminator_id(entity.id)
             if len(trans_units) > 1:
-                print(entity.id)
                 gene = get_common_gene_of_tu_list(trans_units)
                 if len(gene) > 0:
                     gene = gene.pop()

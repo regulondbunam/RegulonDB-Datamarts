@@ -7,6 +7,7 @@ from src.datamarts.domain.general.remove_items import remove_empty_items
 
 
 def all_regulatory_network_nodes():
+    print("Extracting Regulatory Network Datamart")
     network_nodes_tf = RegulatoryNetworkTF()
     network_nodes_gene = RegulatoryNetworkGene()
     network_nodes_srna = RegulatoryNetworkSRNA()

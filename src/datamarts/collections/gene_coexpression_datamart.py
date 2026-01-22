@@ -21,8 +21,8 @@ def load_arguments_parser():
     parser.add_argument(
         "-u", "--url",
         help="URL to establish a connection between the process and MongoDB",
-        metavar="mongodb://user:pass@localhost:27017/regulondbmultigenomic",
-        default="mongodb://andresloal:15091052@localhost:27017/regulondbmultigenomic",
+        metavar="mongodb_url",
+        default="mongodb://user:pass@localhost:27017/regulondbmultigenomic",
         required=False
     )
 
@@ -37,9 +37,9 @@ def load_arguments_parser():
     parser.add_argument(
         "-o", "--output",
         help="folder were file gonna be writted",
-        metavar="/build",
-        default="../build",
-        required=True
+        metavar="./lib/data",
+        default="./lib/data",
+        required=False
     )
 
     args = parser.parse_args()
@@ -91,7 +91,7 @@ if __name__ == '__main__':
     pattern = re.compile("^b[0-9]{4}$")
     coexp_items = []
     a = []
-    line_count = 1
+    line_count = 0
 
     for line in fin.readlines():
         a.append([x for x in line.split(' ')])
@@ -106,7 +106,7 @@ if __name__ == '__main__':
         try:
             gene_1 = next(item for item in gene_list if item["locusTag"] == a[0][line_count])
         except:
-            print(f"bnumber {a[count][0]} is not in collection")
+            #print(f"bnumber {a[count][0]} is not in collection")
             line_count += 1
             continue
         for i in line[line_count:]:
@@ -118,7 +118,7 @@ if __name__ == '__main__':
                 try:
                     gene_2 = next(item for item in gene_list if item["locusTag"] == a[count][0])
                 except:
-                    print(f"bnumber {a[count][0]} is not in collection")
+                    #print(f"bnumber {a[count][0]} is not in collection")
                     count += 1
                     continue
 
@@ -141,7 +141,7 @@ if __name__ == '__main__':
         "geneCoexpressions": coexp_items
     }
 
-    filename = os.path.join("", "coexpression_items")
+    filename = os.path.join(arguments.output, "geneCoexpressionDatamart")
     with open("{}.json".format(filename), 'w') as json_file:
         json.dump(final_json, json_file, indent=2, sort_keys=True)
 

@@ -23,12 +23,12 @@ def create_collection_with_file(file):
     commands = validator[collection_name]
     db.drop_collection(collection_name)
     try:
-        print("Creating collection with name \"" + collection_name + "\"")
+        print("Creating " + collection_name + " collection")
         db.create_collection(collection_name, **commands)
     except pymongo.errors.OperationFailure as e:
         print(e.code)
         print(e.details)
-        print("Collection with name \"" + collection_name + "\" already exists")
+        print(collection_name + " collection already exists")
 
 
 def insert_docs(doc_file):
@@ -43,20 +43,50 @@ def insert_docs(doc_file):
                 print(f"An error occurs; check the document, {collection_document['_id']}", inv_document)
 
 
+def create_indexes_from_file(index_file):
+    with open(index_file, "r", encoding="utf-8") as f:
+        data = json.load(f)
+
+    commands = data.get("commands", [])
+    print("\n=== Creating Indexes ===")
+
+    for cmd in commands:
+        collection = cmd.get("createIndexes")
+        if not collection:
+            print("Invalid command:", cmd)
+            continue
+
+        print(f"➡ Creating indexes for: {collection}")
+        try:
+            result = db.command(cmd)
+            print(result)
+        except Exception as e:
+            print(f"❌ Error creating index on {collection}: {e}")
+
+    print("✔ Finished creating indexes.\n")
+
+
 if __name__ == "__main__":
     args = arguments.load_arguments()
     db = connect_db(args.url, args.database)
 
-    print("principal de create_collection.py")
+    print("Starting creation of collection and adding documents")
 
     for filename in os.listdir(args.schemas):
         f = os.path.join(args.schemas, filename)
         create_collection_with_file(f)
 
     for filename in os.listdir(args.collection_data):
+        if filename.startswith('.'):
+            continue
         f = os.path.join(args.collection_data, filename)
         print(f"inserting docs of {f}")
         insert_docs(f)
+
+    if hasattr(args, "indexes_file"):
+        create_indexes_from_file(args.indexes_file)
+    else:
+        print("⚠ No indexes_file argument provided; skipping index creation.")
 
 else:
     print(__name__)

@@ -4,6 +4,7 @@ from src.datamarts.domain.operon_datamart.transcription_units import Transcripti
 from src.datamarts.domain.general.biological_base import BiologicalBase
 
 from src.datamarts.domain.general.remove_items import remove_empty_items
+from src.datamarts.domain.general.print_progress import print_progress
 
 
 class OperonDatamarts:
@@ -11,10 +12,9 @@ class OperonDatamarts:
     @property
     def objects(self):
         operon_objects = multigenomic_api.operons.get_all()
-        for operon_object in operon_objects:
-            print(operon_object.id)
-            operon_datamart = OperonDatamarts.OperonDatamart(operon_object)
-            yield operon_datamart
+        for n, operon_object in enumerate(operon_objects, start=0):
+            print_progress(n + 1, len(operon_objects), "Operon")
+            yield OperonDatamarts.OperonDatamart(operon_object)
         del operon_objects
 
     class OperonDatamart:

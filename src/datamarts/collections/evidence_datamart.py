@@ -1,16 +1,16 @@
 import multigenomic_api
 
 from src.datamarts.domain.general.remove_items import remove_empty_items
+from src.datamarts.domain.general.print_progress import print_progress
 
 class EvidenceDatamarts:
 
     @property
     def objects(self):
         evidence_objects = multigenomic_api.evidences.get_all()
-        for ev_item in evidence_objects:
-            print(ev_item.id)
-            gene_datamart = EvidenceDatamarts.EvidenceDatamart(ev_item)
-            yield gene_datamart
+        for n, ev_item in enumerate(evidence_objects, start=0):
+            print_progress(n + 1, len(evidence_objects), "Evidences")
+            yield EvidenceDatamarts.EvidenceDatamart(ev_item)
         del evidence_objects
 
     class EvidenceDatamart:

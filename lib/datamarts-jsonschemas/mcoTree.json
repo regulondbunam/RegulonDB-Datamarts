@@ -1,0 +1,72 @@
+{
+	"mcoTree": {
+		"validator": {
+			"$jsonSchema": {
+				"type": "object",
+				"required": [
+					"_id",
+                    "name"
+				],
+				"properties": {
+					"_id": {
+						"type": ["string", "null"],
+						"pattern": "^RDB[A-Z0-9_]{5}[A-Z]{3}[0-9A-Z]{5}$"
+					},
+                    "description": {
+                        "type": ["string", "null"]
+                    },
+                    "name": {
+                        "type": ["string", "null"]
+                    },
+                    "ontologyId": {
+                        "type": ["string", "null"]
+                    },
+                    "synonyms": {
+                        "type": "array",
+                        "uniqueItems": true,
+                        "items": {
+                          "type": ["string", "null"]
+                        }
+                    },
+                    "genes": {
+                        "type": "array",
+                        "uniqueItems": true,
+                        "items": {
+                            "type": "object",
+                            "properties": {
+                                "_id": {
+                                    "type": ["string", "null"],
+                                    "pattern": "^RDB[A-Z0-9_]{5}[A-Z]{3}[0-9A-Z]{5}$"
+                                },
+                                "name": {
+                                    "type": ["string", "null"]
+                                },
+                                "productName": {
+                                    "type": ["string", "null"]
+                                }
+                            },
+                            "additionalProperties": false
+                        }
+                    },
+                    "subclasses": {
+                        "type": "array",
+                        "uniqueItems": true,
+                        "items": {
+                            "type": ["string", "null"]
+                        }
+                    },
+                    "subclassOf": {
+                        "type": "array",
+                        "uniqueItems": true,
+                        "items": {
+                            "type": ["string", "null"]
+                        }
+                    }
+                },
+				"additionalProperties": false
+			}
+		},
+		"validationLevel": "strict",
+		"validationAction": "error"
+	}
+}

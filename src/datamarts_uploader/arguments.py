@@ -18,26 +18,34 @@ def load_arguments():
         "-u", "--url",
         help="URL to establish a connection between the process and MongoDB",
         metavar="mongodb://user:pass@127.0.0.1:27017/regulondbdatamarts",
-        default="mongodb://andresloal:15091052@127.0.0.1:27017/regulondbdatamarts",
-        required=False
+        required=True
     )
 
     parser.add_argument(
         "-cd", "--collection_data",
         type=str,
         help="Input data files for regulondbdatamarts collections",
-        metavar="lib/data",
-        default="lib/data",
-        required=True
+        metavar="./lib/data",
+        default="./lib/data",
+        required=False
     )
 
     parser.add_argument(
         "-s", "--schemas",
         type=str,
         help="jsonSchemas folder for regulondbdatamarts collections",
-        metavar="lib/jsonschemas",
-        default="lib/jsonschemas",
-        required=True
+        metavar="./lib/datamarts-jsonschemas",
+        default="./lib/datamarts-jsonschemas",
+        required=False
+    )
+
+    parser.add_argument(
+        "-if", "--indexes_file",
+        type=str,
+        help="indexes file defined for collections",
+        metavar="./src/datamarts_uploader/rdbdatamarts_indexes.json",
+        default="./src/datamarts_uploader/rdbdatamarts_indexes.json",
+        required=False
     )
 
     arguments = parser.parse_args()

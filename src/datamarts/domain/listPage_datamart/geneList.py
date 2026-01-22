@@ -8,7 +8,6 @@ class ListGeneDM:
     def objects(self):
         gene_objects = multigenomic_api.genes.get_all()
         for gene_obj in gene_objects:
-            print(gene_obj.id)
             regulon_datamart = ListGeneDM.ListGene(gene_obj)
             yield regulon_datamart
         del gene_objects

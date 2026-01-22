@@ -1,0 +1,210 @@
+{
+    "listPage": {
+        "validator": {
+            "$jsonSchema": {
+                "bsonType": "object",
+                "required": [
+              "_id"
+          ],
+                "properties": {
+            "_id": {
+                "type": "string",
+                "pattern": "^RDB[A-Z0-9_]{5}[A-Z]{3}[0-9A-Z]{5}$"
+            },
+            "name": {
+                "type": ["string", "null"]
+            },
+            "synonyms": {
+                "type": "array",
+                "items": {
+                    "type": ["string", "null"]
+                },
+                "uniqueItems": true
+            },
+            "productsName": {
+                "type": "array",
+                "items": {
+                    "type": ["string", "null"]
+                },
+                "uniqueItems": true
+            },
+            "statistics": {
+                "type": "object",
+                "properties": {
+                    "genes": {
+                        "type": ["number", "null"]
+                    },
+                    "transcriptionFactors": {
+                        "type": ["number", "null"]
+                    },
+                    "sites": {
+                        "type": ["number", "null"]
+                    },
+                    "promoters": {
+                        "type": ["number", "null"]
+                    },
+                    "transcriptionUnits": {
+                        "type": ["number", "null"]
+                    },
+                    "cotranscriptionFactors": {
+                        "type": ["number", "null"]
+                    },
+                    "sigmaFactors": {
+                        "type": ["number", "null"]
+                    }
+                },
+                "additionalProperties": false
+            },
+            "encodedGenes": {
+                "type": "array",
+                "items": {
+                    "type": ["string", "null"]
+                },
+                "uniqueItems": true
+            },
+            "sigmulonGeneName": {
+                "type": ["string", "null"]
+            },
+            "datamartType": {
+                "type": ["string", "null"]
+            },
+            "summary": {
+                "type": "object",
+                "properties": {
+                    "genes": {
+                        "type": "object",
+                        "properties": {
+                            "repressed": {
+                                "type": ["number", "null"]
+                            },
+                            "activated": {
+                                "type": ["number", "null"]
+                            },
+                            "dual": {
+                                "type": ["number", "null"]
+                            },
+                            "unknown": {
+                                "type": ["number", "null"]
+                            },
+                            "total": {
+                                "type": ["number", "null"]
+                            }
+                        },
+                        "additionalProperties": false
+                    },
+                    "transcriptionFactors": {
+                        "type": "object",
+                        "properties": {
+                            "repressed": {
+                                "type": ["number", "null"]
+                            },
+                            "activated": {
+                                "type": ["number", "null"]
+                            },
+                            "dual": {
+                                "type": ["number", "null"]
+                            },
+                            "unknown": {
+                                "type": ["number", "null"]
+                            },
+                            "total": {
+                                "type": ["number", "null"]
+                            }
+                        },
+                        "additionalProperties": false
+                    },
+                    "transcriptionUnits": {
+                        "type": "object",
+                        "properties": {
+                            "repressed": {
+                                "type": ["number", "null"]
+                            },
+                            "activated": {
+                                "type": ["number", "null"]
+                            },
+                            "dual": {
+                                "type": ["number", "null"]
+                            },
+                            "unknown": {
+                                "type": ["number", "null"]
+                            },
+                            "total": {
+                                "type": ["number", "null"]
+                            }
+                        },
+                        "additionalProperties": false
+                    },
+                    "sigmaFactors": {
+                        "type": "object",
+                        "properties": {
+                            "repressed": {
+                                "type": ["number", "null"]
+                            },
+                            "activated": {
+                                "type": ["number", "null"]
+                            },
+                            "dual": {
+                                "type": ["number", "null"]
+                            },
+                            "unknown": {
+                                "type": ["number", "null"]
+                            },
+                            "total": {
+                                "type": ["number", "null"]
+                            }
+                        },
+                        "additionalProperties": false
+                    },
+                    "bindingSites": {
+                        "type": "object",
+                        "properties": {
+                            "repressed": {
+                                "type": ["number", "null"]
+                            },
+                            "activated": {
+                                "type": ["number", "null"]
+                            },
+                            "dual": {
+                                "type": ["number", "null"]
+                            },
+                            "unknown": {
+                                "type": ["number", "null"]
+                            },
+                            "total": {
+                                "type": ["number", "null"]
+                            }
+                        },
+                        "additionalProperties": false
+                    },
+                    "regulatoryInteractions": {
+                        "type": "object",
+                        "properties": {
+                            "repressed": {
+                                "type": ["number", "null"]
+                            },
+                            "activated": {
+                                "type": ["number", "null"]
+                            },
+                            "dual": {
+                                "type": ["number", "null"]
+                            },
+                            "unknown": {
+                                "type": ["number", "null"]
+                            },
+                            "total": {
+                                "type": ["number", "null"]
+                            }
+                        },
+                        "additionalProperties": false
+                    }
+                },
+                "additionalProperties": false
+            }
+          },
+                "additionalProperties": false
+            }
+        },
+        "validationLevel": "strict",
+        "validationAction": "error"
+    }
+}

@@ -1,0 +1,59 @@
+{
+  "commands": [
+    {
+      "createIndexes": "dnaFeatures",
+      "indexes": [
+        { "key": { "labelName": 1 }, "name": "labelName_1" }
+      ]
+    },
+    {
+      "createIndexes": "geneCoexpressions",
+      "indexes": [
+        { "key": { "gene.name": 1 }, "name": "gene_name_1" },
+        { "key": { "gene.id": 1 }, "name": "gene_id_1" }
+      ]
+    },
+    {
+      "createIndexes": "geneDatamart",
+      "indexes": [
+        { "key": { "gene.name": 1 }, "name": "gene_name_1" }
+      ]
+    },
+    {
+      "createIndexes": "gensorUnitDatamart",
+      "indexes": [
+        { "key": { "gensorUnit.name": 1 }, "name": "gensorUnit_name_1" }
+      ]
+    },
+    {
+      "createIndexes": "listPage",
+      "indexes": [
+        { "key": { "name": 1 }, "name": "name_1" }
+      ]
+    },
+    {
+      "createIndexes": "operonDatamart",
+      "indexes": [
+        { "key": { "operon.name": 1 }, "name": "operon_name_1" }
+      ]
+    },
+    {
+      "createIndexes": "regulatoryNetworkDatamart",
+      "indexes": [
+        { "key": { "name": 1 }, "name": "name_1" }
+      ]
+    },
+    {
+      "createIndexes": "regulonDatamart",
+      "indexes": [
+        { "key": { "regulator.name": 1 }, "name": "regulator_name_1" }
+      ]
+    },
+    {
+      "createIndexes": "sigmulonDatamart",
+      "indexes": [
+        { "key": { "sigmaFactor.name": 1 }, "name": "sigmaFactor_name_1" }
+      ]
+    }
+  ]
+}

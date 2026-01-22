@@ -1,0 +1,208 @@
+{
+	"regulatoryNetworkDatamart": {
+		"validator": {
+			"$jsonSchema": {
+				"type": "object",
+				"required": [
+					"_id",
+					"name"
+				],
+				"properties": {
+                    "_id": {
+                        "type": ["string"],
+						"pattern": "^RDB[A-Z0-9_]{5}[A-Z]{3}[0-9A-Z]{5}$"
+                    },
+                    "name": {
+                        "type": ["string"]
+                    },
+                    "type": {
+                        "type": ["string", "null"]
+                    },
+                    "indegree": {
+                        "type": "array",
+                        "uniqueItems": true,
+                        "items": {
+                            "type": "object",
+                            "properties": {
+                                "_id": {
+                                    "type": ["string"],
+                                    "pattern": "^RDB[A-Z0-9_]{5}[A-Z]{3}[0-9A-Z]{5}$"
+                                },
+                                "name": {
+                                    "type": ["string"]
+                                },
+                                "type": {
+                                    "type": ["string", "null"]
+                                },
+                                "regulatoryEffect": {
+                                    "type": ["string", "null"]
+                                },
+                                "citations": {
+								  "type": "array",
+								  "uniqueItems": true,
+								  "items": {
+									  "type": "object",
+									  "properties": {
+									  "publication": {
+										  "type": "object",
+										  "properties": {
+										  "authors": {
+											  "type": "array",
+											  "items": {
+												  "type": ["string", "null"]
+											  }
+										  },
+										  "pmid": {
+											  "type": ["string", "null"]
+										  },
+										  "_id": {
+											  "type": ["string", "null"],
+											  "pattern": "^RDB[A-Z0-9_]{5}[A-Z]{3}[0-9A-Z]{5}$"
+										  },
+										  "citation": {
+											  "type": ["string", "null"]
+										  },
+										  "title": {
+											  "type": ["string", "null"]
+										  },
+										  "url": {
+											  "type": ["string", "null"]
+										  },
+										  "year": {
+											  "type": "number"
+										  }
+										  },
+										  "additionalProperties": false
+									  },
+									  "evidence": {
+										  "type": "object",
+										  "properties": {
+										  "code": {
+											  "type": ["string", "null"]
+										  },
+										  "_id": {
+											  "type": ["string", "null"],
+											  "pattern": "^RDB[A-Z0-9_]{5}[A-Z]{3}[0-9A-Z]{5}$"
+										  },
+										  "name": {
+											  "type": ["string", "null"]
+										  },
+										  "type": {
+											  "type": ["string", "null"]
+										  },
+										  "additiveEvidenceCodeRule": {
+											  "type": ["number", "null"]
+										  }
+									  },
+									  "additionalProperties": false
+									  }
+								  },
+								  "additionalProperties": false
+								  }
+								},
+                                "networkType": {
+                                    "type": ["string", "null"]
+                                },"tooltip": {
+                                    "type": ["string", "null"]
+                                }
+                            }
+                        }
+                    },
+                    "outdegree": {
+                        "type": "array",
+                        "uniqueItems": true,
+                        "items": {
+                            "type": "object",
+                            "properties": {
+                                "_id": {
+                                    "type": ["string"]
+                                },
+                                "name": {
+                                    "type": ["string"]
+                                },
+                                "type": {
+                                    "type": ["string", "null"]
+                                },
+                                "regulatoryEffect": {
+                                    "type": ["string", "null"]
+                                },
+                                "citations": {
+								  "type": "array",
+								  "uniqueItems": true,
+								  "items": {
+									  "type": "object",
+									  "properties": {
+									  "publication": {
+										  "type": "object",
+										  "properties": {
+										  "authors": {
+											  "type": "array",
+											  "items": {
+												  "type": ["string", "null"]
+											  }
+										  },
+										  "pmid": {
+											  "type": ["string", "null"]
+										  },
+										  "_id": {
+											  "type": ["string", "null"],
+											  "pattern": "^RDB[A-Z0-9_]{5}[A-Z]{3}[0-9A-Z]{5}$"
+										  },
+										  "citation": {
+											  "type": ["string", "null"]
+										  },
+										  "title": {
+											  "type": ["string", "null"]
+										  },
+										  "url": {
+											  "type": ["string", "null"]
+										  },
+										  "year": {
+											  "type": "number"
+										  }
+										  },
+										  "additionalProperties": false
+									  },
+									  "evidence": {
+										  "type": "object",
+										  "properties": {
+										  "code": {
+											  "type": ["string", "null"]
+										  },
+										  "_id": {
+											  "type": ["string", "null"],
+											  "pattern": "^RDB[A-Z0-9_]{5}[A-Z]{3}[0-9A-Z]{5}$"
+										  },
+										  "name": {
+											  "type": ["string", "null"]
+										  },
+										  "type": {
+											  "type": ["string", "null"]
+										  },
+										  "additiveEvidenceCodeRule": {
+											  "type": ["number", "null"]
+										  }
+									  },
+									  "additionalProperties": false
+									  }
+								  },
+								  "additionalProperties": false
+								  }
+								},
+                                "networkType": {
+                                    "type": ["string", "null"]
+                                },
+                                "tooltip": {
+                                    "type": ["string", "null"]
+                                }
+                            }
+                        }
+                    }
+				},
+				"additionalProperties": false
+			}
+		},
+		"validationLevel": "strict",
+		"validationAction": "error"
+	}
+}

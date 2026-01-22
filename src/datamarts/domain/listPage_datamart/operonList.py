@@ -8,7 +8,6 @@ class ListOperonDM:
     def objects(self):
         operon_objects = multigenomic_api.operons.get_all()
         for operon in operon_objects:
-            print(operon.id)
             operon_datamart = ListOperonDM.ListOperon(operon)
             yield operon_datamart
         del operon_objects

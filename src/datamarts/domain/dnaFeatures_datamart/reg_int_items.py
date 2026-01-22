@@ -14,7 +14,6 @@ class RegIntDnaFeatures(object):
         reg_int_objects = find_dual_reg_ints(reg_int_objects)
         for reg_int in reg_int_objects:
             if reg_int.regulator:
-                print(reg_int.id)
                 dtt_datamart = RegIntDnaFeatures.DTTDatamart(reg_int, self.dict_colors)
                 yield dtt_datamart
         del reg_int_objects

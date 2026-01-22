@@ -1,0 +1,237 @@
+{
+    "gensorUnitDatamart": {
+        "validator": {
+            "$jsonSchema": {
+                "bsonType": "object",
+                "required": [
+                    "_id"
+                ],
+                "properties": {
+                "_id":{
+                    "type": ["string"],
+                    "pattern": "^RDB[A-Z0-9_]{5}[A-Z]{3}[0-9A-Z]{5}$"
+                },
+                "gensorUnit": {
+                    "type": "object",
+                    "properties": {
+                        "_id": {
+                            "type": ["string", "null"],
+                            "pattern": "^RDB[A-Z0-9_]{5}[A-Z]{3}[0-9A-Z]{5}$"
+                        },
+                        "name": {
+                            "type": ["string", "null"]
+                        },
+                        "components": {
+                            "type": "array",
+                            "uniqueItems": true,
+                            "items": {
+                                "type": "object",
+                                "properties": {
+                                    "function": {
+                                        "type": ["string", "null"]
+                                    },
+                                    "name": {
+                                        "type": ["string", "null"]
+                                    },
+                                    "type": {
+                                        "type": ["string", "null"]
+                                    }
+                                },
+                                "additionalProperties": false
+                            }
+                        },
+                        "geneOntology": {
+                            "type": "object",
+                            "properties": {
+                                "biologicalProcess": {
+                                    "type": "array",
+                                    "uniqueItems": true,
+                                    "items": {
+                                        "type": "object",
+                                        "properties": {
+                                            "_id": {
+                                                "type": ["string", "null"]
+                                            },
+                                            "name": {
+                                                "type": ["string", "null"]
+                                            },
+                                            "genes": {
+                                                "type": "array",
+                                                "uniqueItems": true,
+                                                "items": {
+                                                    "type": ["string", "null"]
+                                                }
+                                            }
+                                        },
+                                        "additionalProperties": false
+                                    }
+                                },
+                                "cellularComponent": {
+                                    "type": "array",
+                                    "uniqueItems": true,
+                                    "items": {
+                                        "type": "object",
+                                        "properties": {
+                                            "_id": {
+                                                "type": ["string", "null"]
+                                            },
+                                            "name": {
+                                                "type": ["string", "null"]
+                                            },
+                                            "genes": {
+                                                "type": "array",
+                                                "uniqueItems": true,
+                                                "items": {
+                                                    "type": ["string", "null"]
+                                                }
+                                            }
+                                        },
+                                        "additionalProperties": false
+                                    }
+                                },
+                                "molecularFunction": {
+                                    "type": "array",
+                                    "uniqueItems": true,
+                                    "items": {
+                                        "type": "object",
+                                        "properties": {
+                                            "_id": {
+                                                "type": [
+                                                    "string",
+                                                    "null"
+                                                ]
+                                            },
+                                            "name": {
+                                                "type": [
+                                                    "string",
+                                                    "null"
+                                                ]
+                                            },
+                                            "genes": {
+                                                "type": "array",
+                                                "uniqueItems": true,
+                                                "items": {
+                                                    "type": ["string", "null"]
+                                                }
+                                            }
+                                        },
+                                        "additionalProperties": false
+                                    }
+                                }
+                            },
+                            "additionalProperties": false
+                        },
+                        "description": {
+                            "type": ["string", "null"]
+                        },
+                        "signalName": {
+                            "type": "array",
+                            "uniqueItems": true,
+                            "items": {
+                                "type": ["string", "null"]
+                            }
+                        },
+                        "note": {
+                            "type": ["string", "null"]
+                        },
+                        "groups": {
+                            "type": "array",
+                            "uniqueItems": true,
+                            "items": {
+                                "type": "string"
+                            }
+                        },
+                        "summary": {
+                            "type": "object",
+                            "properties": {
+                                "molecularBiologyLevel": {
+                                    "type": "object",
+                                    "properties": {
+                                        "detailed": {
+                                            "type": ["string", "null"]
+                                        },
+                                        "general": {
+                                            "type": ["string", "null"]
+                                        }
+                                    },
+                                    "additionalProperties": false
+                                },
+                                "physiologyLevel": {
+                                    "type": "object",
+                                    "properties": {
+                                        "detailed": {
+                                            "type": ["string", "null"]
+                                        },
+                                        "general": {
+                                            "type": ["string", "null"]
+                                        }
+                                    },
+                                    "additionalProperties": false
+                                }
+                            },
+                            "additionalProperties": false
+                        }
+                    },
+                    "additionalProperties": false
+                },
+                "reactions": {
+                    "type": "array",
+                    "uniqueItems": true,
+                    "items": {
+                        "type": "object",
+                        "properties": {
+                            "name": {
+                                "type": ["string", "null"]
+                            },
+                            "description": {
+                                "type": ["string", "null"]
+                            },
+                            "type": {
+                                "type": ["string", "null"]
+                            },
+                            "pathwayComponents": {
+                                "type": ["string", "null"]
+                            },
+                            "components": {
+                                "type": "array",
+                                "uniqueItems": true,
+                                "items": {
+                                    "type": "object",
+                                    "properties": {
+                                        "function": {
+                                            "type": ["string", "null"]
+                                        },
+                                        "name": {
+                                            "type": ["string", "null"]
+                                        },
+                                        "type": {
+                                            "type": ["string", "null"]
+                                        }
+                                    },
+                                    "additionalProperties": false
+                                }
+                            },
+                            "order": {
+                                "type": ["number", "null"]
+                            },
+                            "number": {
+                                "type": ["number", "null"]
+                            }
+                        },
+                        "additionalProperties": false
+                    }
+                },
+                "totalOfComponents": {
+                    "type": ["number", "null"]
+                },
+                "totalOfReactions": {
+                    "type": ["number", "null"]
+                }
+              },
+                "additionalProperties": false
+            }
+        },
+        "validationLevel": "strict",
+        "validationAction": "error"
+    }
+}

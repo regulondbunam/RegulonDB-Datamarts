@@ -3,6 +3,7 @@ from src.datamarts.domain.listPage_datamart import regulonList, geneList, operon
 
 
 def get_all_list_page_docs():
+    print("Extracting List Page Datamart")
     list_dm = []
 
     regulons = regulonList.list_all_regulon_datamarts()

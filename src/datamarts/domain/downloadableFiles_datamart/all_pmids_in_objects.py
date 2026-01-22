@@ -1,18 +1,25 @@
+# all_pmids_in_objects.py
 import pymongo
 import re
 from datetime import datetime
 
+mongo_client = None
+mongo_db = None
+
+def init_mongo(url):
+    global mongo_client, mongo_db
+    if mongo_client is None:
+        mongo_client = pymongo.MongoClient(url)
+        mongo_db = mongo_client["regulondbmultigenomic"]
+    return mongo_db
+
 
 def find_doc_by_id(collection_name, doc_id):
-    """Generic function to find a document by ID."""
-    client = pymongo.MongoClient("mongodb://andresloal:15091052@localhost:27017/")
-    db = client["regulondbmultigenomic"]
-    collection = db[collection_name]
+    collection = mongo_db[collection_name]
     return collection.find_one({"_id": doc_id})
 
 
 def extract_citations(doc, obj_name, obj_type):
-    """Extract citations from a document."""
     items = []
     pub_to_evidences = {}
 
@@ -31,8 +38,7 @@ def extract_citations(doc, obj_name, obj_type):
                 ev_code = evidence["code"]
 
         if pub_pmid:
-            if pub_pmid not in pub_to_evidences:
-                pub_to_evidences[pub_pmid] = []
+            pub_to_evidences.setdefault(pub_pmid, [])
             if ev_code:
                 pub_to_evidences[pub_pmid].append(ev_code)
 
@@ -44,7 +50,6 @@ def extract_citations(doc, obj_name, obj_type):
 
 
 def extract_notes(doc, obj_name, obj_type):
-    """Extract PMIDs from notes."""
     items = []
     citations_pattern = re.compile(r"\[[0-9]+\]")
     pmids = set(re.findall(citations_pattern, doc.get("note", "")))
@@ -57,11 +62,7 @@ def extract_notes(doc, obj_name, obj_type):
 
 
 def process_collection(collection_name, obj_type):
-    """Process a MongoDB collection and extract relevant rows."""
-    client = pymongo.MongoClient("mongodb://andresloal:15091052@localhost:27017/")
-    db = client["regulondbmultigenomic"]
-    collection = db[collection_name]
-
+    collection = mongo_db[collection_name]
     items = []
     for doc in collection.find():
         obj_name = doc.get("abbreviatedName", doc.get("name", ""))
@@ -72,12 +73,9 @@ def process_collection(collection_name, obj_type):
 
 
 def process_regulatory_interactions():
-    """Process regulatory interactions with special handling for regulatory sites."""
-    client = pymongo.MongoClient("mongodb://andresloal:15091052@localhost:27017/")
-    db = client["regulondbmultigenomic"]
-    collection = db["regulatoryInteractions"]
-
+    collection = mongo_db["regulatoryInteractions"]
     items = []
+
     for doc in collection.find():
         regulator = find_doc_by_id("regulators", doc["regulator"]["_id"])
         obj_name = regulator.get("abbreviatedName", regulator.get("name", "")) if regulator else doc["regulator"]["name"]
@@ -95,7 +93,6 @@ def process_regulatory_interactions():
 
 
 def generate_pmids_doc(rdb_version, citation):
-    """Generate a document containing all extracted PMIDs."""
     item_list = ["pmid\tobject_type\tobject_id\tobject_name\torigin\tev_code"]
 
     collections = [
@@ -117,41 +114,21 @@ def generate_pmids_doc(rdb_version, citation):
 
     creation_date = datetime.now()
 
-    pmids_doc = {
+    return {
         "_id": "RDBECOLIDLF00021",
         "fileName": "allObjectPmids_internal",
         "title": "Complete Object PMIDs Set",
         "fileFormat": "rif-version 1",
-        "license": (
-            "# RegulonDB is free for academic/noncommercial use\n"
-            "# User is not entitled to change or erase data sets of the RegulonDB\n"
-            "# database or to eliminate copyright notices from RegulonDB. Furthermore,\n"
-            "# User is not entitled to expand RegulonDB or to integrate RegulonDB partly\n"
-            "# or as a whole into other databank systems, without prior written consent\n"
-            "# from CCG-UNAM.\n"
-            "# Please check the license at https://regulondb.ccg.unam.mx/manual/aboutUs/terms-conditions"
-        ),
+        "license": "...",
         "citation": citation,
         "contact": {
             "person": "RegulonDB Team",
-            "webPage": None,
             "email": "regulondb@ccg.unam.mx",
         },
         "version": "1.0",
         "creationDate": creation_date.strftime("%m-%d-%Y"),
-        "columnsDetails": (
-            "# Columns:\n"
-            "# (1) PMID\n"
-            "# (2) Type of the biological object\n"
-            "# (3) Id of the object\n"
-            "# (4) Name of the object\n"
-            "# (5) Origin\n"
-            "# (6) Evidence codes"
-        ),
         "content": " \n".join(item_list),
         "rdbVersion": rdb_version,
         "description": "Collection of all objects with their PMIDs.",
         "group": "EVIDENCE",
     }
-
-    return pmids_doc

@@ -8,7 +8,6 @@ class RegulatoryNetworkCompound:
     def objects(self):
         compound_objects = get_all_regulators(multigenomic_api.regulatory_interactions.get_all())
         for compound in compound_objects:
-            print(compound.id)
             srna_dict = multigenomic_api.regulatory_continuants.find_by_id(compound.id)
             reg_network_node = RegulatoryNetworkCompound.NodeItem(srna_dict)
             yield reg_network_node
