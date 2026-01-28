@@ -3,6 +3,9 @@ from pymongo import errors
 import json
 import arguments
 import os
+import ijson
+from decimal import Decimal
+from datetime import datetime
 
 
 # Connecting to MongoDB in localhost and made some test.
@@ -31,16 +34,41 @@ def create_collection_with_file(file):
         print(collection_name + " collection already exists")
 
 
-def insert_docs(doc_file):
-    doc = open_json(doc_file)
-    for collection_name, collection_documents in doc.items():
-        for collection_document in collection_documents:
-            try:
-                db[collection_name].insert_one(collection_document)
-            except pymongo.errors.DuplicateKeyError as dk_error:
-                print(f'Document with id {collection_document["_id"]} already exists', dk_error)
-            except pymongo.errors.WriteError as inv_document:
-                print(f"An error occurs; check the document, {collection_document['_id']}", inv_document)
+def normalize_doc(obj):
+    if isinstance(obj, dict):
+        return {k: normalize_doc(v) for k, v in obj.items()}
+    elif isinstance(obj, list):
+        return [normalize_doc(v) for v in obj]
+    elif isinstance(obj, Decimal):
+        return float(obj)
+    else:
+        return obj
+
+
+def insert_docs(json_file, col, batch_size=1000):
+    batch = []
+    count = 0
+    with open(json_file, "rb") as f:
+        for doc in ijson.items(f, f"{col.name}.item"):
+            doc = normalize_doc(doc)
+            batch.append(doc)
+            count += 1
+            if len(batch) >= batch_size:
+                flush_batch(col, batch)
+                batch.clear()
+            if count % 100_000 == 0:
+                print(f"{count:,} inserted into {col.name}")
+        if batch:
+            flush_batch(col, batch)
+
+
+def flush_batch(col, batch):
+    try:
+        col.insert_many(batch, ordered=False)
+    except pymongo.errors.BulkWriteError as e:
+        for err in e.details.get("writeErrors", []):
+            if err["code"] != 11000:
+                print("Insert error:", err)
 
 
 def create_indexes_from_file(index_file):
@@ -70,7 +98,7 @@ if __name__ == "__main__":
     args = arguments.load_arguments()
     db = connect_db(args.url, args.database)
 
-    print("Starting creation of collection and adding documents")
+    print(f"[{datetime.now():%Y-%m-%d %H:%M:%S}] creation of collection and adding documents")
 
     for filename in os.listdir(args.schemas):
         f = os.path.join(args.schemas, filename)
@@ -79,14 +107,18 @@ if __name__ == "__main__":
     for filename in os.listdir(args.collection_data):
         if filename.startswith('.'):
             continue
+        collection_name = os.path.splitext(filename)[0]
+        collection = db[collection_name]
         f = os.path.join(args.collection_data, filename)
-        print(f"inserting docs of {f}")
-        insert_docs(f)
+        print(f"Inserting {f} into collection '{collection_name}'")
+        insert_docs(f, collection)
 
     if hasattr(args, "indexes_file"):
         create_indexes_from_file(args.indexes_file)
     else:
         print("⚠ No indexes_file argument provided; skipping index creation.")
+
+    print(f"[{datetime.now():%Y-%m-%d %H:%M:%S}] finished upload process")
 
 else:
     print(__name__)
