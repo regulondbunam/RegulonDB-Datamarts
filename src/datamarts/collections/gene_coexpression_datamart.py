@@ -141,7 +141,7 @@ if __name__ == '__main__':
         "geneCoexpressions": coexp_items
     }
 
-    filename = os.path.join(arguments.output, "geneCoexpressionDatamart")
+    filename = os.path.join(arguments.output, "geneCoexpressions")
     with open("{}.json".format(filename), 'w') as json_file:
         json.dump(final_json, json_file, indent=2, sort_keys=True)
 
