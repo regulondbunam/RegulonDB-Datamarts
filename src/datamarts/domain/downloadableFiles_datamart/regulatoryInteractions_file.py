@@ -47,7 +47,11 @@ class RegulatoryInteractions:
             if tf:
                 regulator_type = "tf"
             elif ri.regulator.type == "product":
-                regulator_type = "srna"
+                product = multigenomic_api.products.find_by_id(ri.regulator.id)
+                if product.type == "small RNA":
+                    regulator_type = "srna"
+                else:
+                    regulator_type = "product"
             elif ri.regulator.type == "regulatoryContinuant":
                 regulator_type = "compound"
             else:
@@ -259,7 +263,9 @@ class RegulatoryInteractions:
             self._additive_evidences = []
             for additive_evs_id in additive_evs_ids:
                 additive_evidence_dict = multigenomic_api.additive_evidences.find_by_id(additive_evs_id)
-                self._additive_evidences.append(f"{additive_evidence_dict.code}:{additive_evidence_dict.confidence_level}")
+                add_ev_item = f"{additive_evidence_dict.code}:{additive_evidence_dict.confidence_level}"
+                if add_ev_item not in self._additive_evidences:
+                    self._additive_evidences.append(add_ev_item)
             self._additive_evidences = ";".join(self._additive_evidences)
 
         @property
