@@ -187,7 +187,7 @@ class Regulates(BiologicalBase):
 def get_all_transcription_units(regulator):
     all_transcription_units = []
     conformations_ids = []
-    if regulator.regulation_type == "Transcription-Factor-Binding" or regulator.id == "RDBECOLITFC00039":
+    if regulator.regulation_type == "Transcription-Factor-Binding" or regulator.abbreviated_name == "DksA":
         reg_complex = None
         try:
             reg_complex = multigenomic_api.regulatory_complexes.find_by_name(regulator.name)
@@ -222,7 +222,7 @@ def get_all_transcription_units(regulator):
 def get_all_regulated_genes(regulator):
     conformations_ids = []
     all_reg_genes = []
-    if regulator.regulation_type == "Transcription-Factor-Binding" or regulator.id == "RDBECOLITFC00039":
+    if regulator.regulation_type == "Transcription-Factor-Binding" or regulator.abbreviated_name == "DksA":
         reg_complex = None
         try:
             reg_complex = multigenomic_api.regulatory_complexes.find_by_name(regulator.name)

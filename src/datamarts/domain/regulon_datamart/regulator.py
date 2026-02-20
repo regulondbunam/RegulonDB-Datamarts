@@ -20,7 +20,7 @@ class Regulator(BiologicalBase):
         note = self.formatted_note
         if not note:
             note = self.get_longest_note()
-        if self.regulator.regulation_type == "Transcription-Factor-Binding" or self.regulator.id == "RDBECOLITFC00039":
+        if self.regulator.regulation_type == "Transcription-Factor-Binding" or self.regulator.abbreviated_name == "DksA":
             regulator = {
                 "_id": self.regulator.id,
                 "citations": self.citations,
@@ -73,7 +73,7 @@ class Regulator(BiologicalBase):
         self._conformations = []
         reg_complex = None
         product = None
-        if regulator.regulation_type == "Transcription-Factor-Binding" or regulator.id == "RDBECOLITFC00039":
+        if regulator.regulation_type == "Transcription-Factor-Binding" or regulator.abbreviated_name == "DksA":
             try:
                 reg_complex = multigenomic_api.regulatory_complexes.find_by_name(regulator.name)
             except DoesNotExist:
@@ -101,7 +101,7 @@ class Regulator(BiologicalBase):
     @genes.setter
     def genes(self, regulator):
         self._genes = []
-        if regulator.regulation_type == "Transcription-Factor-Binding" or regulator.id == "RDBECOLITFC00039":
+        if regulator.regulation_type == "Transcription-Factor-Binding" or regulator.abbreviated_name == "DksA":
             for product_id in regulator.products_ids:
                 prod = multigenomic_api.products.find_by_id(product_id)
                 gene = self.get_gene_properties(prod.genes_id)
@@ -118,7 +118,7 @@ class Regulator(BiologicalBase):
     @operons.setter
     def operons(self, regulator):
         self._operons = []
-        if regulator.regulation_type == "Transcription-Factor-Binding" or regulator.id == "RDBECOLITFC00039":
+        if regulator.regulation_type == "Transcription-Factor-Binding" or regulator.abbreviated_name == "DksA":
             for product_id in regulator.products_ids:
                 prod = multigenomic_api.products.find_by_id(product_id)
                 transcription_units = multigenomic_api.transcription_units.find_by_gene_id(prod.genes_id)

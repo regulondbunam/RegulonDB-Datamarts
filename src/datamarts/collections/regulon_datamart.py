@@ -21,9 +21,9 @@ class RegulonDatamarts:
         for n, regulator in enumerate(regulator_objects, start=0):
             print_progress(n + 1, len(regulator_objects), "Regulon")
             if regulator.regulation_type:
-                if regulator.regulation_type == "Transcription-Factor-Binding" or regulator.id == "RDBECOLITFC00039":
+                if regulator.regulation_type == "Transcription-Factor-Binding" or regulator.abbreviated_name == "DksA":
                     regulator = multigenomic_api.transcription_factors.find_by_id(regulator.id)
-                    if regulator.id == "RDBECOLITFC00039":
+                    if regulator.abbreviated_name == "DksA":
                         regulator["regulation_type"] = "Allosteric-Regulation-of-RNAP"
                     else:
                         regulator["regulation_type"] = "Transcription-Factor-Binding"
@@ -61,7 +61,7 @@ class RegulonDatamarts:
         def terms(self, regulator):
             self._terms = []
             terms = []
-            if regulator.regulation_type != "Allosteric-Regulation-of-RNAP" or regulator.id == "RDBECOLITFC00039":
+            if regulator.regulation_type != "Allosteric-Regulation-of-RNAP" or regulator.abbreviated_name == "DksA":
                 terms = Terms(regulator).to_dict()
             self._terms = terms
 
@@ -83,7 +83,7 @@ class RegulonDatamarts:
             self._regulatory_interactions = []
             reg_complex = None
             product = None
-            if regulator.regulation_type == "Transcription-Factor-Binding" or regulator.id == "RDBECOLITFC00039":
+            if regulator.regulation_type == "Transcription-Factor-Binding" or regulator.abbreviated_name == "DksA":
                 try:
                     reg_complex = multigenomic_api.regulatory_complexes.find_by_name(regulator.name)
                 except DoesNotExist:
@@ -160,4 +160,3 @@ def get_ri_objects(reg_ints, ri_list):
         if reg_int not in ri_list:
             ri_list.append(reg_int)
     return ri_list
-

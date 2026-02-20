@@ -8,7 +8,7 @@ class Terms:
     def __init__(self, regulator):
         super().__init__()
         regulated_genes = []
-        if regulator.regulation_type == "Transcription-Factor-Binding" or regulator.id == "RDBECOLITFC00039":
+        if regulator.regulation_type == "Transcription-Factor-Binding" or regulator.abbreviated_name == "DksA":
             regulated_genes = get_genes(regulator)
         elif regulator.regulation_type == "RNA-Mediated-Translation-Regulation":
             regulated_genes = get_genes(regulator)
@@ -55,7 +55,7 @@ class Terms:
             'cellularComponent': [],
             'molecularFunction': []
         }
-        if regulator.regulation_type == "Transcription-Factor-Binding" or regulator.id == "RDBECOLITFC00039":
+        if regulator.regulation_type == "Transcription-Factor-Binding" or regulator.abbreviated_name == "DksA":
             products_ids = regulator.products_ids
             regulated_genes = regulator.regulated_genes
         else:
@@ -128,7 +128,7 @@ def get_genes(regulator):
     reg_complex = None
     genes = []
     reg_ints = []
-    if regulator.regulation_type == "Transcription-Factor-Binding" or regulator.id == "RDBECOLITFC00039":
+    if regulator.regulation_type == "Transcription-Factor-Binding" or regulator.abbreviated_name == "DksA":
         for active_conformation in regulator.active_conformations:
             reg_ints.extend(multigenomic_api.regulatory_interactions.find_by_regulator_id(active_conformation.id))
         try:
