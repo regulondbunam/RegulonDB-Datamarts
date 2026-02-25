@@ -41,21 +41,18 @@ class RegulatoryInteractions:
         @type.setter
         def type(self, ri):
             self._type = ""
+            regulator_type = "regulator"
             tf = multigenomic_api.transcription_factors.find_tf_id_by_conformation_id(ri.regulator.id)
             if tf is None:
                 tf = multigenomic_api.transcription_factors.find_by_name(ri.regulator.name)
             if tf:
-                regulator_type = "tf"
+                regulator_type = "TF"
             elif ri.regulator.type == "product":
                 product = multigenomic_api.products.find_by_id(ri.regulator.id)
                 if product.type == "small RNA":
-                    regulator_type = "srna"
-                else:
-                    regulator_type = "product"
+                    regulator_type = "sRNA"
             elif ri.regulator.type == "regulatoryContinuant":
                 regulator_type = "compound"
-            else:
-                regulator_type = "regulator"
 
             if ri.regulator.id == "RDBECOLIPDC00432" or ri.regulator.id == "RDBECOLIRCC00094":
                 regulator_type = "regulator"
@@ -65,7 +62,7 @@ class RegulatoryInteractions:
             elif ri.regulated_entity.type == "promoter":
                 self._type = f"{regulator_type}-promoter"
             if ri.regulated_entity.type == "transcriptionUnit":
-                self._type = f"{regulator_type}-tu"
+                self._type = f"{regulator_type}-TU"
 
         @property
         def transcription_factor(self):
