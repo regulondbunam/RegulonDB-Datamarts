@@ -41,17 +41,18 @@ class RegulatoryInteractions:
         @type.setter
         def type(self, ri):
             self._type = ""
+            regulator_type = "regulator"
             tf = multigenomic_api.transcription_factors.find_tf_id_by_conformation_id(ri.regulator.id)
             if tf is None:
                 tf = multigenomic_api.transcription_factors.find_by_name(ri.regulator.name)
             if tf:
-                regulator_type = "tf"
+                regulator_type = "TF"
             elif ri.regulator.type == "product":
-                regulator_type = "srna"
+                product = multigenomic_api.products.find_by_id(ri.regulator.id)
+                if product.type == "small RNA":
+                    regulator_type = "sRNA"
             elif ri.regulator.type == "regulatoryContinuant":
                 regulator_type = "compound"
-            else:
-                regulator_type = "regulator"
 
             if ri.regulator.id == "RDBECOLIPDC00432" or ri.regulator.id == "RDBECOLIRCC00094":
                 regulator_type = "regulator"
@@ -61,7 +62,7 @@ class RegulatoryInteractions:
             elif ri.regulated_entity.type == "promoter":
                 self._type = f"{regulator_type}-promoter"
             if ri.regulated_entity.type == "transcriptionUnit":
-                self._type = f"{regulator_type}-tu"
+                self._type = f"{regulator_type}-TU"
 
         @property
         def transcription_factor(self):
@@ -259,7 +260,9 @@ class RegulatoryInteractions:
             self._additive_evidences = []
             for additive_evs_id in additive_evs_ids:
                 additive_evidence_dict = multigenomic_api.additive_evidences.find_by_id(additive_evs_id)
-                self._additive_evidences.append(f"{additive_evidence_dict.code}:{additive_evidence_dict.confidence_level}")
+                add_ev_item = f"{additive_evidence_dict.code}:{additive_evidence_dict.confidence_level}"
+                if add_ev_item not in self._additive_evidences:
+                    self._additive_evidences.append(add_ev_item)
             self._additive_evidences = ";".join(self._additive_evidences)
 
         @property

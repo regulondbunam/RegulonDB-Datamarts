@@ -1,4 +1,5 @@
 import json
+import multigenomic_api
 
 from src.datamarts.domain.gensorUnit_datamart.gene_ontology import GeneOntology
 
@@ -24,6 +25,9 @@ class GensorUnitsDatamarts:
 
     class GensorUnitDatamart:
         def __init__(self, gensor_unit):
+            regulator = multigenomic_api.regulators.find_by_abbr_name(f"{gensor_unit['gensorUnit']['name']}")
+            gensor_unit["_id"] = regulator.id
+            gensor_unit["gensorUnit"]["_id"] = regulator.id
             self.gu = gensor_unit
             self.gene_ontology = gensor_unit
 
