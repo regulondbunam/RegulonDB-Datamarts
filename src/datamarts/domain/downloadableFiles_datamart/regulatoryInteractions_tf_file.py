@@ -9,7 +9,7 @@ class RegulatoryInteractions:
         ri_objects = multigenomic_api.regulatory_interactions.get_all()
         for ri_object in ri_objects:
             # print(ri_object.id)
-            if ri_object.regulator.id != "RDBECOLIPDC00432" and ri_object.regulator.id != "RDBECOLIRCC00094":
+            if ri_object.regulator.id != "RDBECOLIPDC00432" and ri_object.regulator.id != "RDBECOLIRCC00106":
                 ri_row = RegulatoryInteractions.RIDatamart(ri_object)
                 yield ri_row
         del ri_objects
@@ -371,7 +371,7 @@ def all_ris_rows(rdb_version, citation):
     ris = RegulatoryInteractions()
     ris_content = ["1)riId\t2)riType\t3)regulatorId\t4)regulatorName\t5)cnfName\t6)tfrsID\t7)tfrsLeft\t8)tfrsRight\t9)strand\t10)tfrsSeq\t11)riFunction\t12)promoterID\t13)promoterName\t14)tss\t15)sigmaF\t16)tfrsDistToPm\t17)firstGene\t18)tfrsDistTo1Gene\t19)targetTuOrGene\t20)confidenceLevel\t21)tfrsEvidence\t22)riEvidence\t23)addEvidence\t24)riEvTech\t25)riEvCategory\t26)tfrsPMIDS\t27)riPMIDS"]
     for ri in ris.objects:
-        if ri.type == "tf-gene" or ri.type == "tf-promoter" or ri.type == "tf-tu":
+        if ri.type == "TF-gene" or ri.type == "TF-promoter" or ri.type == "TF-TU":
             ris_content.append(ri.to_row())
     creation_date = datetime.now()
     ri_doc = {
