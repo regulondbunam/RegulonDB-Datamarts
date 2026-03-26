@@ -84,10 +84,10 @@ class Promoters:
             for citation in citations:
                 if citation.evidences_id:
                     citation_dict = multigenomic_api.evidences.find_by_id(citation.evidences_id)
-                    citation_item = f"[{citation_dict.code}:{citation_dict.type}]"
+                    citation_item = f"{citation_dict.code}:{citation_dict.type or '?'}"
                     if citation_item not in self._prom_evidences:
                         self._prom_evidences.append(citation_item)
-            self._prom_evidences = "".join(self._prom_evidences)
+            self._prom_evidences = ";".join(self._prom_evidences)
 
         @property
         def boxes(self):
@@ -115,10 +115,10 @@ class Promoters:
 
         @additive_evidences.setter
         def additive_evidences(self, additive_evs_ids):
-            self._additive_evidences = ""
+            self._additive_evidences = []
             for additive_evs_id in additive_evs_ids:
                 additive_evidence_dict = multigenomic_api.additive_evidences.find_by_id(additive_evs_id)
-                self._additive_evidences += f"[{additive_evidence_dict.code}:{additive_evidence_dict.confidence_level}]"
+                self._additive_evidences.append(f"{additive_evidence_dict.code}:{additive_evidence_dict.confidence_level}")
 
         @property
         def pmids(self):
@@ -142,7 +142,7 @@ class Promoters:
                    f"\t{self.boxes['boxminus35pos']}" \
                    f"\t{self.boxes['boxminus35seq']}" \
                    f"\t{self.prom_evidences}" \
-                   f"\t{self.additive_evidences}" \
+                   f"\t{";".join(self.additive_evidences)}" \
                    f"\t{self.promoter.confidence_level}" \
                    f"\t{self.pmids}"
 
