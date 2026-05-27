@@ -234,7 +234,7 @@ class RegulatoryInteractions:
                             citation_item = f"{citation_dict.code}:{citation_dict.type or '?'}"
                             if citation_item not in self._reg_site_evidences:
                                 self._reg_site_evidences.append(citation_item)
-            self._reg_site_evidences = ";".join(self._reg_site_evidences)
+            self._reg_site_evidences = "|".join(self._reg_site_evidences)
 
         @property
         def ri_evidences(self):
@@ -249,7 +249,7 @@ class RegulatoryInteractions:
                     citation_item = f"{citation_dict.code}:{citation_dict.type or '?'}"
                     if citation_item not in self._ri_evidences:
                         self._ri_evidences.append(citation_item)
-            self._ri_evidences = ";".join(self._ri_evidences)
+            self._ri_evidences = "|".join(self._ri_evidences)
 
         @property
         def additive_evidences(self):
@@ -263,7 +263,7 @@ class RegulatoryInteractions:
                 add_ev_item = f"{additive_evidence_dict.code}:{additive_evidence_dict.confidence_level}"
                 if add_ev_item not in self._additive_evidences:
                     self._additive_evidences.append(add_ev_item)
-            self._additive_evidences = ";".join(self._additive_evidences)
+            self._additive_evidences = "|".join(self._additive_evidences)
 
         @property
         def ri_ev_tech(self):
@@ -320,7 +320,7 @@ class RegulatoryInteractions:
                         publication_dict = multigenomic_api.publications.find_by_id(citation.publications_id)
                         if publication_dict.pmid and publication_dict.pmid not in self._reg_site_pmids:
                             self._reg_site_pmids.append(publication_dict.pmid)
-            self._reg_site_pmids = ";".join(self._reg_site_pmids)
+            self._reg_site_pmids = "|".join(self._reg_site_pmids)
 
         @property
         def ri_pmids(self):
@@ -334,7 +334,7 @@ class RegulatoryInteractions:
                     publication_dict = multigenomic_api.publications.find_by_id(citation.publications_id)
                     if publication_dict.pmid and publication_dict.pmid not in self._ri_pmids:
                         self._ri_pmids.append(publication_dict.pmid)
-            self._ri_pmids = ";".join(self._ri_pmids)
+            self._ri_pmids = "|".join(self._ri_pmids)
 
         def to_row(self):
             regulated_genes = get_regulated_genes(self.ri.regulated_entity)

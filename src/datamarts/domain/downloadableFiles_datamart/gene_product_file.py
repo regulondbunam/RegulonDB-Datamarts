@@ -42,8 +42,8 @@ class GeneProduct:
             for product in products:
                 ids.append(product.id)
                 names.append(product.name)
-            self._product["ids"] = ";".join(ids)
-            self._product["names"] = ";".join(names)
+            self._product["ids"] = "|".join(ids)
+            self._product["names"] = "|".join(names)
 
         @property
         def gene_lep(self):
@@ -84,7 +84,7 @@ class GeneProduct:
                 if citation.publications_id:
                     publication = multigenomic_api.publications.find_by_id(citation.publications_id)
                     if publication.pmid not in self._gene_pmids:
-                        self._gene_pmids.append(f"{publication.pmid};")
+                        self._gene_pmids.append(f"{publication.pmid}|")
             self._gene_pmids = "".join(self._gene_pmids)[:-1]
 
         @property
@@ -123,7 +123,7 @@ class GeneProduct:
             bnumber_pattern = r"^b[0-9]{4}$"
             for synonym in synonyms:
                 if re.match(bnumber_pattern, synonym):
-                    self._relatedBNumbers += f"{synonym};"
+                    self._relatedBNumbers += f"{synonym}|"
             if len(self._relatedBNumbers) > 0:
                 self._relatedBNumbers = self._relatedBNumbers[:-1]
 

@@ -36,7 +36,7 @@ class Operon:
             for gene in genes:
                 self._genes.append(gene['name'])
             if len(self._genes) > 0:
-                self._genes = ";".join(self._genes)
+                self._genes = "|".join(self._genes)
 
         @property
         def genes_positions(self):
@@ -113,7 +113,7 @@ class Operon:
                    f"\t{self.genes_positions[0]}" \
                    f"\t{self.genes_positions[-1]}" \
                    f"\t{self.operon.strand}" \
-                   f"\t{len(self.genes.split(';'))}" \
+                   f"\t{len(self.genes.split('|'))}" \
                    f"\t{self.genes}" \
                    f"\t{self.evidences}" \
                    f"\t{self.confidence_level}" \

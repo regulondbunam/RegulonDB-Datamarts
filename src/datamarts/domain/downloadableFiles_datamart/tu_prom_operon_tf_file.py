@@ -53,7 +53,7 @@ class TranscriptionUnit:
                 for gene_id in genes_ids:
                     gene = multigenomic_api.genes.find_by_id(gene_id)
                     genes.append(gene.name)
-                self._genes_names = ";".join(genes)
+                self._genes_names = "|".join(genes)
 
         @property
         def promoter(self):
@@ -147,7 +147,7 @@ class TranscriptionUnit:
                     gene = multigenomic_api.genes.find_by_id(gene_id)
                     if gene.bnumber:
                         genes.append(gene.bnumber)
-                self._genes_bnumber = ";".join(genes)
+                self._genes_bnumber = "|".join(genes)
 
         @property
         def first_gene_pos(self):
@@ -190,7 +190,7 @@ class TranscriptionUnit:
             for terminator_id in terminator_ids:
                 terminator = multigenomic_api.terminators.find_by_id(terminator_id)
                 positions.append(f"{terminator.transcriptionTerminationSite.left_end_position}-{terminator.transcriptionTerminationSite.right_end_position}")
-            self._terminator_pos = ";".join(positions)
+            self._terminator_pos = "|".join(positions)
 
 
         @property

@@ -87,7 +87,7 @@ class Promoters:
                     citation_item = f"{citation_dict.code}:{citation_dict.type or '?'}"
                     if citation_item not in self._prom_evidences:
                         self._prom_evidences.append(citation_item)
-            self._prom_evidences = ";".join(self._prom_evidences)
+            self._prom_evidences = "|".join(self._prom_evidences)
 
         @property
         def boxes(self):
@@ -142,7 +142,7 @@ class Promoters:
                    f"\t{self.boxes['boxminus35pos']}" \
                    f"\t{self.boxes['boxminus35seq']}" \
                    f"\t{self.prom_evidences}" \
-                   f"\t{";".join(self.additive_evidences)}" \
+                   f"\t{"|".join(self.additive_evidences)}" \
                    f"\t{self.promoter.confidence_level}" \
                    f"\t{self.pmids}"
 

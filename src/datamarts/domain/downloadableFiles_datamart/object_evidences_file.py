@@ -44,7 +44,7 @@ class ObjectEvidences:
             tfs = multigenomic_api.transcription_factors.find_by_evidence_id(self.evidence.id)
             if len(tfs) > 0:
                 obj_type.append("Transcription Factors")
-            obj_type = ";".join(obj_type)
+            obj_type = "|".join(obj_type)
             if obj_type != "":
                 rows.append(self.to_row(obj_type))
             return rows

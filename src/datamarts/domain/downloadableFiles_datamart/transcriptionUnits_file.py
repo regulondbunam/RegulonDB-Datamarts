@@ -44,11 +44,31 @@ class TranscriptionUnit:
 
         @genes.setter
         def genes(self, genes_ids):
-            self._genes = ""
+            self._genes = []
             if len(genes_ids) > 0:
                 for gene_id in genes_ids:
                     gene = multigenomic_api.genes.find_by_id(gene_id)
-                    self._genes += f"{gene.name};"
+
+                    if gene.fragments:
+                        if gene.strand == "forward":
+                            position = min(gene.fragments, key=lambda x: x.left_end_position).left_end_position
+                        elif gene.strand == "reverse":
+                            position = max(gene.fragments, key=lambda x: x.right_end_position).right_end_position
+                        else:
+                            continue
+                    else:
+                        if gene.strand == "forward":
+                            position = gene.left_end_position
+                        elif gene.strand == "reverse":
+                            position = gene.right_end_position
+                        else:
+                            continue
+                    self._genes.append((gene.name, position))
+
+                self._genes.sort(key=lambda x: x[1])
+                self._genes = ";".join(gene_name for gene_name, _ in self._genes)
+            else:
+                self._genes = None
 
         @property
         def promoter(self):
@@ -81,10 +101,10 @@ class TranscriptionUnit:
             for citation in citations:
                 if citation.evidences_id:
                     citation_dict = multigenomic_api.evidences.find_by_id(citation.evidences_id)
-                    citation_item = f"[{citation_dict.code}:{citation_dict.type}]"
+                    citation_item = f"{citation_dict.code}:{citation_dict.type or '?'}"
                     if citation_item not in self._tu_evidences:
                         self._tu_evidences.append(citation_item)
-            self._tu_evidences = "".join(self._tu_evidences)
+            self._tu_evidences = ";".join(self._tu_evidences)
 
         @property
         def additive_evidences(self):
@@ -92,12 +112,12 @@ class TranscriptionUnit:
 
         @additive_evidences.setter
         def additive_evidences(self, additive_evs_ids):
-            self._additive_evidences = ""
+            self._additive_evidences = []
             if len(additive_evs_ids) > 0:
-                self._additive_evidences = ""
                 for additive_evs_id in additive_evs_ids:
                     additive_evidence_dict = multigenomic_api.additive_evidences.find_by_id(additive_evs_id)
-                    self._additive_evidences += f"[{additive_evidence_dict.code}:{additive_evidence_dict.confidence_level}]"
+                    self._additive_evidences.append(f"{additive_evidence_dict.code}:{additive_evidence_dict.confidence_level}")
+            self._additive_evidences = ";".join(self._additive_evidences)
 
         @property
         def pmids(self):

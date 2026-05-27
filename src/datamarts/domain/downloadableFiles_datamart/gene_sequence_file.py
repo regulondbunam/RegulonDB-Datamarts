@@ -35,7 +35,7 @@ class GeneSequence:
             self._product = ""
             products = multigenomic_api.products.find_by_gene_id(gene_id)
             for product in products:
-                self._product += f"{product.name};"
+                self._product += f"{product.name}|"
             self._product = self._product[:-1]
 
         @property
@@ -47,7 +47,7 @@ class GeneSequence:
             self._productType = ""
             products = multigenomic_api.products.find_by_gene_id(gene_id)
             for product in products:
-                self._productType += f"{product.type};"
+                self._productType += f"{product.type}|"
             self._productType = self._productType[:-1]
 
         @property
@@ -88,7 +88,7 @@ class GeneSequence:
             bnumber_pattern = r"^b[0-9]{4}$"
             for synonym in synonyms:
                 if re.match(bnumber_pattern, synonym):
-                    self._relatedBNumbers += f"{synonym};"
+                    self._relatedBNumbers += f"{synonym}|"
             if len(self._relatedBNumbers) > 0:
                 self._relatedBNumbers = self._relatedBNumbers[:-1]
 

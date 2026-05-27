@@ -189,7 +189,7 @@ def get_all_rows(rdb_version, citation):
     creation_date = datetime.now()
     tfs_doc = {
         "_id": "RDBECOLIDLF00024",
-        "fileName": "NetworkRegulatorGene",
+        "fileName": "NetworkRegulatorConfGene",
         "title": "Complete Regulator-Gene Network Set",
         "fileFormat": "rif-version 1",
         "license": "# RegulonDB is free for academic/noncommercial use\n# User is not entitled to change or erase data sets of the RegulonDB\n# database or to eliminate copyright notices from RegulonDB. Furthermore,\n# User is not entitled to expand RegulonDB or to integrate RegulonDB partly\n# or as a whole into other databank systems, without prior written consent\n# from CCG-UNAM.\n# Please check the license at https://regulondb.ccg.unam.mx/manual/aboutUs/terms-conditions",

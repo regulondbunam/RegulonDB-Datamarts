@@ -10,7 +10,6 @@ class TranscriptionFactor:
     def objects(self):
         tf_objects = multigenomic_api.transcription_factors.get_all()
         for tf_object in tf_objects:
-            # print(tf_object.id)
             ri_row = TranscriptionFactor.TFDatamart(tf_object)
             yield ri_row
         del tf_objects
@@ -41,11 +40,11 @@ class TranscriptionFactor:
 
         @tf_synonyms.setter
         def tf_synonyms(self, synonyms):
-            self._tf_synonyms = ""
+            self._tf_synonyms = []
             for synonym in synonyms:
-                self._tf_synonyms += f"{synonym};"
-            if len(self._tf_synonyms) > 0:
-                self._tf_synonyms = self._tf_synonyms[:-1]
+                if synonym not in self._tf_synonyms:
+                    self._tf_synonyms.append(synonym)
+            self._tf_synonyms = "|".join(self._tf_synonyms)
 
         @property
         def genes(self):
@@ -53,13 +52,13 @@ class TranscriptionFactor:
 
         @genes.setter
         def genes(self, products_ids):
-            self._genes = ""
+            self._genes = []
             for product_id in products_ids:
                 product = multigenomic_api.products.find_by_id(product_id)
                 gene = multigenomic_api.genes.find_by_id(product.genes_id)
-                self._genes += f"{gene.name};"
-            if len(self._genes) > 0:
-                self._genes = self._genes[:-1]
+                if gene.name not in self._genes:
+                    self._genes.append(gene.name)
+            self._genes = "|".join(self._genes)
 
         @property
         def gene_bnumbers(self):
@@ -67,13 +66,13 @@ class TranscriptionFactor:
 
         @gene_bnumbers.setter
         def gene_bnumbers(self, products_ids):
-            self._gene_bnumbers = ""
+            self._gene_bnumbers = []
             for product_id in products_ids:
                 product = multigenomic_api.products.find_by_id(product_id)
                 gene = multigenomic_api.genes.find_by_id(product.genes_id)
-                self._gene_bnumbers += f"{gene.bnumber};"
-            if len(self._gene_bnumbers) > 0:
-                self._gene_bnumbers = self._gene_bnumbers[:-1]
+                if gene.bnumber not in self._gene_bnumbers:
+                    self._gene_bnumbers.append(gene.bnumber)
+            self._gene_bnumbers = "|".join(self._gene_bnumbers)
 
         @property
         def active_conf(self):
@@ -81,7 +80,7 @@ class TranscriptionFactor:
 
         @active_conf.setter
         def active_conf(self, active_confs):
-            self._active_conf = ""
+            self._active_conf = []
             if len(active_confs) > 0:
                 for conf in active_confs:
                     conf_obj = {}
@@ -94,9 +93,9 @@ class TranscriptionFactor:
                     elif conf['type'] == "regulatoryContinuant":
                         reg = multigenomic_api.regulatory_continuants.find_by_id(conf["id"])
                         conf_obj = reg.name
-                    self._active_conf += f"{conf_obj};"
-            if len(self._active_conf) > 0:
-                self._active_conf = self._active_conf[:-1]
+                    if conf_obj not in self._active_conf:
+                        self._active_conf.append(conf_obj)
+            self._active_conf = "|".join(self._active_conf)
 
         @property
         def inactive_conf(self):
@@ -104,15 +103,16 @@ class TranscriptionFactor:
 
         @inactive_conf.setter
         def inactive_conf(self, inactive_confs):
-            self._inactive_conf = ""
-            for conf in inactive_confs:
-                if conf.type == "product":
-                    conf = multigenomic_api.products.find_by_id(conf.id)
-                elif conf.type == "regulatoryComplex":
-                    conf = multigenomic_api.regulatory_complexes.find_by_id(conf.id)
-                self._inactive_conf += f"{conf.abbreviated_name or conf.name};"
-            if len(self._inactive_conf) > 0:
-                self._inactive_conf = self._inactive_conf[:-1]
+            self._inactive_conf = []
+            for inac_conf in inactive_confs:
+                conf = None
+                if inac_conf.type == "product":
+                    conf = multigenomic_api.products.find_by_id(inac_conf.id)
+                elif inac_conf.type == "regulatoryComplex":
+                    conf = multigenomic_api.regulatory_complexes.find_by_id(inac_conf.id)
+                if conf:
+                    self._inactive_conf.append(conf.abbreviated_name or conf.name)
+            self._inactive_conf = "|".join(self._inactive_conf)
 
         @property
         def active_conf_syn(self):
@@ -120,12 +120,12 @@ class TranscriptionFactor:
 
         @active_conf_syn.setter
         def active_conf_syn(self, active_confs):
-            self._active_conf_syn = ""
+            self._active_conf_syn = []
             for conf in active_confs:
                 for synonym in conf["synonyms"]:
-                    self._active_conf_syn += f"{synonym};"
-            if len(self._active_conf_syn) > 0:
-                self._active_conf_syn = self._active_conf_syn[:-1]
+                    if synonym not in self._active_conf_syn:
+                        self._active_conf_syn.append(synonym)
+            self._active_conf_syn = "|".join(self._active_conf_syn)
 
         @property
         def inactive_conf_syn(self):
@@ -133,16 +133,16 @@ class TranscriptionFactor:
 
         @inactive_conf_syn.setter
         def inactive_conf_syn(self, inactive_confs):
-            self._inactive_conf_syn = ""
+            self._inactive_conf_syn = []
             for conf in inactive_confs:
                 if conf.type == "product":
                     conf = multigenomic_api.products.find_by_id(conf.id)
                 elif conf.type == "regulatoryComplex":
                     conf = multigenomic_api.regulatory_complexes.find_by_id(conf.id)
                 for synonym in conf.synonyms:
-                    self._inactive_conf_syn += f"{synonym};"
-            if len(self._inactive_conf_syn) > 0:
-                self._inactive_conf_syn = self._inactive_conf_syn[:-1]
+                    if synonym not in self._inactive_conf_syn:
+                        self._inactive_conf_syn.append(synonym)
+            self._inactive_conf_syn = "|".join(self._inactive_conf_syn)
 
         @property
         def active_conf_effectors(self):
@@ -150,12 +150,13 @@ class TranscriptionFactor:
 
         @active_conf_effectors.setter
         def active_conf_effectors(self, active_confs):
-            self._active_conf_effectors = ""
+            self._active_conf_effectors = []
             for conf in active_confs:
                 if conf["type"] == "regulatoryComplex" and conf["effectors"] != "":
-                    self._active_conf_effectors += f"{conf['effectors']};"
-            if len(self._active_conf_effectors) > 0:
-                self._active_conf_effectors = self._active_conf_effectors[:-1]
+                    for effector in conf["effectors"]:
+                        if effector not in self._active_conf_effectors:
+                            self._active_conf_effectors.append(effector)
+            self._active_conf_effectors = "|".join(self._active_conf_effectors)
 
         @property
         def inactive_conf_effectors(self):
@@ -163,15 +164,15 @@ class TranscriptionFactor:
 
         @inactive_conf_effectors.setter
         def inactive_conf_effectors(self, inactive_confs):
-            self._inactive_conf_effectors = ""
+            self._inactive_conf_effectors = []
             for conf in inactive_confs:
                 if conf.type == "regulatoryComplex":
                     conf = multigenomic_api.regulatory_complexes.find_by_id(conf.id)
                     for continuant_id in conf.regulatory_continuants_ids:
                         continuant = multigenomic_api.regulatory_continuants.find_by_id(continuant_id)
-                        self._inactive_conf_effectors += f"{continuant.name};"
-            if len(self._inactive_conf_effectors) > 0:
-                self._inactive_conf_effectors = self._inactive_conf_effectors[:-1]
+                        if continuant.name not in self._inactive_conf_effectors:
+                            self._inactive_conf_effectors.append(continuant.name)
+            self._inactive_conf_effectors = "|".join(self._inactive_conf_effectors)
 
         @property
         def active_conf_effectors_syn(self):
@@ -179,12 +180,13 @@ class TranscriptionFactor:
 
         @active_conf_effectors_syn.setter
         def active_conf_effectors_syn(self, active_confs):
-            self._active_conf_effectors_syn = ""
+            self._active_conf_effectors_syn = []
             for conf in active_confs:
                 if conf["type"] == "regulatoryComplex" and conf["effectorsSynonyms"] != "":
-                    self._active_conf_effectors_syn += f"{conf['effectorsSynonyms']}"
-            if len(self._active_conf_effectors_syn) > 0:
-                self._active_conf_effectors_syn = self._active_conf_effectors_syn[:-1]
+                    for effec_syn in conf["effectorsSynonyms"]:
+                        if effec_syn not in self._active_conf_effectors_syn:
+                            self._active_conf_effectors_syn.append(effec_syn)
+            self._active_conf_effectors_syn = "|".join(self._active_conf_effectors_syn)
 
         @property
         def inactive_conf_effectors_syn(self):
@@ -192,16 +194,16 @@ class TranscriptionFactor:
 
         @inactive_conf_effectors_syn.setter
         def inactive_conf_effectors_syn(self, inactive_confs):
-            self._inactive_conf_effectors_syn = ""
+            self._inactive_conf_effectors_syn = []
             for conf in inactive_confs:
                 if conf.type == "regulatoryComplex":
                     conf = multigenomic_api.regulatory_complexes.find_by_id(conf.id)
                     for continuant_id in conf.regulatory_continuants_ids:
                         continuant = multigenomic_api.regulatory_continuants.find_by_id(continuant_id)
                         for synonym in continuant.synonyms:
-                            self._inactive_conf_effectors_syn += f"{synonym};"
-            if len(self._inactive_conf_effectors_syn) > 0:
-                self._inactive_conf_effectors_syn = self._inactive_conf_effectors_syn[:-1]
+                            if synonym not in self._inactive_conf_effectors_syn:
+                                self._inactive_conf_effectors_syn.append(synonym)
+            self._inactive_conf_effectors_syn = "|".join(self._inactive_conf_effectors_syn)
 
         @property
         def symmetry(self):
@@ -209,12 +211,12 @@ class TranscriptionFactor:
 
         @symmetry.setter
         def symmetry(self, symmetry):
-            self._symmetry = ""
+            self._symmetry = []
             if symmetry:
                 for symm_ele in symmetry:
-                    self._symmetry += f"{symm_ele};"
-                if len(self._symmetry) > 0:
-                    self._symmetry = self._symmetry[:-1]
+                    if symm_ele not in self._symmetry:
+                        self._symmetry.append(symm_ele[1:-1])
+            self._symmetry = "|".join(self._symmetry)
 
         @property
         def tf_evidences(self):
@@ -226,10 +228,10 @@ class TranscriptionFactor:
             for citation in citations:
                 if citation.evidences_id:
                     citation_dict = multigenomic_api.evidences.find_by_id(citation.evidences_id)
-                    citation_item = f"[{citation_dict.code}:{citation_dict.type}]"
+                    citation_item = f"{citation_dict.code}:{citation_dict.type}"
                     if citation_item not in self._tf_evidences:
                         self._tf_evidences.append(citation_item)
-            self._tf_evidences = "".join(self._tf_evidences)
+            self._tf_evidences = "|".join(self._tf_evidences)
 
         @property
         def additive_evidences(self):
@@ -237,12 +239,12 @@ class TranscriptionFactor:
 
         @additive_evidences.setter
         def additive_evidences(self, additive_evs_ids):
-            self._additive_evidences = ""
+            self._additive_evidences = []
             if len(additive_evs_ids) > 0:
-                self._additive_evidences = ""
                 for additive_evs_id in additive_evs_ids:
                     additive_evidence_dict = multigenomic_api.additive_evidences.find_by_id(additive_evs_id)
-                    self._additive_evidences += f"[{additive_evidence_dict.code}:{additive_evidence_dict.confidence_level}]"
+                    self._additive_evidences.append(f"{additive_evidence_dict.code}:{additive_evidence_dict.confidence_level}")
+            self._additive_evidences = "|".join(self._additive_evidences)
 
         @property
         def tf_conf_pmids(self):
@@ -256,8 +258,8 @@ class TranscriptionFactor:
                     for citation in act_conf["citations"]:
                         if citation.publications_id:
                             publication = multigenomic_api.publications.find_by_id(citation.publications_id)
-                            if f"{publication.pmid}; " not in self._tf_conf_pmids:
-                                self._tf_conf_pmids.append(f"{publication.pmid}; ")
+                            if publication.pmid and publication.pmid not in self._tf_conf_pmids:
+                                self._tf_conf_pmids.append(publication.pmid)
             if self.tf.inactive_conformations:
                 if len(self.tf.inactive_conformations) > 0:
                     for conf in self.tf.inactive_conformations:
@@ -268,9 +270,9 @@ class TranscriptionFactor:
                         for citation in conf["citations"]:
                             if citation.publications_id:
                                 publication = multigenomic_api.publications.find_by_id(citation.publications_id)
-                                if f"{publication.pmid}; "not in self._tf_conf_pmids:
-                                    self._tf_conf_pmids.append(f"{publication.pmid}; ")
-            self._tf_conf_pmids = "".join(self._tf_conf_pmids)[:-2]
+                                if publication.pmid and publication.pmid not in self._tf_conf_pmids:
+                                    self._tf_conf_pmids.append(publication.pmid)
+            self._tf_conf_pmids = "|".join(self._tf_conf_pmids)
 
         def to_row(self):
             return f"{self.tf.id}" \
@@ -304,13 +306,13 @@ def get_all_act_conf(tf):
         reg_ints = multigenomic_api.regulatory_interactions.find_by_regulator_id(
             reg_complex.id)
         if len(reg_ints) > 0:
-            effectors = ""
-            effectors_syn = ""
+            effectors = []
+            effectors_syn = []
             for reg_cont_id in reg_complex.regulatory_continuants_ids:
                 continuant = multigenomic_api.regulatory_continuants.find_by_id(reg_cont_id)
-                effectors += f"{continuant.name};"
+                effectors.append(continuant.name)
                 for synonym in continuant.synonyms:
-                    effectors_syn += f"{synonym};"
+                    effectors_syn.append(synonym)
             conformations.append({"name": tf.name,
                                   "id": reg_complex.id,
                                   "synonyms": tf.synonyms,
@@ -339,13 +341,13 @@ def get_all_act_conf(tf):
                                        "citations": prod.citations}
             elif conformation.type == "regulatoryComplex":
                 complx = multigenomic_api.regulatory_complexes.find_by_id(conformation.id)
-                effectors = ""
-                effectors_syn = ""
+                effectors = []
+                effectors_syn = []
                 for reg_cont_id in complx.regulatory_continuants_ids:
                     continuant = multigenomic_api.regulatory_continuants.find_by_id(reg_cont_id)
-                    effectors += continuant.name
+                    effectors.append(continuant.name)
                     for synonym in continuant.synonyms:
-                        effectors_syn += f"{synonym};"
+                        effectors_syn.append(synonym)
                 conformation_object = {"name": complx.name,
                                        "id": complx.id,
                                        "synonyms": complx.synonyms,

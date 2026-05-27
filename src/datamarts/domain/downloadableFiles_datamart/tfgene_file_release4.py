@@ -102,7 +102,7 @@ class TFGene:
             for product_id in tf["products_ids"]:
                 product = multigenomic_api.products.find_by_id(product_id)
                 gene = multigenomic_api.genes.find_by_id(product.genes_id)
-                self._genes += f"{gene.name};"
+                self._genes += f"{gene.name}|"
             if len(self._genes) > 0:
                 self._genes = self._genes[:-1]
 

@@ -32,8 +32,8 @@ class Terminator:
             tus = multigenomic_api.transcription_units.find_by_terminator_id(terminator_id)
             for tu in tus:
                 operon = multigenomic_api.operons.find_by_id(tu.operons_id)
-                if f"{operon.name};" not in self._operon:
-                    self._operon.append(f"{operon.name};")
+                if f"{operon.name}|" not in self._operon:
+                    self._operon.append(f"{operon.name}|")
             self._operon = "".join(self._operon)[:-1]
 
         @property
@@ -58,9 +58,9 @@ class Terminator:
             for tu in tus:
                 if tu.promoters_id:
                     promoter = multigenomic_api.promoters.find_by_id(tu.promoters_id)
-                    self._rel_tus.append(f"{tu.name}:{promoter.name};")
+                    self._rel_tus.append(f"{tu.name}:{promoter.name}|")
                 else:
-                    self._rel_tus.append(f"{tu.name};")
+                    self._rel_tus.append(f"{tu.name}|")
             self._rel_tus = "".join(self._rel_tus)[:-1]
 
         @property
