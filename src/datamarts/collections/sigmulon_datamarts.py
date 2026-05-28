@@ -27,6 +27,7 @@ class SigmulonDatamarts:
             self.sigma_factor = sigma_factor
             self.transcribed_promoters = sigma_factor
             self.statistics = sigma_factor.id
+            self.organism = sigma_factor.organisms_id
 
         @property
         def sigma_factor(self):
@@ -57,12 +58,30 @@ class SigmulonDatamarts:
         def statistics(self, sigmulon_id):
             self._statistics = Statistics(sigmulon_id).to_dict()
 
+        @property
+        def organism(self):
+            return self._organism
+
+        @organism.setter
+        def organism(self, organism_id):
+            organism = multigenomic_api.organisms.find_by_id(organism_id)
+            if organism:
+                self._organism = {
+                    "_id": organism.id,
+                    "name": organism.name
+                }
+            else:
+                self._organism = {
+                    "_id": organism_id
+                }
+
         def to_dict(self):
             sigmulon_datamart = {
                 "_id": self.id,
                 "sigmaFactor": self.sigma_factor,
                 "transcribedPromoters": self.transcribed_promoters,
                 "statistics": self.statistics,
+                "organism": self.organism,
                 "allCitations": BiologicalBase.get_all_citations()
             }
             return sigmulon_datamart

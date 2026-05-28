@@ -30,6 +30,7 @@ class GensorUnitsDatamarts:
             gensor_unit["gensorUnit"]["_id"] = regulator.id
             self.gu = gensor_unit
             self.gene_ontology = gensor_unit
+            self.organism = regulator.organisms_id
 
         @property
         def gene_ontology(self):
@@ -39,8 +40,26 @@ class GensorUnitsDatamarts:
         def gene_ontology(self, gensor_unit):
             self._gene_ontology = GeneOntology(gensor_unit).to_dict()
 
+        @property
+        def organism(self):
+            return self._organism
+
+        @organism.setter
+        def organism(self, organism_id):
+            organism = multigenomic_api.organisms.find_by_id(organism_id)
+            if organism:
+                self._organism = {
+                    "_id": organism.id,
+                    "name": organism.name
+                }
+            else:
+                self._organism = {
+                    "_id": organism_id
+                }
+
         def to_dict(self):
             self.gu["gensorUnit"]["geneOntology"] = self._gene_ontology
+            self.gu["gensorUnit"]["organism"] = self.organism
             return self.gu
 
 

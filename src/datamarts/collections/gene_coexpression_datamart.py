@@ -129,7 +129,9 @@ if __name__ == '__main__':
                     "gene": genes,
                     "rank": score,
                     "rgbColor": get_rgb_color(score),
-                    "organisms": {}
+                    "organism": {
+                        "_id": "RDBECOLIORC00001"
+                    }
                 }
                 count += 1
                 coexp_items.append(item)
