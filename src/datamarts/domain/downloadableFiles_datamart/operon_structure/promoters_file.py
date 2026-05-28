@@ -1,7 +1,7 @@
 import multigenomic_api
 from datetime import datetime
 import re
-from . import common_functions
+from src.datamarts.domain.downloadableFiles_datamart import common_functions
 
 
 class Promoters:

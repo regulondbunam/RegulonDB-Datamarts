@@ -1,6 +1,6 @@
 import multigenomic_api
 from datetime import datetime
-from . import common_functions
+from src.datamarts.domain.downloadableFiles_datamart import common_functions
 
 
 class TranscriptionUnit:
