@@ -76,10 +76,13 @@ class TranscriptionUnit:
 
         @promoter.setter
         def promoter(self, promoter_id):
-            self._promoter = ""
+            self._promoter = {
+                "id": "",
+                "name": ""
+            }
             if promoter_id:
                 promoter = multigenomic_api.promoters.find_by_id(promoter_id)
-                self._promoter = promoter.name
+                self._promoter = promoter
 
         @property
         def terminator_ids(self):
@@ -133,7 +136,8 @@ class TranscriptionUnit:
                    f"\t{self.operon.id}" \
                    f"\t{self.operon.name}" \
                    f"\t{self.genes}" \
-                   f"\t{self.promoter}" \
+                   f"\t{self.promoter['id']}" \
+                   f"\t{self.promoter['name']}" \
                    f"\t{self.terminator_ids}" \
                    f"\t{self.tu_evidences}" \
                    f"\t{self.additive_evidences}" \
@@ -143,7 +147,7 @@ class TranscriptionUnit:
 
 def all_tus_rows(rdb_version, citation):
     trans_units = TranscriptionUnit()
-    tus_content = ["1)tuId\t2)tuName\t3)operonId\t4)operonName\t5)tuGenes\t6)pmName\t7)terminatorIds\t8)tuEvidence\t9)addEvidence\t10)confidenceLevel\t11)pmids"]
+    tus_content = ["1)tuId\t2)tuName\t3)operonId\t4)operonName\t5)tuGenes\t6)pmId\t7)pmName\t8)terminatorIds\t9)tuEvidence\t10)addEvidence\t11)confidenceLevel\t12)pmids"]
     for tu in trans_units.objects:
         tus_content.append(tu.to_row())
     creation_date = datetime.now()
@@ -167,12 +171,13 @@ def all_tus_rows(rdb_version, citation):
                           "# (3) operonId. Operon Id containing the transcription unit\n"
                           "# (4) operonName. Operon name containing the transcription unit\n"
                           "# (5) tuGenes. Name of the gene(s) contained in the transcription unit\n"
-                          "# (6) pmName. Promoter Name\n"
-                          "# (7) terminatorIds. Ids of the terminators associated to transcription unit\n"
-                          "# (8) tuEvidence. Evidence that supports the existence of the transcription unit\n"
-                          "# (9) addEvidence. Additive Evidence [CV(EvidenceCode1/EvidenceCodeN)|Confidence Level]\n"
-                          "# (10) confidenceLevel. TU confidence level (Values: Confirmed, Strong, Weak)\n"
-                          "# (11) pmids associated to object",
+                          "# (6) pmId. Promoter Id\n"
+                          "# (7) pmName. Promoter Name\n"
+                          "# (8) terminatorIds. Ids of the terminators associated to transcription unit\n"
+                          "# (9) tuEvidence. Evidence that supports the existence of the transcription unit\n"
+                          "# (10) addEvidence. Additive Evidence [CV(EvidenceCode1/EvidenceCodeN)|Confidence Level]\n"
+                          "# (11) confidenceLevel. TU confidence level (Values: Confirmed, Strong, Weak)\n"
+                          "# (12) pmids associated to object",
         "content": " \n".join(tus_content),
         "rdbVersion": rdb_version,
         "description": "Transcription units with information of operon, promoter and terminator.",
