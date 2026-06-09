@@ -361,7 +361,7 @@ def get_all_act_conf(tf):
 
 def all_tfs_rows(rdb_version, citation):
     trans_factors = TranscriptionFactor()
-    tfs_content = ["1)tfId\t2)tfName\t3)tfSynonyms\t4)geneCodingForTF\t5)geneBnumberCodingForTF\t6)tfActiveConformations\t7)tfInactiveConformations\t8)tfActiveConformationsSynonyms\t9)tfInactiveConformationsSynonyms\t10)tfActiveConformationsEffector\t11)tfInactiveConformationsEffector\t12)tfActiveConformationsEffectorSynonyms\t13)tfInactiveConformationsEffectorSynonyms\t14)symmetry\t15)tfEvidences\t16)additiveEvidences\t17)confidenceLevel\t18)tfConformationPMID"]
+    tfs_content = ["1)id\t2)name\t3)synonyms\t4)geneCodingForTF\t5)geneBnumberCodingForTF\t6)tfActiveConformations\t7)tfInactiveConformations\t8)tfActiveConformationsSynonyms\t9)tfInactiveConformationsSynonyms\t10)tfActiveConformationsEffector\t11)tfInactiveConformationsEffector\t12)tfActiveConformationsEffectorSynonyms\t13)tfInactiveConformationsEffectorSynonyms\t14)symmetry\t15)tfEvidences\t16)additiveEvidences\t17)confidenceLevel\t18)tfConformationPMID"]
     for tf in trans_factors.objects:
         tfs_content.append(tf.to_row())
     creation_date = datetime.now()

@@ -172,7 +172,16 @@ def all_operons_rows(rdb_version, citation):
         },
         "version": "1.0",
         "creationDate": f"{creation_date.strftime('%m-%d-%Y')}",
-        "columnsDetails": "# Columns:\n# (1) Operon ID\n(2) Operon name\n# (3) First gene-position left\n# (4) Last gene-position right\n# (5) DNA strand where the operon is coded\n# (6) Number of genes contained in the operon\n# (7) Name or Blattner number of the gene(s) contained in the operon\n# (8) Evidence that support the existence of the operon's TUs\n# (9) Evidence confidence level (Confirmed, Strong, Weak)",
+        "columnsDetails": "# Columns:\n"
+                          "# (1) Operon ID\n"
+                          "# (2) Operon name\n"
+                          "# (3) First gene-position left\n"
+                          "# (4) Last gene-position right\n"
+                          "# (5) DNA strand where the operon is coded\n"
+                          "# (6) Number of genes contained in the operon\n"
+                          "# (7) Name or Blattner number of the gene(s) contained in the operon\n"
+                          "# (8) Evidence that support the existence of the operon's TUs\n"
+                          "# (9) Evidence confidence level (Confirmed, Strong, Weak)",
         "content": " \n".join(operons_content),
         "rdbVersion": rdb_version,
         "description": "Operons and their genes.",

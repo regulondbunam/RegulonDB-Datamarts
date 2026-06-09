@@ -110,7 +110,7 @@ class Terminator:
 
 def all_terminators_rows(rdb_version, citation):
     terminators = Terminator()
-    terminators_content = ["1)terminatorId\t2)leftEndPos\t3)rightEndPos\t4)strand\t5)sequence\t6)relatedTus\t7)type\t8)operonName\t9)pmids\t10)evidences\t11)confidenceLevel"]
+    terminators_content = ["1)id\t2)leftEndPos\t3)rightEndPos\t4)strand\t5)sequence\t6)relatedTus\t7)type\t8)operonName\t9)pmids\t10)evidences\t11)confidenceLevel"]
     for terminator in terminators.objects:
         terminators_content.append(terminator.to_row())
     creation_date = datetime.now()

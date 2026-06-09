@@ -147,7 +147,7 @@ class TranscriptionUnit:
 
 def all_tus_rows(rdb_version, citation):
     trans_units = TranscriptionUnit()
-    tus_content = ["1)tuId\t2)tuName\t3)operonId\t4)operonName\t5)tuGenes\t6)pmId\t7)pmName\t8)terminatorIds\t9)tuEvidence\t10)addEvidence\t11)confidenceLevel\t12)pmids"]
+    tus_content = ["1)id\t2)name\t3)operonId\t4)operonName\t5)tuGenes\t6)promoterId\t7)promoterName\t8)terminatorIds\t9)tuEvidence\t10)addEvidence\t11)confidenceLevel\t12)PMIDs"]
     for tu in trans_units.objects:
         tus_content.append(tu.to_row())
     creation_date = datetime.now()
@@ -166,18 +166,18 @@ def all_tus_rows(rdb_version, citation):
         "version": "1.0",
         "creationDate": f"{creation_date.strftime('%m-%d-%Y')}",
         "columnsDetails": "# Columns:\n"
-                          "# (1) tuId. Transcription Unit identifier assigned by RegulonDB\n"
-                          "# (2) tuName. Transcription unit name \n"
+                          "# (1) id. Transcription Unit identifier assigned by RegulonDB\n"
+                          "# (2) name. Transcription unit name \n"
                           "# (3) operonId. Operon Id containing the transcription unit\n"
                           "# (4) operonName. Operon name containing the transcription unit\n"
                           "# (5) tuGenes. Name of the gene(s) contained in the transcription unit\n"
-                          "# (6) pmId. Promoter Id\n"
-                          "# (7) pmName. Promoter Name\n"
+                          "# (6) promoterId. Promoter Id\n"
+                          "# (7) promoterName. Promoter Name\n"
                           "# (8) terminatorIds. Ids of the terminators associated to transcription unit\n"
                           "# (9) tuEvidence. Evidence that supports the existence of the transcription unit\n"
                           "# (10) addEvidence. Additive Evidence [CV(EvidenceCode1/EvidenceCodeN)|Confidence Level]\n"
                           "# (11) confidenceLevel. TU confidence level (Values: Confirmed, Strong, Weak)\n"
-                          "# (12) pmids associated to object",
+                          "# (12) PMIDs. PMIDs associated to object",
         "content": " \n".join(tus_content),
         "rdbVersion": rdb_version,
         "description": "Transcription units with information of operon, promoter and terminator.",

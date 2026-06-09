@@ -179,7 +179,7 @@ def find_dual_items(list):
 def get_all_rows(rdb_version, citation):
     trans_factors = TFGene()
     tfs_content = [
-        "1)regulatorId	2)regulatorName	3)RegulatorGeneName	4)regulatedId	5)regulatedName	6)function	7)confidenceLevel"]
+        "1)regulatorId	2)regulatorName	3)RegulatorGeneName	4)regulatedGeneId	5)regulatedGeneName	6)function	7)confidenceLevel"]
     for tf in trans_factors.objects:
         tfs_content.extend(tf.to_row())
     tfs_content = list(set(tfs_content))
@@ -204,8 +204,8 @@ def get_all_rows(rdb_version, citation):
                           "# (1) regulatorId. Regulator identifier\n"
                           "# (2) regulatorName. Regulator Name\n"
                           "# (3) regulatorGeneName. Gene(s) coding for the TF\n"
-                          "# (4) regulatedId. Gene ID regulated by the Regulator (regulated Gene)\n"
-                          "# (5) regulatedName. Gene regulated by the Regulator (regulated Gene)\n"
+                          "# (4) regulatedGeneId. Gene ID regulated by the Regulator (regulated Gene)\n"
+                          "# (5) regulatedGeneName. Gene regulated by the Regulator (regulated Gene)\n"
                           "# (6) function. Regulatory Function of the Regulator on the regulated Gene (+ activator, - repressor, -+ dual, ? unknown)\n"
                           "# (7) confidenceLevel. RI confidence level based on its evidence (Values: Confirmed[C], Strong[S], Weak[W], Unknown[?])",
         "content": " \n".join(tfs_content),

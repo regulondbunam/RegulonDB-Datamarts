@@ -88,7 +88,7 @@ class GeneProduct:
 def all_gene_rows(rdb_version, citation):
     genes = GeneProduct()
     genes_content = [
-        "1)geneId\t2)geneName\t3)geneBnumber\t4)leftEndPos\t5)rightEndPos\t6)productName\t7)regulatorsName\t8)productSize\t9)motifId\t10)motif_leftEndPos\t11)motif_rightEndPos\t12)sequence"]
+        "1)geneId\t2)geneName\t3)geneBnumber\t4)leftEndPos\t5)rightEndPos\t6)productName\t7)regulatorsName\t8)productSize\t9)motifId\t10)motifLeftEndPos\t11)motifRightEndPos\t12)sequence"]
     for gene in genes.objects:
         if gene.to_row():
             genes_content.extend(gene.to_row())

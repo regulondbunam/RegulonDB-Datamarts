@@ -109,7 +109,7 @@ def remove_repeated_items_by_different_evidences(list):
 def get_all_rows(rdb_version, citation):
     trans_factors = SigmaTU()
     tfs_content = [
-        "1)sigmaName\t2)regulatedName\t3)function\t4)promoterEvidence\t5)confidenceLevel"]
+        "1)sigmaName\t2)regulatedTUName\t3)function\t4)promoterEvidence\t5)confidenceLevel"]
     for tf in trans_factors.objects:
         if tf.to_row() is not None:
             tfs_content.extend(tf.to_row())
@@ -131,7 +131,7 @@ def get_all_rows(rdb_version, citation):
         },
         "version": "1.0",
         "creationDate": f"{creation_date.strftime('%m-%d-%Y')}",
-        "columnsDetails": "# Columns:\n# (1) sigmaName. Sigma Name\n# (2) regulatedName. TU regulated by the Sigma Factor (regulated TU)\n# (3) function. Regulatory Function of the Sigma on the regulated TU (+ activator, - repressor, -+ dual, ? unknown)\n# (4)promoterEvidences. Evidence that supports the regulation the sigma on the promoter and the promoter evidences\n# (5) confidenceLevel. RI confidence level based on its evidence (Values: Confirmed[C], Strong[S], Weak[W], Unknown[?])",
+        "columnsDetails": "# Columns:\n# (1) sigmaName. Sigma Name\n# (2) regulatedTUName. TU regulated by the Sigma Factor (regulated TU)\n# (3) function. Regulatory Function of the Sigma on the regulated TU (+ activator, - repressor, -+ dual, ? unknown)\n# (4)promoterEvidences. Evidence that supports the regulation the sigma on the promoter and the promoter evidences\n# (5) confidenceLevel. RI confidence level based on its evidence (Values: Confirmed[C], Strong[S], Weak[W], Unknown[?])",
         "content": " \n".join(tfs_content),
         "rdbVersion": rdb_version,
         "description": "Regulatory Network Interactions between Sigma Factors and their regulated Transcription Units.",

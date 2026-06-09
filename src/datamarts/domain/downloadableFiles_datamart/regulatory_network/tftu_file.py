@@ -174,7 +174,7 @@ def find_dual_items(list):
 def get_all_rows(rdb_version, citation):
     trans_factors = TFTU()
     tfs_content = [
-        "1)regulatorId	2)regulatorName	3)RegulatorGeneName	4)regulatedId	5)regulatedName	6)function	7)confidenceLevel"]
+        "1)regulatorId	2)regulatorName	3)RegulatorGeneName	4)regulatedTUId	5)regulatedTUName	6)function	7)confidenceLevel"]
     for tf in trans_factors.objects:
         tfs_content.extend(tf.to_row())
     tfs_content = list(set(tfs_content))
@@ -195,7 +195,14 @@ def get_all_rows(rdb_version, citation):
         },
         "version": "1.0",
         "creationDate": f"{creation_date.strftime('%m-%d-%Y')}",
-        "columnsDetails": "# Columns:\n# (1) regulatorId. Regulator identifier\n# (2) regulatorName. Regulator Name\n# (3) regulatorGeneName. Gene(s) coding for the TF\n# (4) regulatedId. Transcription Unit ID regulated by the TF (regulated Transcription Unit)\n# (5) regulatedName. Transcription Unit regulated by the TF (regulated Transcription Unit)\n# (6) function. Regulatory Function of the TF on the regulated Transcription Unit (+ activator, - repressor, +- dual, ? unknown)\n# (7) confidenceLevel. RI confidence level based on its evidence (Values: Confirmed[C], Strong[S], Weak[W], Unknown[?])",
+        "columnsDetails": "# Columns:\n"
+                          "# (1) regulatorId. Regulator identifier\n"
+                          "# (2) regulatorName. Regulator Name\n"
+                          "# (3) regulatorGeneName. Gene(s) coding for the TF\n"
+                          "# (4) regulatedTUId. Transcription Unit ID regulated by the TF (regulated Transcription Unit)\n"
+                          "# (5) regulatedTUName. Transcription Unit regulated by the TF (regulated Transcription Unit)\n"
+                          "# (6) function. Regulatory Function of the TF on the regulated Transcription Unit (+ activator, - repressor, +- dual, ? unknown)\n"
+                          "# (7) confidenceLevel. RI confidence level based on its evidence (Values: Confirmed[C], Strong[S], Weak[W], Unknown[?])",
         "content": " \n".join(tfs_content),
         "rdbVersion": rdb_version,
         "description": "Regulatory Network Interactions between Regulators and their regulated Transcription Units",

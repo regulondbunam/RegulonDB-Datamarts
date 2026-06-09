@@ -172,7 +172,7 @@ def get_first_gene_of_tu(transcription_unit, promoter):
 
 def all_promoters_rows(rdb_version, citation):
     promoters = Promoters()
-    promoters_content = ["1)pmId\t2)pmName\t3)strand\t4)posTSS\t5)sigmaFactor\t6)pmSequence\t7)firstGeneName\t8)distToFirstGene\t9)boxMinus10pos\t10)boxMinus10seq\t11)boxMinus35pos\t12)boxMinus35seq\t13)pmEvidence\t14)addEvidence\t15)confidenceLevel\t16)pmids"]
+    promoters_content = ["1)id\t2)name\t3)strand\t4)posTSS\t5)sigmaFactor\t6)sequence\t7)firstGeneName\t8)distToFirstGene\t9)boxMinus10pos\t10)boxMinus10seq\t11)boxMinus35pos\t12)boxMinus35seq\t13)promoterEvidence\t14)addEvidence\t15)confidenceLevel\t16)pmids"]
     for promoter in promoters.objects:
         promoters_content.append(promoter.to_row())
     creation_date = datetime.now()
@@ -190,20 +190,20 @@ def all_promoters_rows(rdb_version, citation):
         },
         "version": "1.0",
         "creationDate": f"{creation_date.strftime('%m-%d-%Y')}",
-        "columnsDetails": "# Columns:\n# (1) pmId. Promoter identifier assigned by RegulonDB\n"
-                          "# (2) pmName. Promoter Name\n"
+        "columnsDetails": "# Columns:\n# (1) id. Promoter identifier assigned by RegulonDB\n"
+                          "# (2) name. Promoter Name\n"
                           "# (3) strand. DNA strand where the promoter is located\n"
                           "# (4) posTSS. Genome map position of Transcription Start Site (+1)\n"
                           "# (5) sigmaFactor. Sigma Factor that recognize the promoter\n"
-                          "# (6) pmSequence. Promoter Sequence (+1 upper case)\n"
+                          "# (6) sequence. Promoter Sequence (+1 upper case)\n"
                           "# (7) firstGeneName. Name of the first gene of promoter\n"
                           "# (8) distToFirstGene. distance to first gene of promoter\n"
                           "# (9) boxMinus10pos. Positions of the box -10\n"
                           "# (10) boxMinus10pos. Sequence of the box -10\n"
                           "# (11) boxMinus35pos. Positions of the box -35\n"
                           "# (12) boxMinus35pos. Sequence of the box -35\n"
-                          "# (13) pmEvidence. Evidence that supports the existence of the promoter\n"
-                          "# (14)addEvidence. Additive Evidence [CV(EvidenceCode1/EvidenceCodeN)|Confidence Level]\n"
+                          "# (13) promoterEvidence. Evidence that supports the existence of the promoter\n"
+                          "# (14) addEvidence. Additive Evidence [CV(EvidenceCode1/EvidenceCodeN)|Confidence Level]\n"
                           "# (15) confidenceLevel. Promoter confidence level (Values: Confirmed, Strong, Weak)\n"
                           "# (16) pmids associated to object",
         "content": " \n".join(promoters_content),

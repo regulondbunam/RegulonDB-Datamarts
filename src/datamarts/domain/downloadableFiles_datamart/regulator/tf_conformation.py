@@ -121,7 +121,7 @@ def define_oligomer_class(num_products: int) -> str:
 
 def all_tfs_rows(rdb_version, citation):
     trans_factors = TFConformation()
-    tfs_content = ["1)tfName\t2)ActiveConformation\t3)ActiveConfType\t4)Components\t5)Stoichiometry\t6)OligomerClass"]
+    tfs_content = ["1)Name\t2)ActiveConformation\t3)ActiveConfType\t4)Components\t5)Stoichiometry\t6)OligomerClass"]
     for tf in trans_factors.objects:
         #print(repr(tf.to_row()))
         tfs_content.append(tf.to_row())
