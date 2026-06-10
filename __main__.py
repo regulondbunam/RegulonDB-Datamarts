@@ -16,7 +16,8 @@ from src.datamarts.collections import \
     gensorUnit_datamarts, \
     downloadable_files_dm, \
     termTree_datamart, \
-    evidence_datamart
+    evidence_datamart, \
+    organism_datamart
 
 
 def load_arguments_parser():
@@ -98,6 +99,7 @@ if __name__ == '__main__':
     datamart_files["mcoTree"] = termTree_datamart.get_tree()
     datamart_files["downloadableFilesDatamart"] = downloadable_files_dm.get_all_downloadable_docs(arguments.rdbversion, arguments.citation, arguments.url)
     datamart_files["evidencesDatamart"] = evidence_datamart.all_evidences_datamarts()
+    datamart_files["organismsDatamart"] = organism_datamart.all_organism()
     print("Finished time: " + datetime.today().strftime('%H:%M:%S'))
 
     datamartsData = ""
